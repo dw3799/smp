@@ -1,0 +1,18 @@
+use alipapa_smp;
+
+
+-- ----------------------------
+-- Table structure for stock_manage
+-- ----------------------------
+DROP TABLE IF EXISTS `stock_manage`;
+CREATE TABLE `stock_manage` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `type` varchar(100) DEFAULT '' COMMENT '型号',
+  `colour` varchar(10) DEFAULT '' COMMENT '颜色',
+  `qty` int(11) DEFAULT NULL COMMENT '数量',
+  `shelfno` varchar(30) DEFAULT '' COMMENT '货架号',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='库存表';
