@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alipapa.smp.stock.mapper.StockManageMapper">
+    <resultMap id="BaseResultMap" type="com.alipapa.smp.stock.pojo.StockManage">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="colour" jdbcType="VARCHAR" property="colour"/>
+        <result column="qty" jdbcType="INTEGER" property="qty"/>
+        <result column="shelfno" jdbcType="VARCHAR" property="shelfno"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, type, colour, qty, shelfno, remark, created_time, updated_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from stock_manage
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByparams" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from stock_manage WHERE 1 = 1
+        <if test="type != null">
+            and type like CONCAT('%',#{type},'%')
+        </if>
+        <if test="shelfno != null">
+            and shelfno like CONCAT('%',#{shelfno},'%')
+        </if>
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from stock_manage
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from stock_manage
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.alipapa.smp.stock.pojo.StockManage">
+        insert into stock_manage (id, type, colour,
+        qty, shelfno, remark,
+        created_time, updated_time)
+        values (#{id,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{colour,jdbcType=VARCHAR},
+        #{qty,jdbcType=INTEGER}, #{shelfno,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+        #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.alipapa.smp.stock.pojo.StockManage">
+        insert into stock_manage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="colour != null">
+                colour,
+            </if>
+            <if test="qty != null">
+                qty,
+            </if>
+            <if test="shelfno != null">
+                shelfno,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createdTime != null">
+                created_time,
+            </if>
+            <if test="updatedTime != null">
+                updated_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="colour != null">
+                #{colour,jdbcType=VARCHAR},
+            </if>
+            <if test="qty != null">
+                #{qty,jdbcType=INTEGER},
+            </if>
+            <if test="shelfno != null">
+                #{shelfno,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null">
+                #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.stock.pojo.StockManage">
+        update stock_manage
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="colour != null">
+                colour = #{colour,jdbcType=VARCHAR},
+            </if>
+            <if test="qty != null">
+                qty = #{qty,jdbcType=INTEGER},
+            </if>
+            <if test="shelfno != null">
+                shelfno = #{shelfno,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.stock.pojo.StockManage">
+        update stock_manage
+        set type = #{type,jdbcType=VARCHAR},
+        colour = #{colour,jdbcType=VARCHAR},
+        qty = #{qty,jdbcType=INTEGER},
+        shelfno = #{shelfno,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

@@ -1,0 +1,21 @@
+
+   SSSSSSSSSSSSSSS MMMMMMMM               MMMMMMMMPPPPPPPPPPPPPPPPP
+ SS:::::::::::::::SM:::::::M             M:::::::MP::::::::::::::::P
+S:::::SSSSSS::::::SM::::::::M           M::::::::MP::::::PPPPPP:::::P
+S:::::S     SSSSSSSM:::::::::M         M:::::::::MPP:::::P     P:::::P
+S:::::S            M::::::::::M       M::::::::::M  P::::P     P:::::P
+S:::::S            M:::::::::::M     M:::::::::::M  P::::P     P:::::P
+ S::::SSSS         M:::::::M::::M   M::::M:::::::M  P::::PPPPPP:::::P
+  SS::::::SSSSS    M::::::M M::::M M::::M M::::::M  P:::::::::::::PP
+    SSS::::::::SS  M::::::M  M::::M::::M  M::::::M  P::::PPPPPPPPP
+       SSSSSS::::S M::::::M   M:::::::M   M::::::M  P::::P
+            S:::::SM::::::M    M:::::M    M::::::M  P::::P
+            S:::::SM::::::M     MMMMM     M::::::M  P::::P
+SSSSSSS     S:::::SM::::::M               M::::::MPP::::::PP
+S::::::SSSSSS:::::SM::::::M               M::::::MP::::::::P
+S:::::::::::::::SS M::::::M               M::::::MP::::::::P
+ SSSSSSSSSSSSSSS   MMMMMMMM               MMMMMMMMPPPPPPPPPP
+
+
+
+${AnsiColor.BLUE}:: Running Spring Boot ${spring-boot.version} :: ${AnsiColor.DEFAULT}
