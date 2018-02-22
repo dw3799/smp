@@ -16,3 +16,68 @@ CREATE TABLE `stock_manage` (
   `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='库存表';
+
+
+
+
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `name` varchar(32) NOT NULL COMMENT '登录名',
+  `cn_name` varchar(32) NOT NULL COMMENT '中文名称',
+  `user_no` varchar(100) NOT NULL COMMENT '用户唯一标识',
+  `pwd` varchar(50) NOT NULL COMMENT '加密后的密码',
+  `create_user` varchar(50) DEFAULT NULL COMMENT '创建人',
+  `remark` varchar(100) DEFAULT NULL COMMENT '备注',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY  `uk_name` (`name`),
+  KEY `idx_login` (`name`, `pwd`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
+
+
+DROP TABLE IF EXISTS `user_role`;
+CREATE TABLE `user_role` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `token` varchar(100) DEFAULT '' COMMENT 'token',
+  `user_id` bigint(20) NOT NULL COMMENT '用户id',
+  `user_no` varchar(100) NOT NULL COMMENT '用户唯一标识',
+  `role_id` bigint(20) NOT NULL COMMENT '角色id',
+  `group_id` bigint(20) DEFAULT NULL COMMENT '用户组Id',
+  `group_no` varchar(100) NOT NULL COMMENT '组编号',
+  `expire_time`  datetime  NULL COMMENT 'token过期时间',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_user_no` (`user_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户角色表';
+
+
+
+DROP TABLE IF EXISTS `role`;
+CREATE TABLE `role` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `role_name` varchar(100) DEFAULT '' COMMENT '角色简称',
+  `description` varchar(100) NOT NULL COMMENT '角色描述',
+  `remark` varchar(200) NOT NULL COMMENT '备注',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统角色表';
+
+
+DROP TABLE IF EXISTS `group`;
+CREATE TABLE `group` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `group_no` varchar(100) NOT NULL COMMENT '组编号',
+  `name` varchar(100) NOT NULL COMMENT '组名称',
+  `leader_id` bigint(20) NOT NULL COMMENT '组长id',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `partent_group_id` bigint(20) DEFAULT NULL COMMENT '上级组织Id',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='组织架构表';
+
+
