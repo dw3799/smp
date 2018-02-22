@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alipapa.smp.user.mapper.groupMapper">
+  <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo.group">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="group_no" jdbcType="VARCHAR" property="groupNo" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="leader_id" jdbcType="BIGINT" property="leaderId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="partent_group_id" jdbcType="BIGINT" property="partentGroupId" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, group_no, name, leader_id, remark, partent_group_id, created_time, updated_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from group
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from group
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.alipapa.smp.user.pojo.group">
+    insert into group (id, group_no, name, 
+      leader_id, remark, partent_group_id, 
+      created_time, updated_time)
+    values (#{id,jdbcType=BIGINT}, #{groupNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{leaderId,jdbcType=BIGINT}, #{remark,jdbcType=VARCHAR}, #{partentGroupId,jdbcType=BIGINT}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo.group">
+    insert into group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="groupNo != null">
+        group_no,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="leaderId != null">
+        leader_id,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="partentGroupId != null">
+        partent_group_id,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="updatedTime != null">
+        updated_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="groupNo != null">
+        #{groupNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="leaderId != null">
+        #{leaderId,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="partentGroupId != null">
+        #{partentGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null">
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.user.pojo.group">
+    update group
+    <set>
+      <if test="groupNo != null">
+        group_no = #{groupNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="leaderId != null">
+        leader_id = #{leaderId,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="partentGroupId != null">
+        partent_group_id = #{partentGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null">
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.user.pojo.group">
+    update group
+    set group_no = #{groupNo,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      leader_id = #{leaderId,jdbcType=BIGINT},
+      remark = #{remark,jdbcType=VARCHAR},
+      partent_group_id = #{partentGroupId,jdbcType=BIGINT},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
