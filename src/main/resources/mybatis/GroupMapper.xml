@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.alipapa.smp.user.mapper.groupMapper">
-  <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo.group">
+<mapper namespace="com.alipapa.smp.user.mapper.GroupMapper">
+  <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo.Group">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="group_no" jdbcType="VARCHAR" property="groupNo" />
     <result column="name" jdbcType="VARCHAR" property="name" />
@@ -24,7 +24,7 @@
     delete from group
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.alipapa.smp.user.pojo.group">
+  <insert id="insert" parameterType="com.alipapa.smp.user.pojo.Group">
     insert into group (id, group_no, name, 
       leader_id, remark, partent_group_id, 
       created_time, updated_time)
@@ -32,7 +32,7 @@
       #{leaderId,jdbcType=BIGINT}, #{remark,jdbcType=VARCHAR}, #{partentGroupId,jdbcType=BIGINT}, 
       #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo.group">
+  <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo.Group">
     insert into group
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -87,7 +87,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.user.pojo.group">
+  <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.user.pojo.Group">
     update group
     <set>
       <if test="groupNo != null">
@@ -114,7 +114,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.user.pojo.group">
+  <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.user.pojo.Group">
     update group
     set group_no = #{groupNo,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},

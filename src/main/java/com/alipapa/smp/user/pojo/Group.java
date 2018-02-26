@@ -2,7 +2,7 @@ package com.alipapa.smp.user.pojo;
 
 import java.util.Date;
 
-public class group {
+public class Group {
     private Long id;
 
     private String groupNo;
