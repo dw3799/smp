@@ -13,6 +13,8 @@ public class UserRole {
 
     private Long roleId;
 
+    private String roleName;
+
     private Long groupId;
 
     private String groupNo;
@@ -101,5 +103,13 @@ public class UserRole {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }
