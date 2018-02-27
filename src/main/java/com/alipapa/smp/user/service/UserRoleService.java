@@ -8,4 +8,8 @@ public interface UserRoleService {
 
     List<UserRole> listRoleByUserId(Long userId);
 
+    UserRole getUserRoleByUserIdAndRoleId(Long userId, Long roleId);
+
+    boolean updateUserRole(UserRole role);
+
 }
