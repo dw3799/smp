@@ -1,8 +1,7 @@
 package com.alipapa.smp.user.controller;
 
-import com.alipapa.smp.stock.pojo.Person;
-import com.alipapa.smp.stock.pojo.StockManage;
-import com.alipapa.smp.stock.service.StockManageService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.user.pojo.Role;
 import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.pojo.UserRole;
@@ -15,19 +14,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+
+import static com.alipapa.smp.utils.WebApiResponse.error;
 
 /**
  * 用户管理接口
@@ -63,26 +60,26 @@ public class UserController {
     public WebApiResponse<LoginInfo> userLogin(@RequestParam("name") String name, @RequestParam("pwd") String pwd, @RequestParam("roleName") String roleName) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(pwd) || StringUtils.isBlank(roleName)) {
             logger.error("参数不能为空!");
-            return WebApiResponse.error("参数不可以为空");
+            return error("参数不可以为空");
         }
         User user = userService.getUserByUserName(name);
         if (user == null) {
-            return WebApiResponse.error("用户名或密码错误");
+            return error("用户名或密码错误");
         }
 
         Role role = roleService.getRoleByName(roleName);
         if (role == null) {
-            return WebApiResponse.error("角色不存在");
+            return error("角色不存在");
         }
 
         UserRole userRole = userRoleService.getUserRoleByUserIdAndRoleId(user.getId(), role.getId());
         if (userRole == null) {
-            return WebApiResponse.error("用户角色不存在");
+            return error("用户角色不存在");
         }
 
         //if (!user.getPwd().equals(pwd)) {
         if (!user.getPwd().equals(MD5.digist(pwd))) {
-            return WebApiResponse.error("用户名或密码错误");
+            return error("用户名或密码错误");
         }
 
         Map<String, Object> srcData = new HashMap<>();
@@ -102,7 +99,7 @@ public class UserController {
             return WebApiResponse.success(loginInfo);
         } catch (Exception e) {
             logger.error("登录异常", e);
-            return WebApiResponse.error("登录异常");
+            return error("登录异常");
         }
     }
 
@@ -117,17 +114,17 @@ public class UserController {
     public WebApiResponse<List<String>> listRole(@RequestParam("name") String name) {
         if (StringUtils.isBlank(name)) {
             logger.error("参数不能为空!");
-            return WebApiResponse.error("参数不可以为空");
+            return error("参数不可以为空");
         }
         User user = userService.getUserByUserName(name);
 
         if (user == null) {
-            return WebApiResponse.error("用户名不存在");
+            return error("用户名不存在");
         }
 
         List<UserRole> userRoleList = userRoleService.listRoleByUserId(user.getId());
         if (CollectionUtils.isEmpty(userRoleList)) {
-            return WebApiResponse.error("请联系管理员设置角色");
+            return error("请联系管理员设置角色");
         }
 
         List<String> roles = new ArrayList<>();
@@ -145,27 +142,34 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/v1/addUser", method = RequestMethod.POST)
-    public WebApiResponse<String> addUser(@RequestParam("name") String name) {
-        if (StringUtils.isBlank(name)) {
-            logger.error("参数不能为空!");
-            return WebApiResponse.error("参数不可以为空");
+    public WebApiResponse<String> addUser(@RequestBody String jsonStr, HttpServletRequest request) {
+        if (jsonStr == null) {
+            logger.error("提交的json格式数据不可以为空!");
+            return error("输入的信息不可以为空");
         }
-        User user = userService.getUserByUserName(name);
+        try {
+            JSONObject json = JSON.parseObject(jsonStr);
+            if (json == null) {
+                logger.error("客户提交的数据解析失败: " + jsonStr);
+                return error("用户数据解析失败");
+            }
 
-        if (user == null) {
-            return WebApiResponse.error("用户名不存在");
-        }
+            String name = json.getString("name");
+            String cnName = json.getString("cnName");
+            String remark = json.getString("remark");
 
-        List<UserRole> userRoleList = userRoleService.listRoleByUserId(user.getId());
-        if (CollectionUtils.isEmpty(userRoleList)) {
-            return WebApiResponse.error("请联系管理员设置角色");
-        }
+            User newUser = new User();
+            newUser.setName(name);
+            newUser.setCnName(cnName);
+            newUser.setCreateUser(request.getHeader("userNo"));
+            newUser.setUserNo(UUID.randomUUID().toString());
+            newUser.setPwd(MD5.digist("666666"));
+            newUser.setRemark(remark);
 
-        List<String> roles = new ArrayList<>();
-        for (UserRole userRole : userRoleList) {
-            roles.add(userRole.getRoleName());
+            return WebApiResponse.success("ok");
+        } catch (Exception ex) {
+            return error("新建用户失败");
         }
-        return WebApiResponse.success("");
     }
 
 
@@ -179,7 +183,7 @@ public class UserController {
     public WebApiResponse<String> addGroup(@RequestParam("name") String name) {
         if (StringUtils.isBlank(name)) {
             logger.error("参数不能为空!");
-            return WebApiResponse.error("参数不可以为空");
+            return error("参数不可以为空");
         }
         User user = userService.getUserByUserName(name);
 
@@ -189,7 +193,7 @@ public class UserController {
 
         List<UserRole> userRoleList = userRoleService.listRoleByUserId(user.getId());
         if (CollectionUtils.isEmpty(userRoleList)) {
-            return WebApiResponse.error("请联系管理员设置角色");
+            return error("请联系管理员设置角色");
         }
 
         List<String> roles = new ArrayList<>();
@@ -210,17 +214,17 @@ public class UserController {
     public WebApiResponse<String> listGroupUser(@RequestParam("name") String name) {
         if (StringUtils.isBlank(name)) {
             logger.error("参数不能为空!");
-            return WebApiResponse.error("参数不可以为空");
+            return error("参数不可以为空");
         }
         User user = userService.getUserByUserName(name);
 
         if (user == null) {
-            return WebApiResponse.error("用户名不存在");
+            return error("用户名不存在");
         }
 
         List<UserRole> userRoleList = userRoleService.listRoleByUserId(user.getId());
         if (CollectionUtils.isEmpty(userRoleList)) {
-            return WebApiResponse.error("请联系管理员设置角色");
+            return error("请联系管理员设置角色");
         }
 
         List<String> roles = new ArrayList<>();

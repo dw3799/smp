@@ -12,4 +12,5 @@ public interface UserRoleService {
 
     boolean updateUserRole(UserRole role);
 
+    UserRole getUserRoleByToken(String token);
 }

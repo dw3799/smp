@@ -3,7 +3,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-	              http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+	              http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"
+       xmlns:mvc="http://www.springframework.org/schema/mvc">
 
     <bean id="smpDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
         <!-- 数据库驱动 -->
@@ -52,4 +53,11 @@
         <property name="basePackage" value="com.alipapa.**.mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/api/*"/>
+            <bean class="com.alipapa.smp.common.LoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>
