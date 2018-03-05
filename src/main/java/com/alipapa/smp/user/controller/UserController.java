@@ -1,7 +1,10 @@
 package com.alipapa.smp.user.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alipapa.smp.common.request.UserInfo;
+import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.user.pojo.Role;
 import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.pojo.UserRole;
@@ -77,7 +80,6 @@ public class UserController {
             return error("用户角色不存在");
         }
 
-        //if (!user.getPwd().equals(pwd)) {
         if (!user.getPwd().equals(MD5.digist(pwd))) {
             return error("用户名或密码错误");
         }
@@ -143,6 +145,8 @@ public class UserController {
      */
     @RequestMapping(value = "/v1/addUser", method = RequestMethod.POST)
     public WebApiResponse<String> addUser(@RequestBody String jsonStr, HttpServletRequest request) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
         if (jsonStr == null) {
             logger.error("提交的json格式数据不可以为空!");
             return error("输入的信息不可以为空");
@@ -154,18 +158,29 @@ public class UserController {
                 return error("用户数据解析失败");
             }
 
-            String name = json.getString("name");
+
             String cnName = json.getString("cnName");
+            String groupId = json.getString("groupId");
+            JSONArray roleIds = json.getJSONArray("roleIds");
             String remark = json.getString("remark");
 
+            if (cnName == null || roleIds == null) {
+                return error("请输入必要信息");
+            }
+
+            if (userService.getUserByCnName(cnName) == null) {
+                logger.error("员工姓名已存在: " + cnName);
+                return error("员工姓名已存在");
+            }
+
             User newUser = new User();
-            newUser.setName(name);
+            newUser.setName(new Date().getYear() + "001");
             newUser.setCnName(cnName);
-            newUser.setCreateUser(request.getHeader("userNo"));
+            newUser.setCreateUser(userInfo.getUserNo());
             newUser.setUserNo(UUID.randomUUID().toString());
             newUser.setPwd(MD5.digist("666666"));
             newUser.setRemark(remark);
-
+            
             return WebApiResponse.success("ok");
         } catch (Exception ex) {
             return error("新建用户失败");

@@ -9,4 +9,7 @@ import com.alipapa.smp.user.pojo.User;
 public interface UserService {
     User getUserByUserName(String name);
 
+
+    User getUserByCnName(String cnName);
+
 }
