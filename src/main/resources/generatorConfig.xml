@@ -5,7 +5,8 @@
 
 <generatorConfiguration>
     <!--mysql 连接数据库jar 这里选择自己本地位置-->
-    <classPathEntry location="/Users/maibahe/.m2/repository/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar" />
+    <classPathEntry
+            location="/Users/maibahe/.m2/repository/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar"/>
     <context id="testTables" targetRuntime="MyBatis3">
         <commentGenerator>
             <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
@@ -49,11 +50,16 @@
         </javaClientGenerator>
         <!-- 指定数据库表 -->
         <!-- 要生成那些表(更改tableName和domainObjectName就可以) -->
-        <table tableName="Group"
-               domainObjectName="group"
-               enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               selectByExampleQueryId="false"/>
+        <!--       <table tableName="Group"
+                      domainObjectName="group"
+                      enableCountByExample="false"
+                      enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+                      selectByExampleQueryId="false"/>-->
+
+        <table schema="" tableName="group"/>
+        <!--
+                <table schema="" tableName="activity_answer_info"></table>
+        -->
 
     </context>
 </generatorConfiguration>

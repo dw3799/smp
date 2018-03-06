@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.alipapa.smp.user.mapper.UserRoleMapper">
+
     <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo.UserRole">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="token" jdbcType="VARCHAR" property="token"/>
@@ -14,6 +15,17 @@
         <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
         <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
     </resultMap>
+
+    <resultMap id="SearchResultMap" type="com.alipapa.smp.user.vo.UserVo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="userId"/>
+        <result column="cn_name" jdbcType="VARCHAR" property="cnName"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+    </resultMap>
+
+
     <sql id="Base_Column_List">
     id, token, user_id, user_no, role_id, role_name, group_id, group_no, expire_time, created_time,
     updated_time
@@ -161,4 +173,50 @@
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+    <select id="findUserByParam" resultMap="SearchResultMap" parameterType="com.alipapa.smp.user.vo.UserVo">
+        <include refid="queryUserRoleSql"/>
+        <trim prefix="limit" prefixOverrides=",">
+            <if test="start != null and start != ''">
+                #{start}
+            </if>
+
+            <if test="end != null and end != ''">
+                , #{end}
+            </if>
+        </trim>
+    </select>
+
+    <sql id="queryUserRoleSql">
+        select DISTINCT
+        ur.id,
+        u.`name`,
+        u.cn_name,
+        ur.role_name,
+        g.`name` as group_name ,
+        ur.created_time
+        from user_role ur , `user` u , `group` g
+        where ur.group_id=g.id
+        and ur.user_id=u.id
+        <if test="userId != null and userId != ''">
+            and u.`name` = #{userId}
+        </if>
+        <if test="roleName != null and roleName != ''">
+            and ur.role_name = #{roleName}
+        </if>
+        <if test="cnName != null and cnName != ''">
+            and A.cn_name = #{cnName}
+        </if>
+        ORDER BY A.CREATE_TIME DESC
+    </sql>
+
+
+    <select id="findUserByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+        select count(*) from (
+        <include refid="queryUserRoleSql"/>
+        ) T
+    </select>
+
+
 </mapper>

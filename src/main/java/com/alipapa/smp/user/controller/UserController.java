@@ -12,6 +12,7 @@ import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserRoleService;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.user.vo.LoginInfo;
+import com.alipapa.smp.user.vo.UserVo;
 import com.alipapa.smp.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
  */
 
 @Controller
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -59,7 +60,7 @@ public class UserController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/v1/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public WebApiResponse<LoginInfo> userLogin(@RequestParam("name") String name, @RequestParam("pwd") String pwd, @RequestParam("roleName") String roleName) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(pwd) || StringUtils.isBlank(roleName)) {
             logger.error("参数不能为空!");
@@ -112,7 +113,7 @@ public class UserController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/v1/listRole", method = RequestMethod.POST)
+    @RequestMapping(value = "/listRole", method = RequestMethod.POST)
     public WebApiResponse<List<String>> listRole(@RequestParam("name") String name) {
         if (StringUtils.isBlank(name)) {
             logger.error("参数不能为空!");
@@ -143,7 +144,7 @@ public class UserController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/v1/addUser", method = RequestMethod.POST)
+    @RequestMapping(value = "/addUser", method = RequestMethod.POST)
     public WebApiResponse<String> addUser(@RequestBody String jsonStr, HttpServletRequest request) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
@@ -158,8 +159,7 @@ public class UserController {
                 return error("用户数据解析失败");
             }
 
-
-            String cnName = json.getString("cnName");
+            String cnName = json.getString("name");
             String groupId = json.getString("groupId");
             JSONArray roleIds = json.getJSONArray("roleIds");
             String remark = json.getString("remark");
@@ -173,18 +173,75 @@ public class UserController {
                 return error("员工姓名已存在");
             }
 
+            Long userId = userService.getLatestUserId();
             User newUser = new User();
-            newUser.setName(new Date().getYear() + "001");
+            newUser.setName(String.valueOf(DateUtil.getYear()) + String.format("%04d", userId + 1));
             newUser.setCnName(cnName);
             newUser.setCreateUser(userInfo.getUserNo());
             newUser.setUserNo(UUID.randomUUID().toString());
-            newUser.setPwd(MD5.digist("666666"));
+            newUser.setPwd(MD5.digist("666666"));//默认密码
             newUser.setRemark(remark);
-            
-            return WebApiResponse.success("ok");
+
+            userService.addUser(newUser, groupId, roleIds.toJavaList(String.class));
+            return WebApiResponse.success("success");
         } catch (Exception ex) {
             return error("新建用户失败");
         }
+    }
+
+
+    /**
+     * 用户查询
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listGroupUser", method = RequestMethod.GET)
+    public WebApiResponse<List<UserVo>> listGroupUser(@RequestParam("pageSize") String pageSize,
+                                                      @RequestParam("pageNum") String pageNum,
+                                                      @RequestParam(name = "userId", required = false) String userId,
+                                                      @RequestParam(name = "roleName", required = false) String roleName,
+                                                      @RequestParam(name = "name", required = false) String cnName
+    ) {
+
+        List<UserVo> userVoList = new ArrayList<>();
+
+
+        return WebApiResponse.success(userVoList);
+    }
+
+
+    /**
+     * 重置用户密码
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/resetPwd", method = RequestMethod.POST)
+    public WebApiResponse<String> resetUserPwd(@RequestParam("userId") String userId) {
+        if (StringUtils.isBlank(userId)) {
+            logger.error("参数不能为空!");
+            return error("参数不可以为空");
+        }
+
+        return WebApiResponse.success("success");
+    }
+
+
+    /**
+     * 批量删除
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/batchDelUser", method = RequestMethod.POST)
+    public WebApiResponse<String> batchDelUser(@RequestParam("userId") String userId) {
+        if (StringUtils.isBlank(userId)) {
+            logger.error("参数不能为空!");
+            return error("参数不可以为空");
+        }
+
+        return WebApiResponse.success("success");
     }
 
 
@@ -194,7 +251,7 @@ public class UserController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/v1/addGroup", method = RequestMethod.POST)
+    @RequestMapping(value = "/addGroup", method = RequestMethod.POST)
     public WebApiResponse<String> addGroup(@RequestParam("name") String name) {
         if (StringUtils.isBlank(name)) {
             logger.error("参数不能为空!");
@@ -219,35 +276,18 @@ public class UserController {
     }
 
 
-    /**
-     * 用户查询
-     *
-     * @param
-     * @return
-     */
-    @RequestMapping(value = "/v1/listGroupUser", method = RequestMethod.POST)
-    public WebApiResponse<String> listGroupUser(@RequestParam("name") String name) {
-        if (StringUtils.isBlank(name)) {
-            logger.error("参数不能为空!");
-            return error("参数不可以为空");
-        }
-        User user = userService.getUserByUserName(name);
 
-        if (user == null) {
-            return error("用户名不存在");
-        }
+/*
+    public static void main(String[] args) {
 
-        List<UserRole> userRoleList = userRoleService.listRoleByUserId(user.getId());
-        if (CollectionUtils.isEmpty(userRoleList)) {
-            return error("请联系管理员设置角色");
-        }
-
-        List<String> roles = new ArrayList<>();
-        for (UserRole userRole : userRoleList) {
-            roles.add(userRole.getRoleName());
-        }
-        return WebApiResponse.success("");
-    }
+        List<String> ss = new ArrayList();
+        ss.add("qw");
+        ss.add("ww");
+        ss.add("aw");
 
 
+        System.out.println(JSONObject.toJSONString(ss));
+
+        System.out.println(String.format("%04d", 11));
+    }*/
 }

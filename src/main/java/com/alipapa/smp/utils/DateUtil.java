@@ -443,6 +443,18 @@ public class DateUtil extends DateUtils {
         return calendar.getTime();
     }
 
+
+    /**
+     * 得到当前年份
+     *
+     * @return
+     */
+    public static int getYear() {
+        Calendar cal = Calendar.getInstance();
+        return cal.get(Calendar.YEAR);
+    }
+
+
     /**
      * 得到当前时间的小时
      *
