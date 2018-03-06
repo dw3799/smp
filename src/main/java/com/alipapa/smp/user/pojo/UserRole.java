@@ -13,8 +13,6 @@ public class UserRole {
 
     private Long roleId;
 
-    private String roleName;
-
     private Long groupId;
 
     private String groupNo;
@@ -24,6 +22,8 @@ public class UserRole {
     private Date createdTime;
 
     private Date updatedTime;
+
+    private String roleName;
 
     public Long getId() {
         return id;
@@ -110,6 +110,6 @@ public class UserRole {
     }
 
     public void setRoleName(String roleName) {
-        this.roleName = roleName;
+        this.roleName = roleName == null ? null : roleName.trim();
     }
 }

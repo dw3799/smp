@@ -1,16 +1,36 @@
 package com.alipapa.smp.user.service;
 
 import com.alipapa.smp.user.pojo.UserRole;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
-public interface UserRoleService {
 
-    List<UserRole> listRoleByUserId(Long userId);
+@Service
+public class UserRoleService {
 
-    UserRole getUserRoleByUserIdAndRoleId(Long userId, Long roleId);
+    public List<UserRole> listRoleByUserId(Long userId) {
+        return null;
+    }
 
-    boolean updateUserRole(UserRole role);
+    public UserRole getUserRoleByUserIdAndRoleId(Long userId, Long roleId) {
+        return null;
+    }
 
-    UserRole getUserRoleByToken(String token);
+    public boolean updateUserRole(UserRole role) {
+        return false;
+    }
+
+    public UserRole getUserRoleByToken(String token) {
+        return null;
+    }
+
+    public List<UserRole> findUserByParam(Map<String, Object> params) {
+        return null;
+    }
+
+    Long findUserByParamCount(Map<String, Object> params) {
+        return null;
+    }
 }
