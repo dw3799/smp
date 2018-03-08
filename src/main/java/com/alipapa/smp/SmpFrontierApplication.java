@@ -1,18 +1,27 @@
 package com.alipapa.smp;
 
+import com.alipapa.smp.common.LoginInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 @SpringBootApplication
 @ImportResource("classpath*:spring/*.xml")
 @EnableTransactionManagement
-public class SmpFrontierApplication {
+public class SmpFrontierApplication extends WebMvcConfigurationSupport {
 
     private static Logger logger = LoggerFactory.getLogger(SmpFrontierApplication.class);
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/api/user/**/*");
+    }
+
 
     public static void main(String[] args) {
         logger.info("start spring boot application .......");
