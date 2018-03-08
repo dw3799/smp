@@ -2,6 +2,7 @@ package com.alipapa.smp.user.mapper;
 
 import com.alipapa.smp.user.pojo.UserRole;
 import com.alipapa.smp.user.pojo.UserRoleExample;
+import com.alipapa.smp.user.vo.UserVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public interface UserRoleMapper {
 
     int updateByPrimaryKey(UserRole record);
 
-    List<UserRole> findUserByParam(Map<String, Object> params);
+    List<UserVo> findUserByParam(Map<String, Object> params);
 
     Long findUserByParamCount(Map<String, Object> params);
 }

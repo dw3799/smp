@@ -9,6 +9,7 @@ public class UserInfo {
     private String token;
     private String userNo;
     private String roleName;
+    private String uuid;
 
     public Long getUserId() {
         return userId;
@@ -48,5 +49,13 @@ public class UserInfo {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

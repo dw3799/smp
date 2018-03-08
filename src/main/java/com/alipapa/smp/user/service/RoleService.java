@@ -1,10 +1,13 @@
 package com.alipapa.smp.user.service;
 
 import com.alipapa.smp.user.pojo.Role;
+import org.springframework.stereotype.Service;
 
-public interface RoleService {
+@Service
+public class RoleService {
 
-
-    Role getRoleByName(String roleName);
+    public Role getRoleByName(String roleName) {
+        return null;
+    }
 
 }

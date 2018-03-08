@@ -61,12 +61,12 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public WebApiResponse<LoginInfo> userLogin(@RequestParam("name") String name, @RequestParam("pwd") String pwd, @RequestParam("roleName") String roleName) {
-        if (StringUtils.isBlank(name) || StringUtils.isBlank(pwd) || StringUtils.isBlank(roleName)) {
+    public WebApiResponse<LoginInfo> userLogin(@RequestParam("userNo") String userNo, @RequestParam("pwd") String pwd, @RequestParam("roleName") String roleName) {
+        if (StringUtils.isBlank(userNo) || StringUtils.isBlank(pwd) || StringUtils.isBlank(roleName)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
-        User user = userService.getUserByUserName(name);
+        User user = userService.getUserByUserNo(userNo);
         if (user == null) {
             return error("用户名或密码错误");
         }
@@ -97,7 +97,7 @@ public class UserController {
 
             LoginInfo loginInfo = new LoginInfo();
             loginInfo.setToken(token);
-            loginInfo.setUserNo(user.getUserNo());
+            loginInfo.setUuid(user.getUuid());
             loginInfo.setRoleName(roleName);
             return WebApiResponse.success(loginInfo);
         } catch (Exception e) {
@@ -114,12 +114,12 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/listRole", method = RequestMethod.POST)
-    public WebApiResponse<List<String>> listRole(@RequestParam("name") String name) {
-        if (StringUtils.isBlank(name)) {
+    public WebApiResponse<List<String>> listRole(@RequestParam("userNo") String userNo) {
+        if (StringUtils.isBlank(userNo)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
-        User user = userService.getUserByUserName(name);
+        User user = userService.getUserByUserNo(userNo);
 
         if (user == null) {
             return error("用户名不存在");
@@ -145,7 +145,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
-    public WebApiResponse<String> addUser(@RequestBody String jsonStr, HttpServletRequest request) {
+    public WebApiResponse<String> addUser(@RequestBody String jsonStr) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
         if (jsonStr == null) {
@@ -159,26 +159,26 @@ public class UserController {
                 return error("用户数据解析失败");
             }
 
-            String cnName = json.getString("name");
+            String name = json.getString("name");
             String groupId = json.getString("groupId");
             JSONArray roleIds = json.getJSONArray("roleIds");
             String remark = json.getString("remark");
 
-            if (cnName == null || roleIds == null) {
+            if (name == null || roleIds == null) {
                 return error("请输入必要信息");
             }
 
-            if (userService.getUserByCnName(cnName) == null) {
-                logger.error("员工姓名已存在: " + cnName);
+            if (userService.getUserByName(name) == null) {
+                logger.error("员工姓名已存在: " + name);
                 return error("员工姓名已存在");
             }
 
             Long userId = userService.getLatestUserId();
             User newUser = new User();
-            newUser.setName(String.valueOf(DateUtil.getYear()) + String.format("%04d", userId + 1));
-            newUser.setCnName(cnName);
+            newUser.setUserNo(String.valueOf(DateUtil.getYear()) + String.format("%04d", userId + 1));
+            newUser.setName(name);
             newUser.setCreateUser(userInfo.getUserNo());
-            newUser.setUserNo(UUID.randomUUID().toString());
+            newUser.setUuid(UUID.randomUUID().toString());
             newUser.setPwd(MD5.digist("666666"));//默认密码
             newUser.setRemark(remark);
 
@@ -197,15 +197,37 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/listGroupUser", method = RequestMethod.GET)
-    public WebApiResponse<List<UserVo>> listGroupUser(@RequestParam("pageSize") String pageSize,
-                                                      @RequestParam("pageNum") String pageNum,
-                                                      @RequestParam(name = "userId", required = false) String userId,
+    public WebApiResponse<List<UserVo>> listGroupUser(@RequestParam("pageSize") Integer pageSize,
+                                                      @RequestParam("pageNum") Integer pageNum,
+                                                      @RequestParam(name = "userNo", required = false) String userNo,
                                                       @RequestParam(name = "roleName", required = false) String roleName,
-                                                      @RequestParam(name = "name", required = false) String cnName
-    ) {
+                                                      @RequestParam(name = "name", required = false) String name) {
 
-        List<UserVo> userVoList = new ArrayList<>();
+        if (pageSize == null) {
+            pageSize = 1;
+        }
 
+        if (pageNum == null) {
+            pageNum = 30;
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        if (StringUtils.isNotBlank(userNo)) {
+            params.put("userNo", userNo);//对应数据库name
+        }
+        if (StringUtils.isNotBlank(roleName)) {
+            params.put("roleName", roleName);
+
+        }
+        if (StringUtils.isNotBlank(name)) {
+            params.put("name", name);//对应数据库Name
+        }
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        //获取用户角色信息
+        List<UserVo> userVoList = userRoleService.findUserByParam(params, start, size);
 
         return WebApiResponse.success(userVoList);
     }
@@ -218,12 +240,41 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/resetPwd", method = RequestMethod.POST)
-    public WebApiResponse<String> resetUserPwd(@RequestParam("userId") String userId) {
-        if (StringUtils.isBlank(userId)) {
+    public WebApiResponse<String> resetUserPwd(@RequestParam("userNo") String userNo) {
+        if (StringUtils.isBlank(userNo)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
+        User user = userService.getUserByUserNo(userNo);
 
+        if (user == null) {
+            return WebApiResponse.error("用户名不存在");
+        }
+
+        user.setPwd(MD5.digist("666666"));//默认密码
+        return WebApiResponse.success("success");
+    }
+
+
+    /**
+     * 重置用户密码
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/updatePwd", method = RequestMethod.POST)
+    public WebApiResponse<String> resetUserPwd(@RequestParam("userNo") String userNo, @RequestParam("pwd") String pwd) {
+        if (StringUtils.isBlank(userNo) || StringUtils.isBlank(pwd)) {
+            logger.error("参数不能为空!");
+            return error("参数不可以为空");
+        }
+        User user = userService.getUserByUserNo(userNo);
+
+        if (user == null) {
+            return WebApiResponse.error("用户名不存在");
+        }
+
+        user.setPwd(MD5.digist("pwd"));//默认密码
         return WebApiResponse.success("success");
     }
 
@@ -256,21 +307,6 @@ public class UserController {
         if (StringUtils.isBlank(name)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
-        }
-        User user = userService.getUserByUserName(name);
-
-        if (user == null) {
-            return WebApiResponse.error("用户名不存在");
-        }
-
-        List<UserRole> userRoleList = userRoleService.listRoleByUserId(user.getId());
-        if (CollectionUtils.isEmpty(userRoleList)) {
-            return error("请联系管理员设置角色");
-        }
-
-        List<String> roles = new ArrayList<>();
-        for (UserRole userRole : userRoleList) {
-            roles.add(userRole.getRoleName());
         }
         return WebApiResponse.success("");
     }

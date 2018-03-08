@@ -33,7 +33,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             return true;
         }
         String token = request.getHeader("token");
-        String userNo = request.getHeader("userNo");
+        String uuid = request.getHeader("uuid");
         String roleName = request.getHeader("roleName");
         //1：token为空
         if (token == null) {
@@ -47,7 +47,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             throw new ServiceException("token校验失败，请重新登录！");
         }
         //3：信息不正确
-        if (!userNo.equals(role.getUserNo()) || !roleName.equals(role.getRoleName())) {
+        if (!uuid.equals(role.getUuid()) || !roleName.equals(role.getRoleName())) {
             response.setStatus(500);
             throw new ServiceException("token校验失败，请重新登录！");
         }
@@ -62,7 +62,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         userInfo.setToken(token);
         userInfo.setRoleName(roleName);
         userInfo.setUserId(role.getUserId());
-        userInfo.setUserNo(userNo);
+        userInfo.setUserNo(role.getUserNo());
+        userInfo.setUuid(role.getUuid());
         userInfo.setUserRoleId(role.getId());
         UserStatus.setUserInfo(userInfo);
         return super.preHandle(request, response, handler);

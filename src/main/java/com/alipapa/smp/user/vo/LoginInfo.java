@@ -3,7 +3,7 @@ package com.alipapa.smp.user.vo;
 public class LoginInfo {
     private String token;
 
-    private String userNo;
+    private String uuid;
 
     private String roleName;
 
@@ -15,19 +15,19 @@ public class LoginInfo {
         this.token = token;
     }
 
-    public String getUserNo() {
-        return userNo;
-    }
-
-    public void setUserNo(String userNo) {
-        this.userNo = userNo;
-    }
-
     public String getRoleName() {
         return roleName;
     }
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

@@ -1,19 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.alipapa.smp.user.mapper1.UserRoleMapper">
-    <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo1.UserRole">
+<mapper namespace="com.alipapa.smp.user.mapper.UserRoleMapper">
+    <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo.UserRole">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="token" jdbcType="VARCHAR" property="token"/>
         <result column="user_id" jdbcType="BIGINT" property="userId"/>
         <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
+        <result column="uuid" jdbcType="VARCHAR" property="uuid"/>
+        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="group_id" jdbcType="BIGINT" property="groupId"/>
+        <result column="group_no" jdbcType="VARCHAR" property="groupNo"/>
+        <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+    </resultMap>
+
+    <resultMap id="SearchResultMap" type="com.alipapa.smp.user.vo.UserVo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="role_id" jdbcType="BIGINT" property="roleId"/>
         <result column="group_id" jdbcType="BIGINT" property="groupId"/>
         <result column="group_no" jdbcType="VARCHAR" property="groupNo"/>
         <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime"/>
         <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
         <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
-        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
     </resultMap>
+
+    <resultMap id="SearchResultMap" type="com.alipapa.smp.user.vo.UserVo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="name" jdbcType="BIGINT" property="name"/>
+        <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+    </resultMap>
+
+
     <sql id="Example_Where_Clause">
         <where>
             <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -75,10 +99,10 @@
         </where>
     </sql>
     <sql id="Base_Column_List">
-    id, token, user_id, user_no, role_id, group_id, group_no, expire_time, created_time, 
-    updated_time, role_name
+    id, token, user_id, user_no, uuid, role_id, role_name, group_id, group_no, expire_time, 
+    created_time, updated_time
   </sql>
-    <select id="selectByExample" parameterType="com.alipapa.smp.user.pojo1.UserRoleExample" resultMap="BaseResultMap">
+    <select id="selectByExample" parameterType="com.alipapa.smp.user.pojo.UserRoleExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
             distinct
@@ -102,23 +126,25 @@
     delete from user_role
     where id = #{id,jdbcType=BIGINT}
   </delete>
-    <delete id="deleteByExample" parameterType="com.alipapa.smp.user.pojo1.UserRoleExample">
+    <delete id="deleteByExample" parameterType="com.alipapa.smp.user.pojo.UserRoleExample">
         delete from user_role
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.alipapa.smp.user.pojo1.UserRole">
+    <insert id="insert" parameterType="com.alipapa.smp.user.pojo.UserRole">
     insert into user_role (id, token, user_id, 
-      user_no, role_id, group_id, 
-      group_no, expire_time, created_time, 
-      updated_time, role_name)
+      user_no, uuid, role_id, 
+      role_name, group_id, group_no, 
+      expire_time, created_time, updated_time
+      )
     values (#{id,jdbcType=BIGINT}, #{token,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
-      #{userNo,jdbcType=VARCHAR}, #{roleId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, 
-      #{groupNo,jdbcType=VARCHAR}, #{expireTime,jdbcType=TIMESTAMP}, #{createdTime,jdbcType=TIMESTAMP}, 
-      #{updatedTime,jdbcType=TIMESTAMP}, #{roleName,jdbcType=VARCHAR})
+      #{userNo,jdbcType=VARCHAR}, #{uuid,jdbcType=VARCHAR}, #{roleId,jdbcType=BIGINT}, 
+      #{roleName,jdbcType=VARCHAR}, #{groupId,jdbcType=BIGINT}, #{groupNo,jdbcType=VARCHAR}, 
+      #{expireTime,jdbcType=TIMESTAMP}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
+      )
   </insert>
-    <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo1.UserRole">
+    <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo.UserRole">
         insert into user_role
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -133,8 +159,14 @@
             <if test="userNo != null">
                 user_no,
             </if>
+            <if test="uuid != null">
+                uuid,
+            </if>
             <if test="roleId != null">
                 role_id,
+            </if>
+            <if test="roleName != null">
+                role_name,
             </if>
             <if test="groupId != null">
                 group_id,
@@ -151,9 +183,6 @@
             <if test="updatedTime != null">
                 updated_time,
             </if>
-            <if test="roleName != null">
-                role_name,
-            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -168,8 +197,14 @@
             <if test="userNo != null">
                 #{userNo,jdbcType=VARCHAR},
             </if>
+            <if test="uuid != null">
+                #{uuid,jdbcType=VARCHAR},
+            </if>
             <if test="roleId != null">
                 #{roleId,jdbcType=BIGINT},
+            </if>
+            <if test="roleName != null">
+                #{roleName,jdbcType=VARCHAR},
             </if>
             <if test="groupId != null">
                 #{groupId,jdbcType=BIGINT},
@@ -186,12 +221,9 @@
             <if test="updatedTime != null">
                 #{updatedTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="roleName != null">
-                #{roleName,jdbcType=VARCHAR},
-            </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.alipapa.smp.user.pojo1.UserRoleExample" resultType="java.lang.Long">
+    <select id="countByExample" parameterType="com.alipapa.smp.user.pojo.UserRoleExample" resultType="java.lang.Long">
         select count(*) from user_role
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -212,8 +244,14 @@
             <if test="record.userNo != null">
                 user_no = #{record.userNo,jdbcType=VARCHAR},
             </if>
+            <if test="record.uuid != null">
+                uuid = #{record.uuid,jdbcType=VARCHAR},
+            </if>
             <if test="record.roleId != null">
                 role_id = #{record.roleId,jdbcType=BIGINT},
+            </if>
+            <if test="record.roleName != null">
+                role_name = #{record.roleName,jdbcType=VARCHAR},
             </if>
             <if test="record.groupId != null">
                 group_id = #{record.groupId,jdbcType=BIGINT},
@@ -230,9 +268,6 @@
             <if test="record.updatedTime != null">
                 updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.roleName != null">
-                role_name = #{record.roleName,jdbcType=VARCHAR},
-            </if>
         </set>
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -244,18 +279,19 @@
         token = #{record.token,jdbcType=VARCHAR},
         user_id = #{record.userId,jdbcType=BIGINT},
         user_no = #{record.userNo,jdbcType=VARCHAR},
+        uuid = #{record.uuid,jdbcType=VARCHAR},
         role_id = #{record.roleId,jdbcType=BIGINT},
+        role_name = #{record.roleName,jdbcType=VARCHAR},
         group_id = #{record.groupId,jdbcType=BIGINT},
         group_no = #{record.groupNo,jdbcType=VARCHAR},
         expire_time = #{record.expireTime,jdbcType=TIMESTAMP},
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
-        role_name = #{record.roleName,jdbcType=VARCHAR}
+        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.user.pojo1.UserRole">
+    <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.user.pojo.UserRole">
         update user_role
         <set>
             <if test="token != null">
@@ -267,8 +303,14 @@
             <if test="userNo != null">
                 user_no = #{userNo,jdbcType=VARCHAR},
             </if>
+            <if test="uuid != null">
+                uuid = #{uuid,jdbcType=VARCHAR},
+            </if>
             <if test="roleId != null">
                 role_id = #{roleId,jdbcType=BIGINT},
+            </if>
+            <if test="roleName != null">
+                role_name = #{roleName,jdbcType=VARCHAR},
             </if>
             <if test="groupId != null">
                 group_id = #{groupId,jdbcType=BIGINT},
@@ -285,24 +327,22 @@
             <if test="updatedTime != null">
                 updated_time = #{updatedTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="roleName != null">
-                role_name = #{roleName,jdbcType=VARCHAR},
-            </if>
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.user.pojo1.UserRole">
+    <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.user.pojo.UserRole">
     update user_role
     set token = #{token,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=BIGINT},
       user_no = #{userNo,jdbcType=VARCHAR},
+      uuid = #{uuid,jdbcType=VARCHAR},
       role_id = #{roleId,jdbcType=BIGINT},
+      role_name = #{roleName,jdbcType=VARCHAR},
       group_id = #{groupId,jdbcType=BIGINT},
       group_no = #{groupNo,jdbcType=VARCHAR},
       expire_time = #{expireTime,jdbcType=TIMESTAMP},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      role_name = #{roleName,jdbcType=VARCHAR}
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 
@@ -313,8 +353,8 @@
                 #{start}
             </if>
 
-            <if test="end != null and end != ''">
-                , #{end}
+            <if test="size != null and size != ''">
+                , #{size}
             </if>
         </trim>
     </select>
@@ -322,24 +362,24 @@
     <sql id="queryUserRoleSql">
         select DISTINCT
         ur.id,
+        u.user_no,
         u.`name`,
-        u.cn_name,
         ur.role_name,
         g.`name` as group_name ,
         ur.created_time
         from user_role ur , `user` u , `group` g
         where ur.group_id=g.id
         and ur.user_id=u.id
-        <if test="userId != null and userId != ''">
-            and u.`name` = #{userId}
+        <if test="userNo != null and userNo != ''">
+            and u.`user_no` = #{userNo}
         </if>
         <if test="roleName != null and roleName != ''">
             and ur.role_name = #{roleName}
         </if>
-        <if test="cnName != null and cnName != ''">
-            and A.cn_name = #{cnName}
+        <if test="name != null and name != ''">
+            and u.name = #{name}
         </if>
-        ORDER BY A.CREATE_TIME DESC
+        ORDER BY ur.CREATE_TIME DESC
     </sql>
 
 

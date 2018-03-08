@@ -7,9 +7,9 @@ public class User {
 
     private String name;
 
-    private String cnName;
-
     private String userNo;
+
+    private String uuid;
 
     private String pwd;
 
@@ -37,20 +37,20 @@ public class User {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getCnName() {
-        return cnName;
-    }
-
-    public void setCnName(String cnName) {
-        this.cnName = cnName == null ? null : cnName.trim();
-    }
-
     public String getUserNo() {
         return userNo;
     }
 
     public void setUserNo(String userNo) {
         this.userNo = userNo == null ? null : userNo.trim();
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid == null ? null : uuid.trim();
     }
 
     public String getPwd() {

@@ -9,11 +9,11 @@ import java.util.Date;
 public class UserVo {
     private Long id;
 
-    private String userId;//取name
-
-    private String cnName;
+    private String userNo;//用户编号
 
     private String roleName;
+
+    private String name;
 
     private String groupName;
 
@@ -23,20 +23,20 @@ public class UserVo {
 
     private Long totalCount;
 
-    public String getUserId() {
-        return userId;
+    public String getUserNo() {
+        return userNo;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserNo(String userNo) {
+        this.userNo = userNo;
     }
 
-    public String getCnName() {
-        return cnName;
+    public String getName() {
+        return name;
     }
 
-    public void setCnName(String cnName) {
-        this.cnName = cnName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getRoleName() {

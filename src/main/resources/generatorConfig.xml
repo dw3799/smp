@@ -56,7 +56,7 @@
                       enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                       selectByExampleQueryId="false"/>-->
 
-        <table schema="" tableName="role"/>
+        <table schema="" tableName="user_role"/>
         <!--
                 <table schema="" tableName="activity_answer_info"></table>
         -->

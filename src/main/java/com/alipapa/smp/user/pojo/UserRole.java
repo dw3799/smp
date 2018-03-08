@@ -11,7 +11,11 @@ public class UserRole {
 
     private String userNo;
 
+    private String uuid;
+
     private Long roleId;
+
+    private String roleName;
 
     private Long groupId;
 
@@ -22,8 +26,6 @@ public class UserRole {
     private Date createdTime;
 
     private Date updatedTime;
-
-    private String roleName;
 
     public Long getId() {
         return id;
@@ -57,12 +59,28 @@ public class UserRole {
         this.userNo = userNo == null ? null : userNo.trim();
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid == null ? null : uuid.trim();
+    }
+
     public Long getRoleId() {
         return roleId;
     }
 
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName == null ? null : roleName.trim();
     }
 
     public Long getGroupId() {
@@ -103,13 +121,5 @@ public class UserRole {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName == null ? null : roleName.trim();
     }
 }
