@@ -13,7 +13,10 @@ import com.alipapa.smp.user.service.UserRoleService;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.user.vo.LoginInfo;
 import com.alipapa.smp.user.vo.UserVo;
-import com.alipapa.smp.utils.*;
+import com.alipapa.smp.utils.DateUtil;
+import com.alipapa.smp.utils.MD5;
+import com.alipapa.smp.utils.SecurityUtil;
+import com.alipapa.smp.utils.WebApiResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static com.alipapa.smp.utils.WebApiResponse.error;
@@ -257,7 +259,7 @@ public class UserController {
 
 
     /**
-     * 重置用户密码
+     * 修改密码
      *
      * @param
      * @return
@@ -268,15 +270,39 @@ public class UserController {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
+
+        if (!userNo.equals(UserStatus.getUserInfo().getUserNo())) {
+            return WebApiResponse.error("没有权限");
+        }
         User user = userService.getUserByUserNo(userNo);
 
         if (user == null) {
             return WebApiResponse.error("用户名不存在");
         }
 
-        user.setPwd(MD5.digist("pwd"));//默认密码
+        user.setPwd(MD5.digist(pwd));
         return WebApiResponse.success("success");
     }
+
+
+    /**
+     * 修改员工角色组
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/updateUserRole", method = RequestMethod.POST)
+    public WebApiResponse<String> updateUserRole(@RequestParam("userRoleId") Long userRoleId, @RequestParam("groupId") Long groupId, @RequestParam("roleId") Long roleId) {
+        if (userRoleId == null || roleId == null || groupId == null) {
+            logger.error("参数不能为空!");
+            return error("参数不可以为空");
+        }
+
+
+
+        return WebApiResponse.success("success");
+    }
+
 
 
     /**
@@ -286,11 +312,45 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/batchDelUser", method = RequestMethod.POST)
-    public WebApiResponse<String> batchDelUser(@RequestParam("userId") String userId) {
-        if (StringUtils.isBlank(userId)) {
+    public WebApiResponse<String> batchDelUser(@RequestParam("userRoleIds") String userRoleIds) {
+        if (StringUtils.isBlank(userRoleIds)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
+
+        User user = userService.getUserByUserNo(userRoleIds);
+
+        if (user == null) {
+            return WebApiResponse.error("用户名不存在");
+        }
+
+        return WebApiResponse.success("delete success!");
+    }
+
+
+    /**
+     * 角色列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/roleSelect", method = RequestMethod.POST)
+    public WebApiResponse<String> roleSelect() {
+
+
+        return WebApiResponse.success("success");
+    }
+
+
+    /**
+     * 组列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/groupSelect", method = RequestMethod.POST)
+    public WebApiResponse<String> groupSelect() {
+
 
         return WebApiResponse.success("success");
     }

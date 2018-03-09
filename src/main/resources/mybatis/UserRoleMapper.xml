@@ -17,7 +17,7 @@
     </resultMap>
 
     <resultMap id="SearchResultMap" type="com.alipapa.smp.user.vo.UserVo">
-        <id column="id" jdbcType="BIGINT" property="id"/>
+        <id column="user_role_id" jdbcType="BIGINT" property="userRoleId"/>
         <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="role_id" jdbcType="BIGINT" property="roleId"/>
@@ -361,7 +361,7 @@
 
     <sql id="queryUserRoleSql">
         select DISTINCT
-        ur.id,
+        ur.id as user_role_id,
         u.user_no,
         u.`name`,
         ur.role_name,

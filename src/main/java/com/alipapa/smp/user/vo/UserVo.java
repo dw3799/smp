@@ -7,7 +7,7 @@ import java.util.Date;
  * 用户角色信息
  */
 public class UserVo {
-    private Long id;
+    private Long userRoleId;
 
     private String userNo;//用户编号
 
@@ -79,11 +79,12 @@ public class UserVo {
         this.totalCount = totalCount;
     }
 
-    public Long getId() {
-        return id;
+
+    public Long getUserRoleId() {
+        return userRoleId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserRoleId(Long userRoleId) {
+        this.userRoleId = userRoleId;
     }
 }
