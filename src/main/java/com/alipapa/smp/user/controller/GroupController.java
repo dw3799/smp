@@ -67,8 +67,29 @@ public class GroupController {
      * @return
      */
     @RequestMapping(value = "/addGroup", method = RequestMethod.POST)
-    public WebApiResponse<String> addGroup(@RequestParam("name") String name) {
-        if (StringUtils.isBlank(name)) {
+    public WebApiResponse<String> addGroup(@RequestParam(name = "groupName") String groupName,
+                                           @RequestParam(name = "leaderId") Long leaderId,
+                                           @RequestParam(name = "members") String members) {
+        if (StringUtils.isBlank(groupName) || leaderId == null || StringUtils.isBlank(members)) {
+            logger.error("参数不能为空!");
+            return error("参数不可以为空");
+        }
+        return WebApiResponse.success("");
+    }
+
+
+    /**
+     * 更新组
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/updateGroup", method = RequestMethod.POST)
+    public WebApiResponse<String> updateGroup(@RequestParam(name = "groupId") Long groupId,
+                                              @RequestParam(name = "groupName") String groupName,
+                                              @RequestParam(name = "leaderId") Long leaderId,
+                                              @RequestParam(name = "members") String members) {
+        if (groupId == null || StringUtils.isBlank(groupName) || leaderId == null || StringUtils.isBlank(members)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
@@ -119,7 +140,7 @@ public class GroupController {
 
 
     /**
-     * 新建组
+     * 获取组信息及用户
      *
      * @param
      * @return
