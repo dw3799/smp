@@ -43,7 +43,7 @@ public class UserService {
     }
 
 
-    public User getUserByName(String cnName) {
+    public User getUserByName(String name) {
         return null;
     }
 
@@ -51,11 +51,10 @@ public class UserService {
      * 添加用户
      *
      * @param user
-     * @param groupId
      * @param roleList
      * @return
      */
-    public boolean addUser(User user, String groupId, List<String> roleList) {
+    public boolean addUser(User user, List<String> roleList) {
         return false;
     }
 

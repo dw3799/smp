@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
+import com.alipapa.smp.user.pojo.Group;
 import com.alipapa.smp.user.pojo.Role;
 import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.pojo.UserRole;
@@ -24,12 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -43,7 +40,7 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
  * 2018-02-23
  */
 
-@Controller
+@RestController
 @RequestMapping("/api/user")
 public class UserController {
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -121,7 +118,7 @@ public class UserController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/listRole", method = RequestMethod.POST)
+    @RequestMapping(value = "/listRole", method = RequestMethod.GET)
     public WebApiResponse<List<String>> listRole(@RequestParam("userNo") String userNo) {
         if (StringUtils.isBlank(userNo)) {
             logger.error("参数不能为空!");
@@ -180,6 +177,7 @@ public class UserController {
                 logger.error("员工姓名已存在: " + name);
                 return error("员工姓名已存在");
             }
+            Group group = groupService.getGroupById(Long.valueOf(groupId));
 
             Long userId = userService.getLatestUserId();
             User newUser = new User();
@@ -189,8 +187,10 @@ public class UserController {
             newUser.setUuid(UUID.randomUUID().toString());
             newUser.setPwd(MD5.digist("666666"));//默认密码
             newUser.setRemark(remark);
+            newUser.setGroupId(group.getId());
+            newUser.setGroupNo(group.getGroupNo());
 
-            userService.addUser(newUser, groupId, roleIds.toJavaList(String.class));
+            userService.addUser(newUser, roleIds.toJavaList(String.class));
             return WebApiResponse.success("success");
         } catch (Exception ex) {
             return error("新建用户失败");
@@ -204,8 +204,8 @@ public class UserController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/listGroupUser", method = RequestMethod.GET)
-    public WebApiResponse<List<UserVo>> listGroupUser(@RequestParam("pageSize") Integer pageSize,
+    @RequestMapping(value = "/listUserRole", method = RequestMethod.GET)
+    public WebApiResponse<List<UserVo>> listUserRole(@RequestParam("pageSize") Integer pageSize,
                                                       @RequestParam("pageNum") Integer pageNum,
                                                       @RequestParam(name = "userNo", required = false) String userNo,
                                                       @RequestParam(name = "roleName", required = false) String roleName,
@@ -364,7 +364,7 @@ public class UserController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/roleSelect", method = RequestMethod.POST)
+    @RequestMapping(value = "/roleSelect", method = RequestMethod.GET)
     public WebApiResponse<List<RoleSelectVo>> roleSelect() {
         return WebApiResponse.success(roleService.listAllRoleSelect());
     }
@@ -376,27 +376,10 @@ public class UserController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/groupSelect", method = RequestMethod.POST)
+    @RequestMapping(value = "/groupSelect", method = RequestMethod.GET)
     public WebApiResponse<List<GroupSelectVo>> groupSelect() {
         return WebApiResponse.success(groupService.listAllGroupSelect());
     }
-
-
-    /**
-     * 新建组
-     *
-     * @param
-     * @return
-     */
-    @RequestMapping(value = "/addGroup", method = RequestMethod.POST)
-    public WebApiResponse<String> addGroup(@RequestParam("name") String name) {
-        if (StringUtils.isBlank(name)) {
-            logger.error("参数不能为空!");
-            return error("参数不可以为空");
-        }
-        return WebApiResponse.success("");
-    }
-
 
 
     /*  public static void main(String[] args) {
