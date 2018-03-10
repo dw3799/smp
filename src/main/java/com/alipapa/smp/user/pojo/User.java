@@ -13,6 +13,10 @@ public class User {
 
     private String pwd;
 
+    private Long groupId;
+
+    private String groupNo;
+
     private String createUser;
 
     private String remark;
@@ -59,6 +63,22 @@ public class User {
 
     public void setPwd(String pwd) {
         this.pwd = pwd == null ? null : pwd.trim();
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getGroupNo() {
+        return groupNo;
+    }
+
+    public void setGroupNo(String groupNo) {
+        this.groupNo = groupNo == null ? null : groupNo.trim();
     }
 
     public String getCreateUser() {

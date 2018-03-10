@@ -6,6 +6,7 @@
     <result column="group_no" jdbcType="VARCHAR" property="groupNo" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="leader_id" jdbcType="BIGINT" property="leaderId" />
+    <result column="leader_name" jdbcType="VARCHAR" property="leaderName" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="partent_group_id" jdbcType="BIGINT" property="partentGroupId" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
@@ -70,7 +71,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, group_no, name, leader_id, remark, partent_group_id, created_time, updated_time
+    id, group_no, name, leader_id, leader_name, remark, partent_group_id, created_time, 
+    updated_time
   </sql>
   <select id="selectByExample" parameterType="com.alipapa.smp.user.pojo1.GroupExample" resultMap="BaseResultMap">
     select
@@ -104,11 +106,13 @@
   </delete>
   <insert id="insert" parameterType="com.alipapa.smp.user.pojo1.Group">
     insert into group (id, group_no, name, 
-      leader_id, remark, partent_group_id, 
-      created_time, updated_time)
+      leader_id, leader_name, remark, 
+      partent_group_id, created_time, updated_time
+      )
     values (#{id,jdbcType=BIGINT}, #{groupNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
-      #{leaderId,jdbcType=BIGINT}, #{remark,jdbcType=VARCHAR}, #{partentGroupId,jdbcType=BIGINT}, 
-      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+      #{leaderId,jdbcType=BIGINT}, #{leaderName,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{partentGroupId,jdbcType=BIGINT}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo1.Group">
     insert into group
@@ -124,6 +128,9 @@
       </if>
       <if test="leaderId != null">
         leader_id,
+      </if>
+      <if test="leaderName != null">
+        leader_name,
       </if>
       <if test="remark != null">
         remark,
@@ -150,6 +157,9 @@
       </if>
       <if test="leaderId != null">
         #{leaderId,jdbcType=BIGINT},
+      </if>
+      <if test="leaderName != null">
+        #{leaderName,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
@@ -186,6 +196,9 @@
       <if test="record.leaderId != null">
         leader_id = #{record.leaderId,jdbcType=BIGINT},
       </if>
+      <if test="record.leaderName != null">
+        leader_name = #{record.leaderName,jdbcType=VARCHAR},
+      </if>
       <if test="record.remark != null">
         remark = #{record.remark,jdbcType=VARCHAR},
       </if>
@@ -209,6 +222,7 @@
       group_no = #{record.groupNo,jdbcType=VARCHAR},
       name = #{record.name,jdbcType=VARCHAR},
       leader_id = #{record.leaderId,jdbcType=BIGINT},
+      leader_name = #{record.leaderName,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       partent_group_id = #{record.partentGroupId,jdbcType=BIGINT},
       created_time = #{record.createdTime,jdbcType=TIMESTAMP},
@@ -228,6 +242,9 @@
       </if>
       <if test="leaderId != null">
         leader_id = #{leaderId,jdbcType=BIGINT},
+      </if>
+      <if test="leaderName != null">
+        leader_name = #{leaderName,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
@@ -249,6 +266,7 @@
     set group_no = #{groupNo,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
       leader_id = #{leaderId,jdbcType=BIGINT},
+      leader_name = #{leaderName,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       partent_group_id = #{partentGroupId,jdbcType=BIGINT},
       created_time = #{createdTime,jdbcType=TIMESTAMP},

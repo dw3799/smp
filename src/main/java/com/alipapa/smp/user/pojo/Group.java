@@ -11,6 +11,8 @@ public class Group {
 
     private Long leaderId;
 
+    private String leaderName;
+
     private String remark;
 
     private Long partentGroupId;
@@ -49,6 +51,14 @@ public class Group {
 
     public void setLeaderId(Long leaderId) {
         this.leaderId = leaderId;
+    }
+
+    public String getLeaderName() {
+        return leaderName;
+    }
+
+    public void setLeaderName(String leaderName) {
+        this.leaderName = leaderName == null ? null : leaderName.trim();
     }
 
     public String getRemark() {

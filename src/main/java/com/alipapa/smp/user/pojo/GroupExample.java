@@ -365,6 +365,76 @@ public class GroupExample {
             return (Criteria) this;
         }
 
+        public Criteria andLeaderNameIsNull() {
+            addCriterion("leader_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameIsNotNull() {
+            addCriterion("leader_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameEqualTo(String value) {
+            addCriterion("leader_name =", value, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameNotEqualTo(String value) {
+            addCriterion("leader_name <>", value, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameGreaterThan(String value) {
+            addCriterion("leader_name >", value, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameGreaterThanOrEqualTo(String value) {
+            addCriterion("leader_name >=", value, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameLessThan(String value) {
+            addCriterion("leader_name <", value, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameLessThanOrEqualTo(String value) {
+            addCriterion("leader_name <=", value, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameLike(String value) {
+            addCriterion("leader_name like", value, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameNotLike(String value) {
+            addCriterion("leader_name not like", value, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameIn(List<String> values) {
+            addCriterion("leader_name in", values, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameNotIn(List<String> values) {
+            addCriterion("leader_name not in", values, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameBetween(String value1, String value2) {
+            addCriterion("leader_name between", value1, value2, "leaderName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLeaderNameNotBetween(String value1, String value2) {
+            addCriterion("leader_name not between", value1, value2, "leaderName");
+            return (Criteria) this;
+        }
+
         public Criteria andRemarkIsNull() {
             addCriterion("remark is null");
             return (Criteria) this;

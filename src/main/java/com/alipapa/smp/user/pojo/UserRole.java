@@ -17,10 +17,6 @@ public class UserRole {
 
     private String roleName;
 
-    private Long groupId;
-
-    private String groupNo;
-
     private Date expireTime;
 
     private Date createdTime;
@@ -81,22 +77,6 @@ public class UserRole {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName == null ? null : roleName.trim();
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getGroupNo() {
-        return groupNo;
-    }
-
-    public void setGroupNo(String groupNo) {
-        this.groupNo = groupNo == null ? null : groupNo.trim();
     }
 
     public Date getExpireTime() {

@@ -1,6 +1,8 @@
 package com.alipapa.smp.user.service;
 
+import com.alipapa.smp.user.mapper.UserMapper;
 import com.alipapa.smp.user.pojo.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +13,31 @@ import java.util.List;
  */
 @Service
 public class UserService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    /**
+     * @param id
+     * @return
+     */
+    public User getUserById(Long id) {
+        return userMapper.selectByPrimaryKey(id);
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    public boolean updateUser(User user) {
+        if (user == null || user.getId() == null) {
+            return false;
+        }
+        userMapper.updateByPrimaryKey(user);
+        return true;
+    }
+
+
     public User getUserByUserNo(String name) {
         return null;
     }

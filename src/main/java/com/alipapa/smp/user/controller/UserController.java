@@ -8,10 +8,13 @@ import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.user.pojo.Role;
 import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.pojo.UserRole;
+import com.alipapa.smp.user.service.GroupService;
 import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserRoleService;
 import com.alipapa.smp.user.service.UserService;
+import com.alipapa.smp.user.vo.GroupSelectVo;
 import com.alipapa.smp.user.vo.LoginInfo;
+import com.alipapa.smp.user.vo.RoleSelectVo;
 import com.alipapa.smp.user.vo.UserVo;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.MD5;
@@ -54,6 +57,9 @@ public class UserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private GroupService groupService;
 
 
     /**
@@ -293,12 +299,36 @@ public class UserController {
      */
     @RequestMapping(value = "/updateUserRole", method = RequestMethod.POST)
     public WebApiResponse<String> updateUserRole(@RequestParam("userRoleId") Long userRoleId, @RequestParam("groupId") Long groupId, @RequestParam("roleId") Long roleId) {
-        if (userRoleId == null || roleId == null || groupId == null) {
+        if (userRoleId == null) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
 
+        if (roleId == null && groupId == null) {
+            return error("参数不可以为空");
+        }
+        UserRole userRole = userRoleService.getUserRoleByUserRoleId(userRoleId);
 
+        if (roleId != null) {
+            UserRole userRoleByRole = userRoleService.getUserRoleByUserRoleId(roleId);
+            if (userRoleByRole != null && userRoleByRole.getId() != userRoleId) {
+                return error("已存在该角色");
+            }
+
+            Role role = roleService.getRoleById(roleId);
+            userRole.setRoleId(roleId);
+            userRole.setRoleName(role.getRoleName());
+            userRoleService.updateUserRole(userRole);
+        }
+
+
+        if (groupId != null) {
+            User user = userService.getUserById(userRole.getUserId());
+            if (user.getGroupId() == null || user.getGroupId() != groupId) {
+                user.setGroupId(groupId);
+                userService.updateUser(user);
+            }
+        }
 
         return WebApiResponse.success("success");
     }
@@ -335,10 +365,8 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/roleSelect", method = RequestMethod.POST)
-    public WebApiResponse<String> roleSelect() {
-
-
-        return WebApiResponse.success("success");
+    public WebApiResponse<List<RoleSelectVo>> roleSelect() {
+        return WebApiResponse.success(roleService.listAllRoleSelect());
     }
 
 
@@ -349,10 +377,8 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/groupSelect", method = RequestMethod.POST)
-    public WebApiResponse<String> groupSelect() {
-
-
-        return WebApiResponse.success("success");
+    public WebApiResponse<List<GroupSelectVo>> groupSelect() {
+        return WebApiResponse.success(groupService.listAllGroupSelect());
     }
 
 
