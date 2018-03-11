@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.alipapa.smp.user.mapper1.RoleMapper">
-  <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo1.Role">
+  <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo.Role">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="role_name" jdbcType="VARCHAR" property="roleName" />
     <result column="description" jdbcType="VARCHAR" property="description" />
@@ -70,7 +70,7 @@
   <sql id="Base_Column_List">
     id, role_name, description, remark, created_time, updated_time
   </sql>
-  <select id="selectByExample" parameterType="com.alipapa.smp.user.pojo1.RoleExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.alipapa.smp.user.pojo.RoleExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -94,13 +94,13 @@
     delete from role
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.alipapa.smp.user.pojo1.RoleExample">
+  <delete id="deleteByExample" parameterType="com.alipapa.smp.user.pojo.RoleExample">
     delete from role
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.alipapa.smp.user.pojo1.Role">
+  <insert id="insert" parameterType="com.alipapa.smp.user.pojo.Role">
     insert into role (id, role_name, description, 
       remark, created_time, updated_time
       )
@@ -108,7 +108,7 @@
       #{remark,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo1.Role">
+  <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo.Role">
     insert into role
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -151,7 +151,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.alipapa.smp.user.pojo1.RoleExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.alipapa.smp.user.pojo.RoleExample" resultType="java.lang.Long">
     select count(*) from role
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -195,7 +195,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.user.pojo1.Role">
+  <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.user.pojo.Role">
     update role
     <set>
       <if test="roleName != null">
@@ -216,7 +216,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.user.pojo1.Role">
+  <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.user.pojo.Role">
     update role
     set role_name = #{roleName,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},

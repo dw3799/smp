@@ -334,7 +334,6 @@ public class UserController {
     }
 
 
-
     /**
      * 批量删除
      *
@@ -348,12 +347,21 @@ public class UserController {
             return error("参数不可以为空");
         }
 
-        User user = userService.getUserByUserNo(userRoleIds);
+        String[] userRoleIdsArray = userRoleIds.split(";");
+        for (String userRoleId : userRoleIdsArray) {
+            UserRole userRole = userRoleService.getUserRoleByUserRoleId(Long.valueOf(userRoleId));
 
-        if (user == null) {
-            return WebApiResponse.error("用户名不存在");
+            Long userId = userRole.getUserId();
+            boolean result = userRoleService.deleteUserRole(userRole);
+            if (!result) {
+                return WebApiResponse.error("删除异常");
+            }
+            List<UserRole> userRoleList = userRoleService.listRoleByUserId(userId);
+
+            if (CollectionUtils.isEmpty(userRoleList)) {
+                userService.deleteUser(userId);
+            }
         }
-
         return WebApiResponse.success("delete success!");
     }
 

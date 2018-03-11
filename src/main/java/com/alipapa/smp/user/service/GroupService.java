@@ -26,6 +26,44 @@ public class GroupService {
     }
 
     /**
+     * @param groupNo
+     * @return
+     */
+    public Group getGroupByGroupNo(String groupNo) {
+        GroupExample example = new GroupExample();
+        GroupExample.Criteria criteria = example.createCriteria();
+        criteria.andGroupNoEqualTo(groupNo);
+
+        List<Group> groupList = groupMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(groupList)) {
+            return groupList.get(0);
+        }
+        return null;
+    }
+
+
+    /**
+     * @param group
+     * @return
+     */
+    public boolean updateGroup(Group group) {
+        groupMapper.updateByPrimaryKey(group);
+        return true;
+    }
+
+
+    /**
+     * @param group
+     * @return
+     */
+    public boolean addGroup(Group group) {
+        groupMapper.insert(group);
+        return true;
+    }
+
+
+
+    /**
      * 获取组下拉列表
      *
      * @return
@@ -48,4 +86,14 @@ public class GroupService {
         }
         return groupSelectVoList;
     }
+
+
+    /**
+     * @return
+     */
+    public Long getLatestGroupId() {
+        return 0l;
+    }
+
+
 }

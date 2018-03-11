@@ -53,17 +53,29 @@ public class UserRoleService {
     }
 
     /**
-     * @param role
+     * @param userRole
      * @return
      */
-    public boolean updateUserRole(UserRole role) {
-        if (role == null || role.getId() == null) {
+    public boolean updateUserRole(UserRole userRole) {
+        if (userRole == null || userRole.getId() == null) {
             return false;
         }
-
-
-        return false;
+        userRoleMapper.updateByPrimaryKey(userRole);
+        return true;
     }
+
+    /**
+     * @param userRole
+     * @return
+     */
+    public boolean deleteUserRole(UserRole userRole) {
+        if (userRole == null || userRole.getId() == null) {
+            return false;
+        }
+        userRoleMapper.deleteByPrimaryKey(userRole.getId());
+        return true;
+    }
+
 
     /**
      * @param token

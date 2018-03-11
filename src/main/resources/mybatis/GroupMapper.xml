@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.alipapa.smp.user.mapper1.GroupMapper">
-  <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo1.Group">
+  <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo.Group">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="group_no" jdbcType="VARCHAR" property="groupNo" />
     <result column="name" jdbcType="VARCHAR" property="name" />
@@ -74,7 +74,7 @@
     id, group_no, name, leader_id, leader_name, remark, partent_group_id, created_time, 
     updated_time
   </sql>
-  <select id="selectByExample" parameterType="com.alipapa.smp.user.pojo1.GroupExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.alipapa.smp.user.pojo.GroupExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -98,13 +98,13 @@
     delete from group
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.alipapa.smp.user.pojo1.GroupExample">
+  <delete id="deleteByExample" parameterType="com.alipapa.smp.user.pojo.GroupExample">
     delete from group
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.alipapa.smp.user.pojo1.Group">
+  <insert id="insert" parameterType="com.alipapa.smp.user.pojo.Group">
     insert into group (id, group_no, name, 
       leader_id, leader_name, remark, 
       partent_group_id, created_time, updated_time
@@ -114,7 +114,7 @@
       #{partentGroupId,jdbcType=BIGINT}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo1.Group">
+  <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo.Group">
     insert into group
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -175,7 +175,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.alipapa.smp.user.pojo1.GroupExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.alipapa.smp.user.pojo.GroupExample" resultType="java.lang.Long">
     select count(*) from group
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -231,7 +231,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.user.pojo1.Group">
+  <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.user.pojo.Group">
     update group
     <set>
       <if test="groupNo != null">
@@ -261,7 +261,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.user.pojo1.Group">
+  <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.user.pojo.Group">
     update group
     set group_no = #{groupNo,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},

@@ -1,5 +1,7 @@
 package com.alipapa.smp.user.controller;
 
+import com.alipapa.smp.user.pojo.Group;
+import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.service.GroupService;
 import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserRoleService;
@@ -12,12 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.alipapa.smp.utils.WebApiResponse.error;
 
@@ -48,16 +48,19 @@ public class GroupController {
 
 
     /**
-     * 新建组
+     * 用户模糊查询
      *
      * @param
      * @return
      */
     @RequestMapping(value = "/userFuzzyQuery", method = RequestMethod.GET)
     public WebApiResponse<List<FuzzyUserVo>> userFuzzyQuery(@RequestParam("searchString") String searchString) {
-        List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+        if (StringUtils.isBlank(searchString)) {
+            return WebApiResponse.success(new ArrayList<>());
+        }
 
-        return null;
+        List<FuzzyUserVo> fuzzyUserVoList = userService.userSearch(searchString);
+        return WebApiResponse.success(fuzzyUserVoList);
     }
 
     /**
@@ -74,7 +77,44 @@ public class GroupController {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
-        return WebApiResponse.success("");
+
+        Group group = new Group();
+        User leader = userService.getUserById(leaderId);
+        if (leader == null) {
+            return WebApiResponse.error("组长不存在");
+        }
+        group.setLeaderId(leaderId);
+        group.setLeaderName(leader.getName());
+        String groupNo = "G" + groupService.getLatestGroupId();
+        group.setGroupNo(groupNo);
+        group.setName(groupName);
+        group.setCreatedTime(new Date());
+        group.setUpdatedTime(new Date());
+        boolean result = groupService.addGroup(group);
+
+        if (!result) {
+            return WebApiResponse.error("组创建失败");
+        }
+
+        Group savedGroup = groupService.getGroupByGroupNo(groupNo);
+
+        if (group == null) {
+            return WebApiResponse.error("组创建失败");
+        }
+
+        leader.setGroupId(savedGroup.getId());
+        leader.setGroupNo(savedGroup.getGroupNo());
+        userService.updateUser(leader);
+
+        String[] userIds = members.split(";");
+        for (String userId : userIds) {
+            User member = userService.getUserById(Long.valueOf(userId));
+            member.setGroupId(group.getId());
+            member.setGroupNo(group.getGroupNo());
+            userService.updateUser(member);
+        }
+
+        return WebApiResponse.success("success");
     }
 
 
@@ -93,7 +133,35 @@ public class GroupController {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
-        return WebApiResponse.success("");
+
+        Group group = groupService.getGroupById(groupId);
+        if (group == null) {
+            return WebApiResponse.error("组不存在");
+        }
+        group.setName(groupName);
+
+        User leader = userService.getUserById(leaderId);
+        if (leader == null) {
+            return WebApiResponse.error("组长不存在");
+        }
+
+        group.setLeaderId(leaderId);
+        group.setLeaderName(leader.getName());
+
+        leader.setGroupId(group.getId());
+        leader.setGroupNo(group.getGroupNo());
+
+        String[] userIds = members.split(";");
+        for (String userId : userIds) {
+            User member = userService.getUserById(Long.valueOf(userId));
+            member.setGroupId(group.getId());
+            member.setGroupNo(group.getGroupNo());
+            userService.updateUser(member);
+        }
+
+        userService.updateUser(leader);
+        groupService.updateGroup(group);
+        return WebApiResponse.success("success");
     }
 
 
@@ -151,7 +219,35 @@ public class GroupController {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
-        return WebApiResponse.success(null);
+
+        Group group = groupService.getGroupById(groupId);
+        if (group == null) {
+            return WebApiResponse.error("groupId错误");
+        }
+        GroupWithUserVo groupWithUserVo = new GroupWithUserVo();
+        groupWithUserVo.setGroupId(group.getId());
+        groupWithUserVo.setGroupName(group.getName());
+        groupWithUserVo.setGroupNo(group.getGroupNo());
+        //User leader = userService.getUserById(group.getLeaderId());
+        groupWithUserVo.setLeaderId(group.getLeaderId());
+        groupWithUserVo.setLeaderName(group.getLeaderName());
+
+        List<FuzzyUserVo> members = new ArrayList<>();
+        List<User> userList = userService.listUserByGroupId(group.getId());
+        if (!CollectionUtils.isEmpty(userList)) {
+            for (User user : userList) {
+                if (user.getId() != group.getLeaderId()) {//组长不算入组员
+                    FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                    fuzzyUserVo.setUserNo(user.getUserNo());
+                    fuzzyUserVo.setName(user.getName());
+                    fuzzyUserVo.setUserId(user.getId());
+                    members.add(fuzzyUserVo);
+                }
+            }
+        }
+
+        groupWithUserVo.setMembers(members);
+        return WebApiResponse.success(groupWithUserVo);
     }
 
 
