@@ -4,12 +4,15 @@ import com.alipapa.smp.user.mapper.GroupMapper;
 import com.alipapa.smp.user.pojo.Group;
 import com.alipapa.smp.user.pojo.GroupExample;
 import com.alipapa.smp.user.vo.GroupSelectVo;
+import com.alipapa.smp.user.vo.GroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GroupService {
@@ -89,10 +92,43 @@ public class GroupService {
 
 
     /**
+     * 获取组下拉列表
+     *
+     * @return
+     */
+    public List<GroupVo> listGroupByParams(Map<String, Object> params, Integer start, Integer size) {
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        Long count = groupMapper.findGroupByParamCount(params);
+
+        List<GroupVo> groupVoList = new ArrayList<>();
+        if (count != null && count > 0) {
+            params.put("start", start);
+            params.put("size", size);
+            List<Group> groupList = groupMapper.findGroupByParam(params);
+            if (!CollectionUtils.isEmpty(groupList)) {
+                for (Group group : groupList) {
+                    GroupVo groupVo = new GroupVo();
+                    groupVo.setGroupId(group.getId());
+                    groupVo.setGroupName(group.getName());
+                    groupVo.setGroupNo(group.getGroupNo());
+                    groupVo.setLeaderName(group.getLeaderName());
+                    groupVo.setCount(count);
+                    groupVoList.add(groupVo);
+                }
+            }
+        }
+        return groupVoList;
+    }
+
+
+
+    /**
      * @return
      */
     public Long getLatestGroupId() {
-        return 0l;
+        return groupMapper.selectMaxId();
     }
 
 

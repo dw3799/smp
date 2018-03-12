@@ -313,4 +313,9 @@
     ORDER BY u.created_time DESC
   </select>
 
+
+  <select id="selectMaxId" resultType="java.lang.Long">
+    select max(id) from user
+  </select>
+
 </mapper>

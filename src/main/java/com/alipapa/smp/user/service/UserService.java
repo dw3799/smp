@@ -172,7 +172,7 @@ public class UserService {
      * @return
      */
     public Long getLatestUserId() {
-        return null;
+        return userMapper.selectMaxId();
     }
 
 }

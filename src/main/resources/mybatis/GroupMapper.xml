@@ -12,6 +12,7 @@
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
   </resultMap>
+
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -273,4 +274,46 @@
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+  <select id="findGroupByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    <include refid="queryGroupSql"/>
+    <trim prefix="limit" prefixOverrides=",">
+      <if test="start != null and start != ''">
+        #{start}
+      </if>
+      <if test="size != null and size != ''">
+        , #{size}
+      </if>
+    </trim>
+  </select>
+
+  <sql id="queryGroupSql">
+    select *
+    from `group` g
+    where 1=1
+    <if test="groupNo != null and groupNo != ''">
+      and g.group_no = #{groupNo}
+    </if>
+    <if test="groupName != null and groupName != ''">
+      and g.name = #{groupName}
+    </if>
+    <if test="leaderId != null and leaderId != ''">
+      and g.leader_id = #{leaderId}
+    </if>
+    ORDER BY g.created_time DESC
+  </sql>
+
+
+  <select id="findGroupByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+    select count(*) from (
+    <include refid="queryGroupSql"/>
+    ) T
+  </select>
+
+
+  <select id="selectMaxId" resultType="java.lang.Long">
+      select max(id) from group
+  </select>
+
 </mapper>

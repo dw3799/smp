@@ -5,6 +5,7 @@ import com.alipapa.smp.user.pojo.GroupExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GroupMapper {
     long countByExample(GroupExample example);
@@ -28,4 +29,10 @@ public interface GroupMapper {
     int updateByPrimaryKeySelective(Group record);
 
     int updateByPrimaryKey(Group record);
+
+    List<Group> findGroupByParam(Map<String, Object> params);
+
+    long findGroupByParamCount(Map<String, Object> params);
+
+    Long selectMaxId();
 }

@@ -85,7 +85,9 @@ public class GroupController {
         }
         group.setLeaderId(leaderId);
         group.setLeaderName(leader.getName());
-        String groupNo = "G" + groupService.getLatestGroupId();
+        Long groupId = groupService.getLatestGroupId();
+        String groupNo = "G" + String.format("%03d", groupId + 1);
+        groupService.getLatestGroupId();
         group.setGroupNo(groupNo);
         group.setName(groupName);
         group.setCreatedTime(new Date());
@@ -202,8 +204,9 @@ public class GroupController {
         Integer start = (pageNum - 1) * pageSize;
         Integer size = pageSize;
 
+        List<GroupVo> groupVoList = groupService.listGroupByParams(params, start, size);
 
-        return WebApiResponse.success(null);
+        return WebApiResponse.success(groupVoList);
     }
 
 

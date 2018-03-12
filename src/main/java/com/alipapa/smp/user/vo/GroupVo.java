@@ -10,6 +10,9 @@ public class GroupVo {
 
     private String leaderName;
 
+    private Long count;
+
+
     public Long getGroupId() {
         return groupId;
     }
@@ -40,5 +43,13 @@ public class GroupVo {
 
     public void setLeaderName(String leaderName) {
         this.leaderName = leaderName;
+    }
+
+    public Long getCount() {
+        return count;
+    }
+
+    public void setCount(Long count) {
+        this.count = count;
     }
 }

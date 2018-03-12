@@ -31,4 +31,6 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     List<User> fuzzyUserSearch(Map<String, String> params);
+
+    Long selectMaxId();
 }
