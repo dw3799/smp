@@ -73,6 +73,7 @@ public class GroupService {
      */
     public List<GroupSelectVo> listAllGroupSelect() {
         GroupExample example = new GroupExample();
+        example.setOrderByClause("created_time");
 
         List<Group> groupList = groupMapper.selectByExample(example);
         List<GroupSelectVo> groupSelectVoList = new ArrayList<>();
@@ -89,6 +90,19 @@ public class GroupService {
         }
         return groupSelectVoList;
     }
+
+
+    /**
+     * 获取组下拉列表
+     *
+     * @return
+     */
+    public List<Group> listOrinGroup() {
+        GroupExample example = new GroupExample();
+        example.setOrderByClause("created_time");
+        return groupMapper.selectByExample(example);
+    }
+
 
 
     /**

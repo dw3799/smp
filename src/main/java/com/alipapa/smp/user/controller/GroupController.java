@@ -261,8 +261,21 @@ public class GroupController {
      * @return
      */
     @RequestMapping(value = "/leaderSelect", method = RequestMethod.GET)
-    public WebApiResponse<List<FuzzyUserVo>> roleSelect() {
-        return null;
+    public WebApiResponse<List<FuzzyUserVo>> leaderSelect() {
+        List<Group> groupSelectVoList = groupService.listOrinGroup();
+        List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(groupSelectVoList)) {
+            for (Group group : groupSelectVoList) {
+                FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                fuzzyUserVo.setUserId(group.getLeaderId());
+                User leader = userService.getUserById(group.getLeaderId());
+                fuzzyUserVo.setName(leader.getName());
+                fuzzyUserVo.setUserNo(leader.getUserNo());
+                fuzzyUserVoList.add(fuzzyUserVo);
+            }
+        }
+        return WebApiResponse.success(fuzzyUserVoList);
     }
 
 
