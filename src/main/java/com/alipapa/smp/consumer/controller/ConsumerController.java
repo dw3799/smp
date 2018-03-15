@@ -1,18 +1,19 @@
 package com.alipapa.smp.consumer.controller;
 
 import com.alipapa.smp.common.enums.CategoryCode;
+import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
+import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
+import com.alipapa.smp.consumer.vo.ConsumerVo;
 import com.alipapa.smp.consumer.vo.SysDictVo;
+import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.WebApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +32,10 @@ public class ConsumerController {
 
     @Autowired
     private SysDictService sysDictService;
+
+
+    @Autowired
+    private ConsumerService consumerService;
 
     /**
      * 客户相关下拉列表
@@ -79,6 +84,47 @@ public class ConsumerController {
     }
 
 
+    /**
+     * 客户详情
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/consumerDetail/{consumerId}", method = RequestMethod.GET)
+    public WebApiResponse<ConsumerVo> consumerSelect(@PathVariable("consumerId") Long consumerId) {
+        if (consumerId == null) {
+            return WebApiResponse.error("consumerId不能为空！");
+        }
+        Consumer consumer = consumerService.getConsumerById(consumerId);
+        if (consumer == null) {
+            return WebApiResponse.error("客户不存在！");
+        }
+        ConsumerVo consumerVo = new ConsumerVo();
+        consumerVo.setCompanyAddress(consumer.getCompanyAddress());
+        consumerVo.setCompanyWebsite(consumer.getCompanyWebsite());
+        consumerVo.setConsignee(consumer.getConsignee());
+        consumerVo.setContacts(consumer.getContacts());
+        consumerVo.setConsumerNo(consumer.getConsumerNo());
+        consumerVo.setCountry(consumer.getCountry());
+        consumerVo.setCreatedTime(DateUtil.formatToStrTime(consumer.getCreatedTime()));
+        consumerVo.setEmail(consumer.getEmail());
+        consumerVo.setFacebook(consumer.getFacebook());
+        consumerVo.setId(consumerId);
+        consumerVo.setLevel(consumer.getLevel());
+        consumerVo.setLinkedin(consumer.getLinkedin());
+        consumerVo.setMainBusiness(consumer.getMainBusiness());
+        consumerVo.setName(consumer.getName());
+        consumerVo.setPostalCode(consumer.getPostalCode());
+        consumerVo.setQq(consumer.getQq());
+        consumerVo.setSource(consumer.getSource());
+        consumerVo.setTelMobile(consumer.getTelMobile());
+        consumerVo.setReceivingAddress(consumer.getReceivingAddress());
+        consumerVo.setType(consumer.getType());
+        consumerVo.setUpdatedTime(DateUtil.formatToStrTime(consumer.getUpdatedTime()));
+        consumerVo.setWechat(consumer.getWechat());
+        consumerVo.setWhatsapp(consumer.getWhatsapp());
+        return WebApiResponse.success(consumerVo);
+    }
 
 
 }
