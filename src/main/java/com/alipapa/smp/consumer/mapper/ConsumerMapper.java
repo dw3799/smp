@@ -2,8 +2,9 @@ package com.alipapa.smp.consumer.mapper;
 
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.ConsumerExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface ConsumerMapper {
     long countByExample(ConsumerExample example);
@@ -27,4 +28,6 @@ public interface ConsumerMapper {
     int updateByPrimaryKeySelective(Consumer record);
 
     int updateByPrimaryKey(Consumer record);
+
+    Long selectMaxId();
 }

@@ -173,7 +173,7 @@ public class UserController {
                 return error("请输入必要信息");
             }
 
-            if (userService.getUserByName(name) == null) {
+            if (userService.getUserByName(name) != null) {
                 logger.error("员工姓名已存在: " + name);
                 return error("员工姓名已存在");
             }

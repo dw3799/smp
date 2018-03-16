@@ -1,13 +1,20 @@
 package com.alipapa.smp.consumer.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.enums.CategoryCode;
+import com.alipapa.smp.common.request.UserInfo;
+import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.consumer.vo.ConsumerVo;
 import com.alipapa.smp.consumer.vo.SysDictVo;
+import com.alipapa.smp.user.pojo.User;
+import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.DateUtil;
+import com.alipapa.smp.utils.StringUtil;
 import com.alipapa.smp.utils.WebApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
+
+import static com.alipapa.smp.utils.WebApiResponse.error;
 
 /**
  * 组管理接口
@@ -36,6 +46,10 @@ public class ConsumerController {
 
     @Autowired
     private ConsumerService consumerService;
+
+    @Autowired
+    private UserService userService;
+
 
     /**
      * 客户相关下拉列表
@@ -126,5 +140,105 @@ public class ConsumerController {
         return WebApiResponse.success(consumerVo);
     }
 
+
+    /**
+     * 新建用户
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/addConsumer", method = RequestMethod.POST)
+    public WebApiResponse<String> addConsumer(@RequestBody String jsonStr) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        if (jsonStr == null) {
+            logger.error("提交的json格式数据不可以为空!");
+            return error("输入的信息不可以为空");
+        }
+        try {
+            JSONObject json = JSON.parseObject(jsonStr);
+            if (json == null) {
+                logger.error("客户提交的数据解析失败: " + jsonStr);
+                return error("用户数据解析失败");
+            }
+
+            //不能为空
+            String name = json.getString("name");
+            String country = json.getString("country");
+            String mainBusiness = json.getString("mainBusiness");
+            String source = json.getString("source");
+            String type = json.getString("type");
+            String email = json.getString("email");
+
+            //可为空
+            String facebook = json.getString("facebook");
+            String whatsapp = json.getString("whatsapp");
+            String linkedin = json.getString("linkedin");
+            String wechat = json.getString("wechat");
+            String qq = json.getString("qq");
+            String contacts = json.getString("contacts");
+            String companyAddress = json.getString("companyAddress");
+            String companyWebsite = json.getString("companyWebsite");
+
+            //收货地址
+            String consignee = json.getString("consignee");
+            String telMobile = json.getString("telMobile");
+            String postalCode = json.getString("postalCode");
+            String receivingAddress = json.getString("receivingAddress");
+
+
+            if (StringUtil.isEmptyString(name) || StringUtil.isEmptyString(country) || StringUtil.isEmptyString(mainBusiness) || StringUtil.isEmptyString(source)
+                    || StringUtil.isEmptyString(type) || StringUtil.isEmptyString(email)) {
+                return error("缺少必填参数");
+            }
+
+            if (!CollectionUtils.isEmpty(consumerService.listConsumerByNameAndEmail(name, email))) {
+                return WebApiResponse.error("客户已存在");
+            }
+
+            Consumer consumer = new Consumer();
+            //YYYYMMDD+随机四位数
+            Long consumerId = consumerService.getLatestConsumerId();
+
+            consumer.setConsumerNo(DateUtil.formatToStr(new Date()) + String.format("%04d", consumerId + 1));
+            consumer.setCreatedTime(new Date());
+            consumer.setUpdatedTime(new Date());
+            consumer.setBelongUser(userInfo.getUserNo());
+            User user = userService.getUserById(userInfo.getUserId());
+            consumer.setBelongGroup(user.getGroupNo());
+            consumer.setCreateUser(userInfo.getUserNo());
+
+
+            //拓传参数
+            consumer.setName(name);
+            consumer.setCountry(country);
+            consumer.setMainBusiness(mainBusiness);
+            consumer.setSource(source);
+            consumer.setType(type);
+            consumer.setEmail(email);
+
+            consumer.setFacebook(facebook);
+            consumer.setWhatsapp(whatsapp);
+            consumer.setLinkedin(linkedin);
+            consumer.setWechat(wechat);
+            consumer.setQq(qq);
+            consumer.setContacts(contacts);
+            consumer.setCompanyAddress(companyAddress);
+            consumer.setCompanyWebsite(companyWebsite);
+
+            consumer.setConsignee(consignee);
+            consumer.setTelMobile(telMobile);
+            consumer.setPostalCode(postalCode);
+            consumer.setReceivingAddress(receivingAddress);
+
+            boolean result = consumerService.addConsumer(consumer);
+            if (result) {
+                return WebApiResponse.success("success");
+            }
+        } catch (Exception ex) {
+            return error("添加客户异常");
+        }
+        return WebApiResponse.error("添加客户失败");
+    }
 
 }
