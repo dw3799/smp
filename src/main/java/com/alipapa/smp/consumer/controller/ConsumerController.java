@@ -9,6 +9,7 @@ import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
+import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
 import com.alipapa.smp.consumer.vo.ConsumerVo;
 import com.alipapa.smp.consumer.vo.SysDictVo;
 import com.alipapa.smp.user.pojo.User;
@@ -22,8 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.alipapa.smp.utils.WebApiResponse.error;
 
@@ -142,7 +142,7 @@ public class ConsumerController {
 
 
     /**
-     * 新建用户
+     * 新建客户
      *
      * @param
      * @return
@@ -159,7 +159,7 @@ public class ConsumerController {
             JSONObject json = JSON.parseObject(jsonStr);
             if (json == null) {
                 logger.error("客户提交的数据解析失败: " + jsonStr);
-                return error("用户数据解析失败");
+                return error("客户数据解析失败");
             }
 
             //不能为空
@@ -239,6 +239,204 @@ public class ConsumerController {
             return error("添加客户异常");
         }
         return WebApiResponse.error("添加客户失败");
+    }
+
+
+    /**
+     * 更新客户信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/updateConsumer", method = RequestMethod.POST)
+    public WebApiResponse<String> updateConsumer(@RequestBody String jsonStr) {
+        //UserInfo userInfo = UserStatus.getUserInfo();
+
+        if (jsonStr == null) {
+            logger.error("提交的json格式数据不可以为空!");
+            return error("输入的信息不可以为空");
+        }
+        try {
+            JSONObject json = JSON.parseObject(jsonStr);
+            if (json == null) {
+                logger.error("客户提交的数据解析失败: " + jsonStr);
+                return error("客户数据解析失败");
+            }
+
+            //不能为空
+            Long id = json.getLong("consumerId");
+            String consumerNo = json.getString("consumerNo");
+
+            if (StringUtil.isEmptyString(consumerNo) || id == null) {
+                return error("缺少必填参数");
+            }
+
+            Consumer consumer = consumerService.getConsumerById(id);
+            if (consumer == null) {
+                return error("客户不存在");
+            }
+
+            String name = json.getString("name");
+            String country = json.getString("country");
+            String mainBusiness = json.getString("mainBusiness");
+            String source = json.getString("source");
+            String type = json.getString("type");
+            String email = json.getString("email");
+
+            //可为空
+            String facebook = json.getString("facebook");
+            String whatsapp = json.getString("whatsapp");
+            String linkedin = json.getString("linkedin");
+            String wechat = json.getString("wechat");
+            String qq = json.getString("qq");
+            String contacts = json.getString("contacts");
+            String companyAddress = json.getString("companyAddress");
+            String companyWebsite = json.getString("companyWebsite");
+
+            //收货地址
+            String consignee = json.getString("consignee");
+            String telMobile = json.getString("telMobile");
+            String postalCode = json.getString("postalCode");
+            String receivingAddress = json.getString("receivingAddress");
+
+
+            if (StringUtil.isEmptyString(name) || StringUtil.isEmptyString(country) || StringUtil.isEmptyString(mainBusiness) || StringUtil.isEmptyString(source)
+                    || StringUtil.isEmptyString(type) || StringUtil.isEmptyString(email)) {
+                return error("缺少必填参数");
+            }
+
+            consumer.setConsumerNo(consumerNo);
+            consumer.setUpdatedTime(new Date());
+
+            //拓传参数
+            consumer.setName(name);
+            consumer.setCountry(country);
+            consumer.setMainBusiness(mainBusiness);
+            consumer.setSource(source);
+            consumer.setType(type);
+            consumer.setEmail(email);
+
+            consumer.setFacebook(facebook);
+            consumer.setWhatsapp(whatsapp);
+            consumer.setLinkedin(linkedin);
+            consumer.setWechat(wechat);
+            consumer.setQq(qq);
+            consumer.setContacts(contacts);
+            consumer.setCompanyAddress(companyAddress);
+            consumer.setCompanyWebsite(companyWebsite);
+
+            consumer.setConsignee(consignee);
+            consumer.setTelMobile(telMobile);
+            consumer.setPostalCode(postalCode);
+            consumer.setReceivingAddress(receivingAddress);
+
+            boolean result = consumerService.updateConsumer(consumer);
+            if (result) {
+                return WebApiResponse.success("success");
+            }
+        } catch (Exception ex) {
+            return error("更新客户信息异常");
+        }
+        return WebApiResponse.error("更新客户信息失败");
+    }
+
+
+    /**
+     * 客户信息查询，注意用户权限
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listConsumer", method = RequestMethod.GET)
+    public WebApiResponse<List<ConsumerDetailVo>> listConsumer(@RequestBody String jsonStr) {
+
+        Integer pageSize = null;
+        Integer pageNum = null;
+        Map<String, Object> params = new HashMap<>();
+
+
+        if (jsonStr != null) {
+            JSONObject json = JSON.parseObject(jsonStr);
+            if (json == null) {
+                logger.error("客户提交的数据解析失败: " + jsonStr);
+                return error("客户数据解析失败");
+            }
+
+            pageSize = json.getInteger("pageSize");
+            pageNum = json.getInteger("pageNum");
+
+            String source = json.getString("source");
+            if (!StringUtil.isEmptyString(source)) {
+                params.put("source", source);
+            }
+
+            String type = json.getString("type");
+            if (!StringUtil.isEmptyString(type)) {
+                params.put("type", type);
+            }
+
+            String country = json.getString("country");
+            if (!StringUtil.isEmptyString(country)) {
+                params.put("country", country);
+            }
+
+            String level = json.getString("level");
+            if (!StringUtil.isEmptyString(level)) {
+                params.put("level", level);
+            }
+
+            String name = json.getString("name");
+            if (!StringUtil.isEmptyString(name)) {
+                params.put("name", name);
+            }
+
+            String consumerNo = json.getString("consumerNo");
+            if (!StringUtil.isEmptyString(consumerNo)) {
+                params.put("consumerNo", consumerNo);
+            }
+
+
+            String hasOrder = json.getString("hasOrder");
+            if (!StringUtil.isEmptyString(hasOrder)) {
+                params.put("hasOrder", hasOrder);
+            }
+
+            Long groupId = json.getLong("groupId");
+            if (groupId != null) {
+                params.put("groupId", groupId);
+            }
+
+            Long salerId = json.getLong("salerId");
+            if (salerId != null) {
+                params.put("salerId", salerId);
+            }
+
+            String startTime = json.getString("startTime");
+            if (!StringUtil.isEmptyString(startTime)) {
+                params.put("startTime", DateUtil.formatFromString(startTime, DateUtil.FormatString));
+            }
+
+            String endTime = json.getString("endTime");
+            if (!StringUtil.isEmptyString(endTime)) {
+                params.put("endTime", DateUtil.formatFromString(endTime, DateUtil.FormatString));
+            }
+        }
+
+        if (pageSize == null) {
+            pageSize = 1;
+        }
+        if (pageNum == null) {
+            pageNum = 30;
+        }
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        List<ConsumerDetailVo> consumerDetailVoList = consumerService.listConsumerDetailVoByParams(params, start, size);
+        if (CollectionUtils.isEmpty(consumerDetailVoList)) {
+            return WebApiResponse.success(new ArrayList<>());
+        }
+        return WebApiResponse.success(consumerDetailVoList);
     }
 
 }

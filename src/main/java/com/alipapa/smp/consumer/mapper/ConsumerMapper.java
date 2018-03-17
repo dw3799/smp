@@ -5,6 +5,7 @@ import com.alipapa.smp.consumer.pojo.ConsumerExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ConsumerMapper {
     long countByExample(ConsumerExample example);
@@ -30,4 +31,9 @@ public interface ConsumerMapper {
     int updateByPrimaryKey(Consumer record);
 
     Long selectMaxId();
+
+    List<Consumer> findConsumerByParam(Map<String, Object> params);
+
+    long findConsumerByParamCount(Map<String, Object> params);
+
 }

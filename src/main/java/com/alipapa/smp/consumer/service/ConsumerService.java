@@ -3,10 +3,15 @@ package com.alipapa.smp.consumer.service;
 import com.alipapa.smp.consumer.mapper.ConsumerMapper;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.ConsumerExample;
+import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ConsumerService {
@@ -28,6 +33,15 @@ public class ConsumerService {
      */
     public boolean addConsumer(Consumer consumer) {
         consumerMapper.insertSelective(consumer);
+        return true;
+    }
+
+    /**
+     * @param consumer
+     * @return
+     */
+    public boolean updateConsumer(Consumer consumer) {
+        consumerMapper.updateByPrimaryKey(consumer);
         return true;
     }
 
@@ -53,5 +67,47 @@ public class ConsumerService {
     public Long getLatestConsumerId() {
         return consumerMapper.selectMaxId();
     }
+
+
+    /**
+     * 客户查询
+     *
+     * @return
+     */
+    public List<ConsumerDetailVo> listConsumerDetailVoByParams(Map<String, Object> params, Integer start, Integer size) {
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        Long count = consumerMapper.findConsumerByParamCount(params);
+
+        List<ConsumerDetailVo> consumerDetailVoList = new ArrayList<>();
+        if (count != null && count > 0) {
+            params.put("start", start);
+            params.put("size", size);
+            List<Consumer> consumerList = consumerMapper.findConsumerByParam(params);
+            if (!CollectionUtils.isEmpty(consumerList)) {
+                for (Consumer consumer : consumerList) {
+                    ConsumerDetailVo consumerDetailVo = new ConsumerDetailVo();
+                    consumerDetailVo.setConsumerNo(consumer.getConsumerNo());
+                    consumerDetailVo.setCountry(consumer.getCountry());
+                    consumerDetailVo.setHasOrder(consumer.getHasOrder());
+                    consumerDetailVo.setMainBusiness(consumer.getMainBusiness());
+                    consumerDetailVo.setName(consumer.getName());
+                    consumerDetailVo.setSource(consumer.getSource());
+                    consumerDetailVo.setType(consumer.getType());
+
+                    //TODO from订单管理
+                    consumerDetailVo.setTotalOrder(null);
+                    consumerDetailVo.setOrderAmount(null);
+
+                    consumerDetailVo.setTotalCount(count);
+                    consumerDetailVoList.add(consumerDetailVo);
+                }
+            }
+        }
+        return consumerDetailVoList;
+    }
+
+
 
 }

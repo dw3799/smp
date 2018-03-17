@@ -577,4 +577,40 @@
     select max(id) from consumer
   </select>
 
+
+  <select id="findConsumerByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    <include refid="queryConsumerSql"/>
+    <trim prefix="limit" prefixOverrides=",">
+      <if test="start != null and start != ''">
+        #{start}
+      </if>
+      <if test="size != null and size != ''">
+        , #{size}
+      </if>
+    </trim>
+  </select>
+
+  <sql id="queryConsumerSql">
+    select *
+    from consumer cu
+    where 1=1
+    <if test="groupNo != null and groupNo != ''">
+      and g.group_no = #{groupNo}
+    </if>
+    <if test="groupName != null and groupName != ''">
+      and g.name = #{groupName}
+    </if>
+    <if test="leaderId != null and leaderId != ''">
+      and g.leader_id = #{leaderId}
+    </if>
+    ORDER BY cu.created_time DESC
+  </sql>
+
+
+  <select id="findConsumerByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+    select count(*) from (
+    <include refid="queryConsumerSql"/>
+    ) T
+  </select>
+
 </mapper>

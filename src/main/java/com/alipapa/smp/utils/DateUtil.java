@@ -21,6 +21,8 @@ public class DateUtil extends DateUtils {
     private static Logger logger = LoggerFactory.getLogger("DateUtil");
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    public static final String FormatString = "yyyy-MM-dd HH:mm:ss";
+
     private DateUtil() {
     }
 
