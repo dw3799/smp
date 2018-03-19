@@ -308,7 +308,7 @@
   <select id="fuzzyUserSearch" resultType="java.lang.Long" parameterType="java.util.HashMap">
     select DISTINCT * from `user` u
     <if test="searchString != null and searchString != ''">
-      WHERE u.`user_no` LIKE #{searchString} OR u.name LIKE #{searchString}
+      WHERE u.`user_no` LIKE CONCAT('%',#{searchString},'%') OR u.name LIKE CONCAT('%',#{searchString},'%')
     </if>
     ORDER BY u.created_time DESC
   </select>

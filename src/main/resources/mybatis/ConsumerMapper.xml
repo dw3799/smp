@@ -594,19 +594,42 @@
     select *
     from consumer cu
     where 1=1
-    <if test="groupNo != null and groupNo != ''">
-      and g.group_no = #{groupNo}
+    <if test="source != null and source != ''">
+      and cu.source = #{source}
     </if>
-    <if test="groupName != null and groupName != ''">
-      and g.name = #{groupName}
+    <if test="type != null and type != ''">
+      and cu.type = #{type}
     </if>
-    <if test="leaderId != null and leaderId != ''">
-      and g.leader_id = #{leaderId}
+    <if test="country != null and country != ''">
+      and cu.country = #{country}
+    </if>
+    <if test="level != null and level != ''">
+      and cu.level = #{level}
+    </if>
+    <if test="name != null and name != ''">
+      and cu.name LIKE like CONCAT('%',#{name},'%')
+    </if>
+    <if test="consumerNo != null and consumerNo != ''">
+      and cu.consumer_no LIKE CONCAT('%',#{consumerNo},'%')
+    </if>
+    <if test="hasOrder != null and hasOrder != ''">
+      and cu.hasOrder = #{hasOrder}
+    </if>
+    <if test="groupId != null">
+      and cu.belong_group = #{groupId}
+    </if>
+    <if test="salerId != null">
+      and cu.belong_user = #{salerId}
+    </if>
+    <if test="startTime != null">
+      and cu.created_time &gt;= #{startTime}
+    </if>
+    <if test="endTime != null">
+      and cu.created_time &lt;= #{endTime}
     </if>
     ORDER BY cu.created_time DESC
   </sql>
-
-
+  
   <select id="findConsumerByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
     select count(*) from (
     <include refid="queryConsumerSql"/>
