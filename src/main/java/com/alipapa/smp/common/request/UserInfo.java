@@ -9,7 +9,16 @@ public class UserInfo {
     private String token;
     private String userNo;
     private String roleName;
+    private Long roleId;
     private String uuid;
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
 
     public Long getUserId() {
         return userId;
