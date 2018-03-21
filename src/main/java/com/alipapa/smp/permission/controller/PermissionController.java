@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import java.util.List;
 public class PermissionController {
     private static Logger logger = LoggerFactory.getLogger(PermissionController.class);
 
+    private static final String LevelKey = "LevelKey";
     @Autowired
     private PermissionService permissionService;
 
@@ -46,21 +48,81 @@ public class PermissionController {
 
         //管理员返回全部权限
         if ("admin".equals(userInfo.getRoleName())) {
+            List<PermissionItem> permissionItemList = permissionService.listMainPermissionItem();
+            List<PermissionItemVo> permissionItemVoList = new ArrayList<>();
 
-            return null;
+            for (PermissionItem permissionItem : permissionItemList) {
+                PermissionItemVo permissionItemVo = new PermissionItemVo();
+                permissionItemVo.setId(permissionItem.getId());
+                permissionItemVo.setIcon(permissionItem.getIcon());
+                permissionItemVo.setName(permissionItem.getName());
+                permissionItemVo.setUrl(permissionItem.getUrl());
+
+                List<PermissionItem> childList = permissionService.listPermissionItemByParentId(permissionItem.getId());
+                if (!CollectionUtils.isEmpty(childList)) {
+                    List<PermissionItemVo> childVoList = new ArrayList<>();
+                    for (PermissionItem child : childList) {
+                        PermissionItemVo childVo = new PermissionItemVo();
+                        childVo.setId(child.getId());
+                        childVo.setIcon(child.getIcon());
+                        childVo.setName(child.getName());
+                        childVo.setUrl(child.getUrl());
+                        childVoList.add(childVo);
+                    }
+
+                    permissionItemVo.setChilds(childVoList);
+                }
+                permissionItemVoList.add(permissionItemVo);
+            }
+            return WebApiResponse.success(permissionItemVoList);
         }
 
 
         //其他的查看权限树
         List<RolePermission> rolePermissionList = permissionService.listRolePermissionByRoleId(roleId);
         if (!CollectionUtils.isEmpty(rolePermissionList)) {
-            HashMap<String, PermissionItem> level1Map = new HashMap();
+            List<PermissionItem> mainPermissionItemList = new ArrayList<>();
+
             HashMap<String, PermissionItem> level2Map = new HashMap();
             for (RolePermission rolePermission : rolePermissionList) {
-
-
+                PermissionItem permissionItem = permissionService.getPermissionItemById(rolePermission.getPermissionId());
+                if (permissionItem != null && permissionItem.getLevel() != null && permissionItem.getLevel() == 1) {
+                    mainPermissionItemList.add(permissionItem);
+                } else if (permissionItem != null && permissionItem.getLevel() != null && permissionItem.getLevel() == 2) {
+                    level2Map.put(LevelKey + permissionItem.getId(), permissionItem);
+                }
             }
+
+            List<PermissionItemVo> permissionItemVoList = new ArrayList<>();
+
+            for (PermissionItem permissionItem : mainPermissionItemList) {
+                PermissionItemVo permissionItemVo = new PermissionItemVo();
+                permissionItemVo.setId(permissionItem.getId());
+                permissionItemVo.setIcon(permissionItem.getIcon());
+                permissionItemVo.setName(permissionItem.getName());
+                permissionItemVo.setUrl(permissionItem.getUrl());
+
+                List<PermissionItem> childList = permissionService.listPermissionItemByParentId(permissionItem.getId());
+                if (!CollectionUtils.isEmpty(childList)) {
+                    List<PermissionItemVo> childVoList = new ArrayList<>();
+                    for (PermissionItem child : childList) {
+                        if (level2Map.get(LevelKey + child.getId()) != null) {
+                            PermissionItemVo childVo = new PermissionItemVo();
+                            childVo.setId(child.getId());
+                            childVo.setIcon(child.getIcon());
+                            childVo.setName(child.getName());
+                            childVo.setUrl(child.getUrl());
+                            childVoList.add(childVo);
+                        }
+                    }
+                    permissionItemVo.setChilds(childVoList);
+                }
+                permissionItemVoList.add(permissionItemVo);
+            }
+
+            return WebApiResponse.success(permissionItemVoList);
         }
+
 
         return null;
     }
