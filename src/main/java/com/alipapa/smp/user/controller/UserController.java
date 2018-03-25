@@ -266,6 +266,7 @@ public class UserController {
         }
 
         user.setPwd(MD5.digist("666666"));//默认密码
+        userService.updateUser(user);
         return WebApiResponse.success("success");
     }
 
@@ -293,6 +294,7 @@ public class UserController {
         }
 
         user.setPwd(MD5.digist(pwd));
+        userService.updateUser(user);
         return WebApiResponse.success("success");
     }
 
@@ -304,7 +306,12 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/updateUserRole", method = RequestMethod.POST)
-    public WebApiResponse<String> updateUserRole(@RequestParam("userRoleId") Long userRoleId, @RequestParam("groupId") Long groupId, @RequestParam("roleId") Long roleId) {
+    public WebApiResponse<String> updateUserRole(@RequestParam("userRoleId") Long userRoleId, @RequestParam(name = "groupId", required = false) Long groupId, @RequestParam(name = "roleId", required = false) Long roleId) {
+        String roleName = UserStatus.getUserInfo().getRoleName();
+        if (!"admin".equals(roleName)) {
+            return error("没有权限");
+        }
+
         if (userRoleId == null) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
@@ -316,12 +323,11 @@ public class UserController {
         UserRole userRole = userRoleService.getUserRoleByUserRoleId(userRoleId);
 
         if (roleId != null) {
-            UserRole userRoleByRole = userRoleService.getUserRoleByUserRoleId(roleId);
-            if (userRoleByRole != null && userRoleByRole.getId() != userRoleId) {
+            Role role = roleService.getRoleById(roleId);
+            if (role != null && role.getId() == userRole.getRoleId()) {
                 return error("已存在该角色");
             }
 
-            Role role = roleService.getRoleById(roleId);
             userRole.setRoleId(roleId);
             userRole.setRoleName(role.getRoleName());
             userRoleService.updateUserRole(userRole);
@@ -348,6 +354,11 @@ public class UserController {
      */
     @RequestMapping(value = "/batchDelUser", method = RequestMethod.POST)
     public WebApiResponse<String> batchDelUser(@RequestParam("userRoleIds") String userRoleIds) {
+        String roleName = UserStatus.getUserInfo().getRoleName();
+        if (!"admin".equals(roleName)) {
+            return error("没有权限");
+        }
+
         if (StringUtils.isBlank(userRoleIds)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
