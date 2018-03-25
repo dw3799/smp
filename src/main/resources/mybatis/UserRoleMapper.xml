@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.alipapa.smp.user.mapper1.UserRoleMapper">
+<mapper namespace="com.alipapa.smp.user.mapper.UserRoleMapper">
     <resultMap id="BaseResultMap" type="com.alipapa.smp.user.pojo.UserRole">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="token" jdbcType="VARCHAR" property="token"/>
@@ -323,9 +323,10 @@
         ur.role_name,
         g.`name` as group_name ,
         ur.created_time
-        from user_role ur , `user` u , `group` g
-        where u.group_id=g.id
-        and ur.user_id=u.id
+        from user_role ur
+        LEFT JOIN `user` u on ur.user_id=u.id
+        LEFT JOIN `group` g on u.group_id=g.id
+        where 1=1
         <if test="userNo != null and userNo != ''">
             and u.`user_no` = #{userNo}
         </if>

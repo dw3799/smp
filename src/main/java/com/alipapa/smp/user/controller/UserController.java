@@ -1,7 +1,6 @@
 package com.alipapa.smp.user.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
@@ -104,6 +103,7 @@ public class UserController {
             loginInfo.setToken(token);
             loginInfo.setUuid(user.getUuid());
             loginInfo.setRoleName(roleName);
+            loginInfo.setUserRoleId(userRole.getId());
             return WebApiResponse.success(loginInfo);
         } catch (Exception e) {
             logger.error("登录异常", e);
@@ -158,6 +158,7 @@ public class UserController {
             return error("输入的信息不可以为空");
         }
         try {
+            logger.info(jsonStr);
             JSONObject json = JSON.parseObject(jsonStr);
             if (json == null) {
                 logger.error("客户提交的数据解析失败: " + jsonStr);
@@ -166,7 +167,7 @@ public class UserController {
 
             String name = json.getString("name");
             String groupId = json.getString("groupId");
-            JSONArray roleIds = json.getJSONArray("roleIds");
+            String roleIds = json.getString("roleIds");
             String remark = json.getString("remark");
 
             if (name == null || roleIds == null) {
@@ -177,7 +178,6 @@ public class UserController {
                 logger.error("员工姓名已存在: " + name);
                 return error("员工姓名已存在");
             }
-            Group group = groupService.getGroupById(Long.valueOf(groupId));
 
             Long userId = userService.getLatestUserId();
             User newUser = new User();
@@ -187,12 +187,18 @@ public class UserController {
             newUser.setUuid(UUID.randomUUID().toString());
             newUser.setPwd(MD5.digist("666666"));//默认密码
             newUser.setRemark(remark);
-            newUser.setGroupId(group.getId());
-            newUser.setGroupNo(group.getGroupNo());
+            if (StringUtils.isNotBlank(groupId)) {
+                Group group = groupService.getGroupById(Long.valueOf(groupId));
+                newUser.setGroupId(group.getId());
+                newUser.setGroupNo(group.getGroupNo());
+            }
 
-            userService.addUser(newUser, roleIds.toJavaList(String.class));
+            String[] roleIdArray = roleIds.split(";");
+
+            userService.addUser(newUser, Arrays.asList(roleIdArray));
             return WebApiResponse.success("success");
         } catch (Exception ex) {
+            logger.error("新建用户失败!", ex);
             return error("新建用户失败");
         }
     }
@@ -205,18 +211,18 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/listUserRole", method = RequestMethod.GET)
-    public WebApiResponse<List<UserVo>> listUserRole(@RequestParam("pageSize") Integer pageSize,
-                                                      @RequestParam("pageNum") Integer pageNum,
-                                                      @RequestParam(name = "userNo", required = false) String userNo,
-                                                      @RequestParam(name = "roleName", required = false) String roleName,
-                                                      @RequestParam(name = "name", required = false) String name) {
+    public WebApiResponse<List<UserVo>> listUserRole(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                     @RequestParam(name = "pageNum", required = false) Integer pageNum,
+                                                     @RequestParam(name = "userNo", required = false) String userNo,
+                                                     @RequestParam(name = "roleName", required = false) String roleName,
+                                                     @RequestParam(name = "name", required = false) String name) {
 
         if (pageSize == null) {
-            pageSize = 1;
+            pageSize = 30;
         }
 
         if (pageNum == null) {
-            pageNum = 30;
+            pageNum = 1;
         }
 
         Map<String, Object> params = new HashMap<>();

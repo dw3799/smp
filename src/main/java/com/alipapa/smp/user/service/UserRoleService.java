@@ -5,6 +5,8 @@ import com.alipapa.smp.user.pojo.UserRole;
 import com.alipapa.smp.user.pojo.UserRoleExample;
 import com.alipapa.smp.user.vo.UserVo;
 import com.alipapa.smp.utils.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -16,6 +18,8 @@ import java.util.Map;
 
 @Service
 public class UserRoleService {
+    private static Logger logger = LoggerFactory.getLogger(UserRoleService.class);
+
     @Autowired
     private UserRoleMapper userRoleMapper;
 
@@ -114,10 +118,13 @@ public class UserRoleService {
      * @return
      */
     public List<UserVo> findUserByParam(Map<String, Object> params, Integer start, Integer size) {
-        if (params == null) {
+/*        if (params == null) {
             return null;
-        }
+        }*/
+
+        logger.info("start:" + start + "size:" + size);
         Long count = this.findUserByParamCount(params);
+        logger.info("count:" + count);
 
         if (count <= 0) {
             return null;
@@ -145,9 +152,9 @@ public class UserRoleService {
      * @return
      */
     public Long findUserByParamCount(Map<String, Object> params) {
-        if (params == null) {
+/*        if (params == null) {
             return 0l;
-        }
+        }*/
         return userRoleMapper.findUserByParamCount(params);
     }
 }
