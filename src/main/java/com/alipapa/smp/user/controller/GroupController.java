@@ -72,22 +72,32 @@ public class GroupController {
     @RequestMapping(value = "/addGroup", method = RequestMethod.POST)
     public WebApiResponse<String> addGroup(@RequestParam(name = "groupName") String groupName,
                                            @RequestParam(name = "leaderId") Long leaderId,
-                                           @RequestParam(name = "members") String members) {
-        if (StringUtils.isBlank(groupName) || leaderId == null || StringUtils.isBlank(members)) {
+                                           @RequestParam(name = "members", required = false) String members) {
+        if (StringUtils.isBlank(groupName)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
 
+        List<Group> groupList = groupService.getGroupByGroupName(groupName);
+        if (!CollectionUtils.isEmpty(groupList)) {
+            return WebApiResponse.error("组名已存在");
+        }
         Group group = new Group();
+
         User leader = userService.getUserById(leaderId);
         if (leader == null) {
             return WebApiResponse.error("组长不存在");
         }
+
         group.setLeaderId(leaderId);
         group.setLeaderName(leader.getName());
         Long groupId = groupService.getLatestGroupId();
+        logger.info("groupId:" + groupId);
+        if (groupId == null) {
+            groupId = 0l;
+        }
         String groupNo = "G" + String.format("%03d", groupId + 1);
-        groupService.getLatestGroupId();
+
         group.setGroupNo(groupNo);
         group.setName(groupName);
         group.setCreatedTime(new Date());
@@ -104,17 +114,19 @@ public class GroupController {
             return WebApiResponse.error("组创建失败");
         }
 
+        if (StringUtils.isNotBlank(members)) {
+            String[] userIds = members.split(";");
+            for (String userId : userIds) {
+                User member = userService.getUserById(Long.valueOf(userId));
+                member.setGroupId(savedGroup.getId());
+                member.setGroupNo(savedGroup.getGroupNo());
+                userService.updateUser(member);
+            }
+        }
+
         leader.setGroupId(savedGroup.getId());
         leader.setGroupNo(savedGroup.getGroupNo());
         userService.updateUser(leader);
-
-        String[] userIds = members.split(";");
-        for (String userId : userIds) {
-            User member = userService.getUserById(Long.valueOf(userId));
-            member.setGroupId(group.getId());
-            member.setGroupNo(group.getGroupNo());
-            userService.updateUser(member);
-        }
 
         return WebApiResponse.success("success");
     }
@@ -153,14 +165,15 @@ public class GroupController {
         leader.setGroupId(group.getId());
         leader.setGroupNo(group.getGroupNo());
 
-        String[] userIds = members.split(";");
-        for (String userId : userIds) {
-            User member = userService.getUserById(Long.valueOf(userId));
-            member.setGroupId(group.getId());
-            member.setGroupNo(group.getGroupNo());
-            userService.updateUser(member);
+        if (StringUtils.isNotBlank(members)) {
+            String[] userIds = members.split(";");
+            for (String userId : userIds) {
+                User member = userService.getUserById(Long.valueOf(userId));
+                member.setGroupId(group.getId());
+                member.setGroupNo(group.getGroupNo());
+                userService.updateUser(member);
+            }
         }
-
         userService.updateUser(leader);
         groupService.updateGroup(group);
         return WebApiResponse.success("success");
@@ -174,19 +187,19 @@ public class GroupController {
      * @return
      */
     @RequestMapping(value = "/listGroup", method = RequestMethod.GET)
-    public WebApiResponse<List<GroupVo>> listGroup(@RequestParam("pageSize") Integer pageSize,
-                                                   @RequestParam("pageNum") Integer pageNum,
+    public WebApiResponse<List<GroupVo>> listGroup(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                   @RequestParam(name = "pageNum", required = false) Integer pageNum,
                                                    @RequestParam(name = "groupNo", required = false) String groupNo,
                                                    @RequestParam(name = "groupName", required = false) String groupName,
                                                    @RequestParam(name = "leaderId", required = false) String leaderId) {
 
 
         if (pageSize == null) {
-            pageSize = 1;
+            pageSize = 30;
         }
 
         if (pageNum == null) {
-            pageNum = 30;
+            pageNum = 1;
         }
 
         Map<String, Object> params = new HashMap<>();

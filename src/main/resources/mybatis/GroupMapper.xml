@@ -312,7 +312,7 @@
 
 
   <select id="selectMaxId" resultType="java.lang.Long">
-      select max(id) from group
+      select max(id) from `group`
   </select>
 
 </mapper>

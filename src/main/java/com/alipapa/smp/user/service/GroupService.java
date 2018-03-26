@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +45,30 @@ public class GroupService {
 
 
     /**
+     * @param groupName
+     * @return
+     */
+    public List<Group> getGroupByGroupName(String groupName) {
+        GroupExample example = new GroupExample();
+        GroupExample.Criteria criteria = example.createCriteria();
+        criteria.andNameEqualTo(groupName);
+
+        return groupMapper.selectByExample(example);
+    }
+
+    /**
+     * @param leaderId
+     * @return
+     */
+    public List<Group> getGroupByLeaderId(Long leaderId) {
+        GroupExample example = new GroupExample();
+        GroupExample.Criteria criteria = example.createCriteria();
+        criteria.andLeaderIdEqualTo(leaderId);
+
+        return groupMapper.selectByExample(example);
+    }
+
+    /**
      * @param group
      * @return
      */
@@ -60,6 +83,15 @@ public class GroupService {
      * @return
      */
     public boolean addGroup(Group group) {
+        List<Group> leadGroupList = this.getGroupByLeaderId(group.getLeaderId());
+        if (!CollectionUtils.isEmpty(leadGroupList)) {
+            for (Group leadGroup : leadGroupList) {
+                leadGroup.setLeaderId(null);
+                leadGroup.setLeaderName(null);
+                this.updateGroup(leadGroup);
+            }
+        }
+
         groupMapper.insert(group);
         return true;
     }
@@ -111,9 +143,6 @@ public class GroupService {
      * @return
      */
     public List<GroupVo> listGroupByParams(Map<String, Object> params, Integer start, Integer size) {
-        if (params == null) {
-            params = new HashMap<>();
-        }
         Long count = groupMapper.findGroupByParamCount(params);
 
         List<GroupVo> groupVoList = new ArrayList<>();

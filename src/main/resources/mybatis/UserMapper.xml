@@ -305,7 +305,7 @@
   </update>
 
 
-  <select id="fuzzyUserSearch" resultType="java.lang.Long" parameterType="java.util.HashMap">
+  <select id="fuzzyUserSearch" resultMap="BaseResultMap" parameterType="java.util.HashMap">
     select DISTINCT * from `user` u
     <if test="searchString != null and searchString != ''">
       WHERE u.`user_no` LIKE CONCAT('%',#{searchString},'%') OR u.name LIKE CONCAT('%',#{searchString},'%')

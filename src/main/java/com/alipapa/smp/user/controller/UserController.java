@@ -180,6 +180,12 @@ public class UserController {
             }
 
             Long userId = userService.getLatestUserId();
+
+            logger.info("userId:" + userId);
+            if (userId == null) {
+                userId = 0l;
+            }
+
             User newUser = new User();
             newUser.setUserNo(String.valueOf(DateUtil.getYear()) + String.format("%04d", userId + 1));
             newUser.setName(name);
