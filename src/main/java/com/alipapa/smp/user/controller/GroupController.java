@@ -291,9 +291,11 @@ public class GroupController {
                 FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
                 fuzzyUserVo.setUserId(group.getLeaderId());
                 User leader = userService.getUserById(group.getLeaderId());
-                fuzzyUserVo.setName(leader.getName());
-                fuzzyUserVo.setUserNo(leader.getUserNo());
-                fuzzyUserVoList.add(fuzzyUserVo);
+                if (leader != null) {
+                    fuzzyUserVo.setName(leader.getName());
+                    fuzzyUserVo.setUserNo(leader.getUserNo());
+                    fuzzyUserVoList.add(fuzzyUserVo);
+                }
             }
         }
         return WebApiResponse.success(fuzzyUserVoList);
