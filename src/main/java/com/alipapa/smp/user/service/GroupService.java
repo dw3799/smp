@@ -73,6 +73,16 @@ public class GroupService {
      * @return
      */
     public boolean updateGroup(Group group) {
+        List<Group> leadGroupList = this.getGroupByLeaderId(group.getLeaderId());
+        if (!CollectionUtils.isEmpty(leadGroupList)) {
+            for (Group leadGroup : leadGroupList) {
+                if (leadGroup.getId() != group.getId()) {
+                    leadGroup.setLeaderId(null);
+                    leadGroup.setLeaderName(null);
+                    groupMapper.updateByPrimaryKey(leadGroup);
+                }
+            }
+        }
         groupMapper.updateByPrimaryKey(group);
         return true;
     }
@@ -88,7 +98,7 @@ public class GroupService {
             for (Group leadGroup : leadGroupList) {
                 leadGroup.setLeaderId(null);
                 leadGroup.setLeaderName(null);
-                this.updateGroup(leadGroup);
+                groupMapper.updateByPrimaryKey(leadGroup);
             }
         }
 

@@ -148,6 +148,14 @@ public class GroupController {
             return error("参数不可以为空");
         }
 
+        List<Group> groupList = groupService.getGroupByGroupName(groupName);
+        if (!CollectionUtils.isEmpty(groupList)) {
+            for (Group nameGroup : groupList) {
+                if (nameGroup.getId() != groupId)
+                    return WebApiResponse.error("组名已存在");
+            }
+        }
+
         Group group = groupService.getGroupById(groupId);
         if (group == null) {
             return WebApiResponse.error("组不存在");
