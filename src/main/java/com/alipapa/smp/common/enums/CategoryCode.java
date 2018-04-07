@@ -13,9 +13,10 @@ public enum CategoryCode {
 
     level(4, "ConsumerLevel", "客户等级"),
 
-    order(5, "ConsumerOrder", "是否有订单");
+    order(5, "ConsumerOrder", "是否有订单"),
 
-
+    intention(6, "ConsumerIntention", "客户意向");
+    
     CategoryCode(int code, String codeName, String dec) {
         this.code = code;
         this.codeName = codeName;

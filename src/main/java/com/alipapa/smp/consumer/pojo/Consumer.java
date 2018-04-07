@@ -19,6 +19,8 @@ public class Consumer {
 
     private String email;
 
+    private String intention;
+
     private String facebook;
 
     private String whatsapp;
@@ -46,10 +48,6 @@ public class Consumer {
     private String level;
 
     private String hasOrder;
-
-    private String belongUser;
-
-    private String belongGroup;
 
     private String createUser;
 
@@ -121,6 +119,14 @@ public class Consumer {
 
     public void setEmail(String email) {
         this.email = email == null ? null : email.trim();
+    }
+
+    public String getIntention() {
+        return intention;
+    }
+
+    public void setIntention(String intention) {
+        this.intention = intention == null ? null : intention.trim();
     }
 
     public String getFacebook() {
@@ -233,22 +239,6 @@ public class Consumer {
 
     public void setHasOrder(String hasOrder) {
         this.hasOrder = hasOrder == null ? null : hasOrder.trim();
-    }
-
-    public String getBelongUser() {
-        return belongUser;
-    }
-
-    public void setBelongUser(String belongUser) {
-        this.belongUser = belongUser == null ? null : belongUser.trim();
-    }
-
-    public String getBelongGroup() {
-        return belongGroup;
-    }
-
-    public void setBelongGroup(String belongGroup) {
-        this.belongGroup = belongGroup == null ? null : belongGroup.trim();
     }
 
     public String getCreateUser() {

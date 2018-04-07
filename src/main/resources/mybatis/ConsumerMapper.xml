@@ -10,6 +10,7 @@
     <result column="source" jdbcType="VARCHAR" property="source" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="intention" jdbcType="VARCHAR" property="intention" />
     <result column="facebook" jdbcType="VARCHAR" property="facebook" />
     <result column="whatsapp" jdbcType="VARCHAR" property="whatsapp" />
     <result column="linkedin" jdbcType="VARCHAR" property="linkedin" />
@@ -24,8 +25,6 @@
     <result column="receiving_address" jdbcType="VARCHAR" property="receivingAddress" />
     <result column="level" jdbcType="VARCHAR" property="level" />
     <result column="has_order" jdbcType="VARCHAR" property="hasOrder" />
-    <result column="belong_user" jdbcType="VARCHAR" property="belongUser" />
-    <result column="belong_group" jdbcType="VARCHAR" property="belongGroup" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
@@ -90,10 +89,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, consumer_no, name, country, main_business, source, type, email, facebook, whatsapp, 
-    linkedin, wechat, qq, contacts, company_address, company_website, consignee, tel_mobile, 
-    postal_code, receiving_address, level, has_order, belong_user, belong_group, create_user, 
-    remark, created_time, updated_time
+    id, consumer_no, name, country, main_business, source, type, email, intention, facebook, 
+    whatsapp, linkedin, wechat, qq, contacts, company_address, company_website, consignee, 
+    tel_mobile, postal_code, receiving_address, level, has_order, create_user, remark, 
+    created_time, updated_time
   </sql>
   <select id="selectByExample" parameterType="com.alipapa.smp.consumer.pojo.ConsumerExample" resultMap="BaseResultMap">
     select
@@ -128,24 +127,24 @@
   <insert id="insert" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
     insert into consumer (id, consumer_no, name, 
       country, main_business, source, 
-      type, email, facebook, 
-      whatsapp, linkedin, wechat, 
-      qq, contacts, company_address, 
-      company_website, consignee, tel_mobile, 
-      postal_code, receiving_address, level, 
-      has_order, belong_user, belong_group, 
-      create_user, remark, created_time, 
-      updated_time)
+      type, email, intention, 
+      facebook, whatsapp, linkedin, 
+      wechat, qq, contacts, 
+      company_address, company_website, consignee, 
+      tel_mobile, postal_code, receiving_address, 
+      level, has_order, create_user, 
+      remark, created_time, updated_time
+      )
     values (#{id,jdbcType=BIGINT}, #{consumerNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{country,jdbcType=VARCHAR}, #{mainBusiness,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, 
-      #{type,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{facebook,jdbcType=VARCHAR}, 
-      #{whatsapp,jdbcType=VARCHAR}, #{linkedin,jdbcType=VARCHAR}, #{wechat,jdbcType=VARCHAR}, 
-      #{qq,jdbcType=VARCHAR}, #{contacts,jdbcType=VARCHAR}, #{companyAddress,jdbcType=VARCHAR}, 
-      #{companyWebsite,jdbcType=VARCHAR}, #{consignee,jdbcType=VARCHAR}, #{telMobile,jdbcType=VARCHAR}, 
-      #{postalCode,jdbcType=VARCHAR}, #{receivingAddress,jdbcType=VARCHAR}, #{level,jdbcType=VARCHAR}, 
-      #{hasOrder,jdbcType=VARCHAR}, #{belongUser,jdbcType=VARCHAR}, #{belongGroup,jdbcType=VARCHAR}, 
-      #{createUser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
-      #{updatedTime,jdbcType=TIMESTAMP})
+      #{type,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{intention,jdbcType=VARCHAR}, 
+      #{facebook,jdbcType=VARCHAR}, #{whatsapp,jdbcType=VARCHAR}, #{linkedin,jdbcType=VARCHAR}, 
+      #{wechat,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR}, #{contacts,jdbcType=VARCHAR}, 
+      #{companyAddress,jdbcType=VARCHAR}, #{companyWebsite,jdbcType=VARCHAR}, #{consignee,jdbcType=VARCHAR}, 
+      #{telMobile,jdbcType=VARCHAR}, #{postalCode,jdbcType=VARCHAR}, #{receivingAddress,jdbcType=VARCHAR}, 
+      #{level,jdbcType=VARCHAR}, #{hasOrder,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
     insert into consumer
@@ -173,6 +172,9 @@
       </if>
       <if test="email != null">
         email,
+      </if>
+      <if test="intention != null">
+        intention,
       </if>
       <if test="facebook != null">
         facebook,
@@ -216,12 +218,6 @@
       <if test="hasOrder != null">
         has_order,
       </if>
-      <if test="belongUser != null">
-        belong_user,
-      </if>
-      <if test="belongGroup != null">
-        belong_group,
-      </if>
       <if test="createUser != null">
         create_user,
       </if>
@@ -259,6 +255,9 @@
       </if>
       <if test="email != null">
         #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="intention != null">
+        #{intention,jdbcType=VARCHAR},
       </if>
       <if test="facebook != null">
         #{facebook,jdbcType=VARCHAR},
@@ -301,12 +300,6 @@
       </if>
       <if test="hasOrder != null">
         #{hasOrder,jdbcType=VARCHAR},
-      </if>
-      <if test="belongUser != null">
-        #{belongUser,jdbcType=VARCHAR},
-      </if>
-      <if test="belongGroup != null">
-        #{belongGroup,jdbcType=VARCHAR},
       </if>
       <if test="createUser != null">
         #{createUser,jdbcType=VARCHAR},
@@ -355,6 +348,9 @@
       <if test="record.email != null">
         email = #{record.email,jdbcType=VARCHAR},
       </if>
+      <if test="record.intention != null">
+        intention = #{record.intention,jdbcType=VARCHAR},
+      </if>
       <if test="record.facebook != null">
         facebook = #{record.facebook,jdbcType=VARCHAR},
       </if>
@@ -397,12 +393,6 @@
       <if test="record.hasOrder != null">
         has_order = #{record.hasOrder,jdbcType=VARCHAR},
       </if>
-      <if test="record.belongUser != null">
-        belong_user = #{record.belongUser,jdbcType=VARCHAR},
-      </if>
-      <if test="record.belongGroup != null">
-        belong_group = #{record.belongGroup,jdbcType=VARCHAR},
-      </if>
       <if test="record.createUser != null">
         create_user = #{record.createUser,jdbcType=VARCHAR},
       </if>
@@ -430,6 +420,7 @@
       source = #{record.source,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
+      intention = #{record.intention,jdbcType=VARCHAR},
       facebook = #{record.facebook,jdbcType=VARCHAR},
       whatsapp = #{record.whatsapp,jdbcType=VARCHAR},
       linkedin = #{record.linkedin,jdbcType=VARCHAR},
@@ -444,8 +435,6 @@
       receiving_address = #{record.receivingAddress,jdbcType=VARCHAR},
       level = #{record.level,jdbcType=VARCHAR},
       has_order = #{record.hasOrder,jdbcType=VARCHAR},
-      belong_user = #{record.belongUser,jdbcType=VARCHAR},
-      belong_group = #{record.belongGroup,jdbcType=VARCHAR},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       created_time = #{record.createdTime,jdbcType=TIMESTAMP},
@@ -477,6 +466,9 @@
       </if>
       <if test="email != null">
         email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="intention != null">
+        intention = #{intention,jdbcType=VARCHAR},
       </if>
       <if test="facebook != null">
         facebook = #{facebook,jdbcType=VARCHAR},
@@ -520,12 +512,6 @@
       <if test="hasOrder != null">
         has_order = #{hasOrder,jdbcType=VARCHAR},
       </if>
-      <if test="belongUser != null">
-        belong_user = #{belongUser,jdbcType=VARCHAR},
-      </if>
-      <if test="belongGroup != null">
-        belong_group = #{belongGroup,jdbcType=VARCHAR},
-      </if>
       <if test="createUser != null">
         create_user = #{createUser,jdbcType=VARCHAR},
       </if>
@@ -550,6 +536,7 @@
       source = #{source,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
+      intention = #{intention,jdbcType=VARCHAR},
       facebook = #{facebook,jdbcType=VARCHAR},
       whatsapp = #{whatsapp,jdbcType=VARCHAR},
       linkedin = #{linkedin,jdbcType=VARCHAR},
@@ -564,14 +551,13 @@
       receiving_address = #{receivingAddress,jdbcType=VARCHAR},
       level = #{level,jdbcType=VARCHAR},
       has_order = #{hasOrder,jdbcType=VARCHAR},
-      belong_user = #{belongUser,jdbcType=VARCHAR},
-      belong_group = #{belongGroup,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
 
   <select id="selectMaxId" resultType="java.lang.Long">
     select max(id) from consumer
@@ -629,11 +615,10 @@
     </if>
     ORDER BY cu.created_time DESC
   </sql>
-  
+
   <select id="findConsumerByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
     select count(*) from (
     <include refid="queryConsumerSql"/>
     ) T
   </select>
-
 </mapper>

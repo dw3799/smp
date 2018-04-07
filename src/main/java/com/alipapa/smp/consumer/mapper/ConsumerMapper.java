@@ -32,8 +32,7 @@ public interface ConsumerMapper {
 
     Long selectMaxId();
 
-    List<Consumer> findConsumerByParam(Map<String, Object> params);
+    List<com.alipapa.smp.consumer.pojo.Consumer> findConsumerByParam(Map<String, Object> params);
 
     long findConsumerByParamCount(Map<String, Object> params);
-
 }

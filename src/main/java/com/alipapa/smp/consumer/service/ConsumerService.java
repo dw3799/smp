@@ -4,6 +4,7 @@ import com.alipapa.smp.consumer.mapper.ConsumerMapper;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.ConsumerExample;
 import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
+import com.alipapa.smp.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -32,7 +33,7 @@ public class ConsumerService {
      * @return
      */
     public boolean addConsumer(Consumer consumer) {
-        consumerMapper.insertSelective(consumer);
+        consumerMapper.insert(consumer);
         return true;
     }
 
@@ -51,11 +52,28 @@ public class ConsumerService {
      * @return
      */
     public List<Consumer> listConsumerByNameAndEmail(String name, String email) {
+        if (StringUtil.isEmptyString(name) || StringUtil.isEmptyString(email)) {
+            return null;
+        }
         ConsumerExample example = new ConsumerExample();
         ConsumerExample.Criteria criteria = example.createCriteria();
         criteria.andNameEqualTo(name);
         criteria.andEmailEqualTo(email);
         return consumerMapper.selectByExample(example);
+    }
+
+
+    /**
+     * @param name,email
+     * @return
+     */
+    public Consumer getConsumerByNameAndEmail(String name, String email) {
+        List<Consumer> consumerList = this.listConsumerByNameAndEmail(name, email);
+
+        if (!CollectionUtils.isEmpty(consumerList)) {
+            return consumerList.get(0);
+        }
+        return null;
     }
 
 
@@ -107,7 +125,6 @@ public class ConsumerService {
         }
         return consumerDetailVoList;
     }
-
 
 
 }

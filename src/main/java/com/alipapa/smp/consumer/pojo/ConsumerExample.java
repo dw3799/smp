@@ -655,6 +655,76 @@ public class ConsumerExample {
             return (Criteria) this;
         }
 
+        public Criteria andIntentionIsNull() {
+            addCriterion("intention is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionIsNotNull() {
+            addCriterion("intention is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionEqualTo(String value) {
+            addCriterion("intention =", value, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionNotEqualTo(String value) {
+            addCriterion("intention <>", value, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionGreaterThan(String value) {
+            addCriterion("intention >", value, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionGreaterThanOrEqualTo(String value) {
+            addCriterion("intention >=", value, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionLessThan(String value) {
+            addCriterion("intention <", value, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionLessThanOrEqualTo(String value) {
+            addCriterion("intention <=", value, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionLike(String value) {
+            addCriterion("intention like", value, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionNotLike(String value) {
+            addCriterion("intention not like", value, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionIn(List<String> values) {
+            addCriterion("intention in", values, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionNotIn(List<String> values) {
+            addCriterion("intention not in", values, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionBetween(String value1, String value2) {
+            addCriterion("intention between", value1, value2, "intention");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionNotBetween(String value1, String value2) {
+            addCriterion("intention not between", value1, value2, "intention");
+            return (Criteria) this;
+        }
+
         public Criteria andFacebookIsNull() {
             addCriterion("facebook is null");
             return (Criteria) this;
@@ -1632,146 +1702,6 @@ public class ConsumerExample {
 
         public Criteria andHasOrderNotBetween(String value1, String value2) {
             addCriterion("has_order not between", value1, value2, "hasOrder");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserIsNull() {
-            addCriterion("belong_user is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserIsNotNull() {
-            addCriterion("belong_user is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserEqualTo(String value) {
-            addCriterion("belong_user =", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserNotEqualTo(String value) {
-            addCriterion("belong_user <>", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserGreaterThan(String value) {
-            addCriterion("belong_user >", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserGreaterThanOrEqualTo(String value) {
-            addCriterion("belong_user >=", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserLessThan(String value) {
-            addCriterion("belong_user <", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserLessThanOrEqualTo(String value) {
-            addCriterion("belong_user <=", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserLike(String value) {
-            addCriterion("belong_user like", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserNotLike(String value) {
-            addCriterion("belong_user not like", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserIn(List<String> values) {
-            addCriterion("belong_user in", values, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserNotIn(List<String> values) {
-            addCriterion("belong_user not in", values, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserBetween(String value1, String value2) {
-            addCriterion("belong_user between", value1, value2, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserNotBetween(String value1, String value2) {
-            addCriterion("belong_user not between", value1, value2, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupIsNull() {
-            addCriterion("belong_group is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupIsNotNull() {
-            addCriterion("belong_group is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupEqualTo(String value) {
-            addCriterion("belong_group =", value, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupNotEqualTo(String value) {
-            addCriterion("belong_group <>", value, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupGreaterThan(String value) {
-            addCriterion("belong_group >", value, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupGreaterThanOrEqualTo(String value) {
-            addCriterion("belong_group >=", value, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupLessThan(String value) {
-            addCriterion("belong_group <", value, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupLessThanOrEqualTo(String value) {
-            addCriterion("belong_group <=", value, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupLike(String value) {
-            addCriterion("belong_group like", value, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupNotLike(String value) {
-            addCriterion("belong_group not like", value, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupIn(List<String> values) {
-            addCriterion("belong_group in", values, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupNotIn(List<String> values) {
-            addCriterion("belong_group not in", values, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupBetween(String value1, String value2) {
-            addCriterion("belong_group between", value1, value2, "belongGroup");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongGroupNotBetween(String value1, String value2) {
-            addCriterion("belong_group not between", value1, value2, "belongGroup");
             return (Criteria) this;
         }
 
