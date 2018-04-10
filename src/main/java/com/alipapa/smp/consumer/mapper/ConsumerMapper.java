@@ -29,7 +29,7 @@ public interface ConsumerMapper {
     int updateByPrimaryKeySelective(Consumer record);
 
     int updateByPrimaryKey(Consumer record);
-
+    
     Long selectMaxId();
 
     List<com.alipapa.smp.consumer.pojo.Consumer> findConsumerByParam(Map<String, Object> params);

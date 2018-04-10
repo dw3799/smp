@@ -15,6 +15,10 @@ public class UserConsumerRelation {
 
     private Integer isDel;
 
+    private Integer hasOrder;
+
+    private Integer dealOrder;
+
     private Date createdTime;
 
     private Date updatedTime;
@@ -65,6 +69,22 @@ public class UserConsumerRelation {
 
     public void setIsDel(Integer isDel) {
         this.isDel = isDel;
+    }
+
+    public Integer getHasOrder() {
+        return hasOrder;
+    }
+
+    public void setHasOrder(Integer hasOrder) {
+        this.hasOrder = hasOrder;
+    }
+
+    public Integer getDealOrder() {
+        return dealOrder;
+    }
+
+    public void setDealOrder(Integer dealOrder) {
+        this.dealOrder = dealOrder;
     }
 
     public Date getCreatedTime() {

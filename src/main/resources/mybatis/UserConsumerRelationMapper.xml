@@ -8,6 +8,8 @@
     <result column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="user_no" jdbcType="VARCHAR" property="userNo" />
     <result column="is_del" jdbcType="INTEGER" property="isDel" />
+    <result column="has_order" jdbcType="INTEGER" property="hasOrder" />
+    <result column="deal_order" jdbcType="INTEGER" property="dealOrder" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
   </resultMap>
@@ -70,7 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, consumer_id, consumer_no, user_id, user_no, is_del, created_time, updated_time
+    id, consumer_id, consumer_no, user_id, user_no, is_del, has_order, deal_order, created_time, 
+    updated_time
   </sql>
   <select id="selectByExample" parameterType="com.alipapa.smp.consumer.pojo.UserConsumerRelationExample" resultMap="BaseResultMap">
     select
@@ -105,10 +108,12 @@
   <insert id="insert" parameterType="com.alipapa.smp.consumer.pojo.UserConsumerRelation">
     insert into user_consumer_relation (id, consumer_id, consumer_no, 
       user_id, user_no, is_del, 
-      created_time, updated_time)
+      has_order, deal_order, created_time, 
+      updated_time)
     values (#{id,jdbcType=BIGINT}, #{consumerId,jdbcType=BIGINT}, #{consumerNo,jdbcType=VARCHAR}, 
       #{userId,jdbcType=BIGINT}, #{userNo,jdbcType=VARCHAR}, #{isDel,jdbcType=INTEGER}, 
-      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+      #{hasOrder,jdbcType=INTEGER}, #{dealOrder,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{updatedTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.alipapa.smp.consumer.pojo.UserConsumerRelation">
     insert into user_consumer_relation
@@ -130,6 +135,12 @@
       </if>
       <if test="isDel != null">
         is_del,
+      </if>
+      <if test="hasOrder != null">
+        has_order,
+      </if>
+      <if test="dealOrder != null">
+        deal_order,
       </if>
       <if test="createdTime != null">
         created_time,
@@ -156,6 +167,12 @@
       </if>
       <if test="isDel != null">
         #{isDel,jdbcType=INTEGER},
+      </if>
+      <if test="hasOrder != null">
+        #{hasOrder,jdbcType=INTEGER},
+      </if>
+      <if test="dealOrder != null">
+        #{dealOrder,jdbcType=INTEGER},
       </if>
       <if test="createdTime != null">
         #{createdTime,jdbcType=TIMESTAMP},
@@ -192,6 +209,12 @@
       <if test="record.isDel != null">
         is_del = #{record.isDel,jdbcType=INTEGER},
       </if>
+      <if test="record.hasOrder != null">
+        has_order = #{record.hasOrder,jdbcType=INTEGER},
+      </if>
+      <if test="record.dealOrder != null">
+        deal_order = #{record.dealOrder,jdbcType=INTEGER},
+      </if>
       <if test="record.createdTime != null">
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
       </if>
@@ -211,6 +234,8 @@
       user_id = #{record.userId,jdbcType=BIGINT},
       user_no = #{record.userNo,jdbcType=VARCHAR},
       is_del = #{record.isDel,jdbcType=INTEGER},
+      has_order = #{record.hasOrder,jdbcType=INTEGER},
+      deal_order = #{record.dealOrder,jdbcType=INTEGER},
       created_time = #{record.createdTime,jdbcType=TIMESTAMP},
       updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
@@ -235,6 +260,12 @@
       <if test="isDel != null">
         is_del = #{isDel,jdbcType=INTEGER},
       </if>
+      <if test="hasOrder != null">
+        has_order = #{hasOrder,jdbcType=INTEGER},
+      </if>
+      <if test="dealOrder != null">
+        deal_order = #{dealOrder,jdbcType=INTEGER},
+      </if>
       <if test="createdTime != null">
         created_time = #{createdTime,jdbcType=TIMESTAMP},
       </if>
@@ -251,6 +282,8 @@
       user_id = #{userId,jdbcType=BIGINT},
       user_no = #{userNo,jdbcType=VARCHAR},
       is_del = #{isDel,jdbcType=INTEGER},
+      has_order = #{hasOrder,jdbcType=INTEGER},
+      deal_order = #{dealOrder,jdbcType=INTEGER},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}

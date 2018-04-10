@@ -3,6 +3,7 @@ package com.alipapa.smp.consumer.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.enums.CategoryCode;
+import com.alipapa.smp.common.enums.ConsumerScope;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.Consumer;
@@ -110,7 +111,7 @@ public class ConsumerController {
      * @return
      */
     @RequestMapping(value = "/isExist", method = RequestMethod.GET)
-    public WebApiResponse<String> isExistConsumer(@RequestParam("name") String name, @RequestParam("email") String email, List<Consumer> consumerList) {
+    public WebApiResponse<String> isExistConsumer(@RequestParam("name") String name, @RequestParam("email") String email) {
         if (StringUtil.isEmptyString(name) || StringUtil.isEmptyString(email)) {
             return error("缺少必填参数");
         }
@@ -119,7 +120,7 @@ public class ConsumerController {
 
         Consumer consumer = consumerService.getConsumerByNameAndEmail(name, email);
         if (consumer != null) {
-            if (CollectionUtils.isEmpty(userConsumerRelationService.listAllRelationByConsumerId(consumer.getId()))) {
+            if (consumer.getScope() == ConsumerScope.Public.getCodeName()) {
                 response.setData("2");
                 response.setError("客户已在资源池中，无须重复创建，请去抢本客户");
             } else {
@@ -131,6 +132,41 @@ public class ConsumerController {
             response.setError("");
         }
         return response;
+    }
+
+
+    /**
+     * 弹出提示框“本客户已其他跟进人，是否继续跟进”，点击【是】，业务主管跳转至【我的客户】界面，业务员角色跳转至【潜在客户】页面；点击【否】，提示框消失，返回至客户创建界面。
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/stillFollowUp", method = RequestMethod.GET)
+    public WebApiResponse<String> stillFollowUp(@RequestParam("name") String name, @RequestParam("email") String email) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        if (StringUtil.isEmptyString(name) || StringUtil.isEmptyString(email)) {
+            return error("缺少必填参数");
+        }
+
+        Consumer consumer = consumerService.getConsumerByNameAndEmail(name, email);
+        if (consumer != null) {
+            if (consumer.getScope() == ConsumerScope.Private.getCodeName() || consumer.getScope() == ConsumerScope.Protected.getCodeName()) {
+                //创建关联关系
+                UserConsumerRelation userConsumerRelation = new UserConsumerRelation();
+                userConsumerRelation.setConsumerId(consumer.getId());
+                userConsumerRelation.setConsumerNo(consumer.getConsumerNo());
+                userConsumerRelation.setUserId(userInfo.getUserId());
+                userConsumerRelation.setUserNo(userInfo.getUserNo());
+                userConsumerRelation.setIsDel(0);
+                userConsumerRelation.setHasOrder(0);
+                userConsumerRelation.setDealOrder(0);
+                userConsumerRelation.setCreatedTime(new Date());
+                userConsumerRelation.setUpdatedTime(new Date());
+                userConsumerRelationService.addUserConsumerRelation(userConsumerRelation);
+            }
+        }
+        return WebApiResponse.success("success");
     }
 
     /**
@@ -189,7 +225,7 @@ public class ConsumerController {
             //判断客户是否已存在
             Consumer preConsumer = consumerService.getConsumerByNameAndEmail(name, email);
             if (preConsumer != null) {
-                if (CollectionUtils.isEmpty(userConsumerRelationService.listAllRelationByConsumerId(preConsumer.getId()))) {
+                if (preConsumer.getScope() == ConsumerScope.Public.getCodeName()) {
                     return WebApiResponse.error("客户已在资源池中，无须重复创建，请去抢本客户");
                 } else {
                     return WebApiResponse.error("若已存在，不在资源池，有人跟进");
@@ -227,6 +263,7 @@ public class ConsumerController {
             consumer.setCreatedTime(new Date());
             consumer.setUpdatedTime(new Date());
             consumer.setCreateUser(userInfo.getUserNo());
+            consumer.setScope(ConsumerScope.Private.getCodeName());
             boolean result = consumerService.addConsumer(consumer);
 
             if (result) {
@@ -238,6 +275,8 @@ public class ConsumerController {
                 userConsumerRelation.setUserId(userInfo.getUserId());
                 userConsumerRelation.setUserNo(userInfo.getUserNo());
                 userConsumerRelation.setIsDel(0);
+                userConsumerRelation.setHasOrder(0);
+                userConsumerRelation.setDealOrder(0);
                 userConsumerRelation.setCreatedTime(new Date());
                 userConsumerRelation.setUpdatedTime(new Date());
                 userConsumerRelationService.addUserConsumerRelation(userConsumerRelation);

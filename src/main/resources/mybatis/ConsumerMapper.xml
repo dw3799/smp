@@ -26,6 +26,7 @@
     <result column="level" jdbcType="VARCHAR" property="level" />
     <result column="has_order" jdbcType="VARCHAR" property="hasOrder" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="scope" jdbcType="VARCHAR" property="scope" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
@@ -91,8 +92,8 @@
   <sql id="Base_Column_List">
     id, consumer_no, name, country, main_business, source, type, email, intention, facebook, 
     whatsapp, linkedin, wechat, qq, contacts, company_address, company_website, consignee, 
-    tel_mobile, postal_code, receiving_address, level, has_order, create_user, remark, 
-    created_time, updated_time
+    tel_mobile, postal_code, receiving_address, level, has_order, create_user, scope, 
+    remark, created_time, updated_time
   </sql>
   <select id="selectByExample" parameterType="com.alipapa.smp.consumer.pojo.ConsumerExample" resultMap="BaseResultMap">
     select
@@ -133,8 +134,8 @@
       company_address, company_website, consignee, 
       tel_mobile, postal_code, receiving_address, 
       level, has_order, create_user, 
-      remark, created_time, updated_time
-      )
+      scope, remark, created_time, 
+      updated_time)
     values (#{id,jdbcType=BIGINT}, #{consumerNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{country,jdbcType=VARCHAR}, #{mainBusiness,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, 
       #{type,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{intention,jdbcType=VARCHAR}, 
@@ -143,8 +144,8 @@
       #{companyAddress,jdbcType=VARCHAR}, #{companyWebsite,jdbcType=VARCHAR}, #{consignee,jdbcType=VARCHAR}, 
       #{telMobile,jdbcType=VARCHAR}, #{postalCode,jdbcType=VARCHAR}, #{receivingAddress,jdbcType=VARCHAR}, 
       #{level,jdbcType=VARCHAR}, #{hasOrder,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
-      )
+      #{scope,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{updatedTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
     insert into consumer
@@ -220,6 +221,9 @@
       </if>
       <if test="createUser != null">
         create_user,
+      </if>
+      <if test="scope != null">
+        scope,
       </if>
       <if test="remark != null">
         remark,
@@ -303,6 +307,9 @@
       </if>
       <if test="createUser != null">
         #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="scope != null">
+        #{scope,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
@@ -396,6 +403,9 @@
       <if test="record.createUser != null">
         create_user = #{record.createUser,jdbcType=VARCHAR},
       </if>
+      <if test="record.scope != null">
+        scope = #{record.scope,jdbcType=VARCHAR},
+      </if>
       <if test="record.remark != null">
         remark = #{record.remark,jdbcType=VARCHAR},
       </if>
@@ -436,6 +446,7 @@
       level = #{record.level,jdbcType=VARCHAR},
       has_order = #{record.hasOrder,jdbcType=VARCHAR},
       create_user = #{record.createUser,jdbcType=VARCHAR},
+      scope = #{record.scope,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       created_time = #{record.createdTime,jdbcType=TIMESTAMP},
       updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
@@ -515,6 +526,9 @@
       <if test="createUser != null">
         create_user = #{createUser,jdbcType=VARCHAR},
       </if>
+      <if test="scope != null">
+        scope = #{scope,jdbcType=VARCHAR},
+      </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
@@ -552,6 +566,7 @@
       level = #{level,jdbcType=VARCHAR},
       has_order = #{hasOrder,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},
+      scope = #{scope,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}

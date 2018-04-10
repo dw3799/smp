@@ -1775,6 +1775,76 @@ public class ConsumerExample {
             return (Criteria) this;
         }
 
+        public Criteria andScopeIsNull() {
+            addCriterion("scope is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeIsNotNull() {
+            addCriterion("scope is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeEqualTo(String value) {
+            addCriterion("scope =", value, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeNotEqualTo(String value) {
+            addCriterion("scope <>", value, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeGreaterThan(String value) {
+            addCriterion("scope >", value, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeGreaterThanOrEqualTo(String value) {
+            addCriterion("scope >=", value, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeLessThan(String value) {
+            addCriterion("scope <", value, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeLessThanOrEqualTo(String value) {
+            addCriterion("scope <=", value, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeLike(String value) {
+            addCriterion("scope like", value, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeNotLike(String value) {
+            addCriterion("scope not like", value, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeIn(List<String> values) {
+            addCriterion("scope in", values, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeNotIn(List<String> values) {
+            addCriterion("scope not in", values, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeBetween(String value1, String value2) {
+            addCriterion("scope between", value1, value2, "scope");
+            return (Criteria) this;
+        }
+
+        public Criteria andScopeNotBetween(String value1, String value2) {
+            addCriterion("scope not between", value1, value2, "scope");
+            return (Criteria) this;
+        }
+
         public Criteria andRemarkIsNull() {
             addCriterion("remark is null");
             return (Criteria) this;

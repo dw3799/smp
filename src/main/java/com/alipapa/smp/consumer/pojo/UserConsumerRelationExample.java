@@ -485,6 +485,126 @@ public class UserConsumerRelationExample {
             return (Criteria) this;
         }
 
+        public Criteria andHasOrderIsNull() {
+            addCriterion("has_order is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderIsNotNull() {
+            addCriterion("has_order is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderEqualTo(Integer value) {
+            addCriterion("has_order =", value, "hasOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderNotEqualTo(Integer value) {
+            addCriterion("has_order <>", value, "hasOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderGreaterThan(Integer value) {
+            addCriterion("has_order >", value, "hasOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderGreaterThanOrEqualTo(Integer value) {
+            addCriterion("has_order >=", value, "hasOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderLessThan(Integer value) {
+            addCriterion("has_order <", value, "hasOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderLessThanOrEqualTo(Integer value) {
+            addCriterion("has_order <=", value, "hasOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderIn(List<Integer> values) {
+            addCriterion("has_order in", values, "hasOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderNotIn(List<Integer> values) {
+            addCriterion("has_order not in", values, "hasOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderBetween(Integer value1, Integer value2) {
+            addCriterion("has_order between", value1, value2, "hasOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasOrderNotBetween(Integer value1, Integer value2) {
+            addCriterion("has_order not between", value1, value2, "hasOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderIsNull() {
+            addCriterion("deal_order is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderIsNotNull() {
+            addCriterion("deal_order is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderEqualTo(Integer value) {
+            addCriterion("deal_order =", value, "dealOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderNotEqualTo(Integer value) {
+            addCriterion("deal_order <>", value, "dealOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderGreaterThan(Integer value) {
+            addCriterion("deal_order >", value, "dealOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderGreaterThanOrEqualTo(Integer value) {
+            addCriterion("deal_order >=", value, "dealOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderLessThan(Integer value) {
+            addCriterion("deal_order <", value, "dealOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderLessThanOrEqualTo(Integer value) {
+            addCriterion("deal_order <=", value, "dealOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderIn(List<Integer> values) {
+            addCriterion("deal_order in", values, "dealOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderNotIn(List<Integer> values) {
+            addCriterion("deal_order not in", values, "dealOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderBetween(Integer value1, Integer value2) {
+            addCriterion("deal_order between", value1, value2, "dealOrder");
+            return (Criteria) this;
+        }
+
+        public Criteria andDealOrderNotBetween(Integer value1, Integer value2) {
+            addCriterion("deal_order not between", value1, value2, "dealOrder");
+            return (Criteria) this;
+        }
+
         public Criteria andCreatedTimeIsNull() {
             addCriterion("created_time is null");
             return (Criteria) this;

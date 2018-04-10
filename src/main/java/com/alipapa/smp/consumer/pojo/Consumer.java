@@ -51,6 +51,8 @@ public class Consumer {
 
     private String createUser;
 
+    private String scope;
+
     private String remark;
 
     private Date createdTime;
@@ -247,6 +249,14 @@ public class Consumer {
 
     public void setCreateUser(String createUser) {
         this.createUser = createUser == null ? null : createUser.trim();
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope == null ? null : scope.trim();
     }
 
     public String getRemark() {
