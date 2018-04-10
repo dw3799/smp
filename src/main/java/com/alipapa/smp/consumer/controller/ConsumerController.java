@@ -163,6 +163,11 @@ public class ConsumerController {
             userConsumerRelation.setCreatedTime(new Date());
             userConsumerRelation.setUpdatedTime(new Date());
             userConsumerRelationService.addUserConsumerRelation(userConsumerRelation);
+
+            if (consumer.getScope() == ConsumerScope.Private.getCodeName()) {
+                consumer.setScope(ConsumerScope.Protected.getCodeName());
+                consumerService.updateConsumer(consumer);
+            }
             return WebApiResponse.success("success");
         }
         return null;
