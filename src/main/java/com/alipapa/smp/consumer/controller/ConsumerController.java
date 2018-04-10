@@ -150,23 +150,22 @@ public class ConsumerController {
         }
 
         Consumer consumer = consumerService.getConsumerByNameAndEmail(name, email);
-        if (consumer != null) {
-            if (consumer.getScope() == ConsumerScope.Private.getCodeName() || consumer.getScope() == ConsumerScope.Protected.getCodeName()) {
-                //创建关联关系
-                UserConsumerRelation userConsumerRelation = new UserConsumerRelation();
-                userConsumerRelation.setConsumerId(consumer.getId());
-                userConsumerRelation.setConsumerNo(consumer.getConsumerNo());
-                userConsumerRelation.setUserId(userInfo.getUserId());
-                userConsumerRelation.setUserNo(userInfo.getUserNo());
-                userConsumerRelation.setIsDel(0);
-                userConsumerRelation.setHasOrder(0);
-                userConsumerRelation.setDealOrder(0);
-                userConsumerRelation.setCreatedTime(new Date());
-                userConsumerRelation.setUpdatedTime(new Date());
-                userConsumerRelationService.addUserConsumerRelation(userConsumerRelation);
-            }
+        if (consumer != null && (consumer.getScope() == ConsumerScope.Private.getCodeName() || consumer.getScope() == ConsumerScope.Protected.getCodeName())) {
+            //创建关联关系
+            UserConsumerRelation userConsumerRelation = new UserConsumerRelation();
+            userConsumerRelation.setConsumerId(consumer.getId());
+            userConsumerRelation.setConsumerNo(consumer.getConsumerNo());
+            userConsumerRelation.setUserId(userInfo.getUserId());
+            userConsumerRelation.setUserNo(userInfo.getUserNo());
+            userConsumerRelation.setIsDel(0);
+            userConsumerRelation.setHasOrder(0);
+            userConsumerRelation.setDealOrder(0);
+            userConsumerRelation.setCreatedTime(new Date());
+            userConsumerRelation.setUpdatedTime(new Date());
+            userConsumerRelationService.addUserConsumerRelation(userConsumerRelation);
+            return WebApiResponse.success("success");
         }
-        return WebApiResponse.success("success");
+        return null;
     }
 
     /**
