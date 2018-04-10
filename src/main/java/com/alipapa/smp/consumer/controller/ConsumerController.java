@@ -167,10 +167,10 @@ public class ConsumerController {
             if (consumer.getScope() == ConsumerScope.Private.getCodeName()) {
                 consumer.setScope(ConsumerScope.Protected.getCodeName());
                 consumerService.updateConsumer(consumer);
+                return WebApiResponse.success("1");
             }
-            return WebApiResponse.success("success");
         }
-        return null;
+        return WebApiResponse.success("2");
     }
 
     /**
