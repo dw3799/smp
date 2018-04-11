@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @SpringBootApplication
 @ImportResource("classpath*:spring/*.xml")
 @EnableTransactionManagement
+@EnableScheduling //允许支持schedule定时任务
 public class SmpFrontierApplication extends WebMvcConfigurationSupport {
 
     private static Logger logger = LoggerFactory.getLogger(SmpFrontierApplication.class);
