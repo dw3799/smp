@@ -46,6 +46,7 @@ public class PermissionController {
         UserInfo userInfo = UserStatus.getUserInfo();
         Long roleId = userInfo.getRoleId();
 
+/*
         //管理员返回全部权限
         if ("admin".equals(userInfo.getRoleName())) {
             List<PermissionItem> permissionItemList = permissionService.listMainPermissionItem();
@@ -76,8 +77,7 @@ public class PermissionController {
             }
             return WebApiResponse.success(permissionItemVoList);
         }
-
-
+*/
         //其他的查看权限树
         List<RolePermission> rolePermissionList = permissionService.listRolePermissionByRoleId(roleId);
         if (!CollectionUtils.isEmpty(rolePermissionList)) {

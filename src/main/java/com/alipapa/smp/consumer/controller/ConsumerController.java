@@ -148,9 +148,19 @@ public class ConsumerController {
         if (StringUtil.isEmptyString(name) || StringUtil.isEmptyString(email)) {
             return error("缺少必填参数");
         }
-
+        
         Consumer consumer = consumerService.getConsumerByNameAndEmail(name, email);
         if (consumer != null && (consumer.getScope() == ConsumerScope.Private.getCodeName() || consumer.getScope() == ConsumerScope.Protected.getCodeName())) {
+            //2:抛弃规则判断
+            if (!sysDictService.checkDiscardingRules(userInfo, consumer.getId())) {
+                return error("根据抛弃规则，暂时无法跟进！");
+            }
+
+            //3:抛弃规则判断
+            if (!sysDictService.checkReclaimRules(userInfo, consumer.getId())) {
+                return error("根据回收规则，暂时无法跟进！");
+            }
+
             //创建关联关系
             UserConsumerRelation userConsumerRelation = new UserConsumerRelation();
             userConsumerRelation.setConsumerId(consumer.getId());
@@ -226,7 +236,7 @@ public class ConsumerController {
                 return error("缺少必填参数");
             }
 
-            //判断客户是否已存在
+            //1：判断客户是否已存在
             Consumer preConsumer = consumerService.getConsumerByNameAndEmail(name, email);
             if (preConsumer != null) {
                 if (preConsumer.getScope() == ConsumerScope.Public.getCodeName()) {

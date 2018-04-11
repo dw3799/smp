@@ -4,7 +4,6 @@ package com.alipapa.smp.common.enums;
  * 活动类型
  */
 public enum CategoryCode {
-
     Source(1, "ConsumerSource", "客户来源"),
 
     Type(2, "ConsumerType", "客户类型"),
@@ -15,8 +14,12 @@ public enum CategoryCode {
 
     order(5, "ConsumerOrder", "是否有订单"),
 
-    intention(6, "ConsumerIntention", "客户意向");
-    
+    intention(6, "ConsumerIntention", "客户意向"),
+
+    reclaim_rules(7, "ConsumerReclaimRules", "客户回收规则"),
+
+    discarding_rules(8, "ConsumerDiscardingRules", "客户抛弃规则");
+
     CategoryCode(int code, String codeName, String dec) {
         this.code = code;
         this.codeName = codeName;

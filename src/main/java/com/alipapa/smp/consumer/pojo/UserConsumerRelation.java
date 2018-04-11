@@ -13,7 +13,7 @@ public class UserConsumerRelation {
 
     private String userNo;
 
-    private Integer isDel;
+    private Integer isDel;// 0正常，1y已回收  2已抛弃
 
     private Integer hasOrder;
 
