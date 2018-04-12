@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.enums.CategoryCode;
 import com.alipapa.smp.common.enums.ConsumerScopeEnum;
+import com.alipapa.smp.common.enums.ConsumerSearchTypeEnum;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.Consumer;
@@ -14,6 +15,7 @@ import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.consumer.service.UserConsumerRelationService;
 import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
 import com.alipapa.smp.consumer.vo.ConsumerVo;
+import com.alipapa.smp.consumer.vo.SalerConsumerDetailVo;
 import com.alipapa.smp.consumer.vo.SysDictVo;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.DateUtil;
@@ -524,6 +526,97 @@ public class ConsumerController {
 
 
     /**
+     * 业务员，潜在客户/成交客户查询
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listSalerConsumer", method = RequestMethod.GET)
+    public WebApiResponse<List<SalerConsumerDetailVo>> listPotentialOrDealConsumer(@RequestBody String jsonStr) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        Integer pageSize = null;
+        Integer pageNum = null;
+        Map<String, Object> params = new HashMap<>();
+
+
+        if (jsonStr != null) {
+            JSONObject json = JSON.parseObject(jsonStr);
+            if (json == null) {
+                logger.error("客户提交的数据解析失败: " + jsonStr);
+                return error("客户数据解析失败");
+            }
+            //用户ID
+            params.put("userId", userInfo.getUserId());
+
+            Long searchType = json.getLong("searchType");
+
+            if (searchType == null) {
+                return WebApiResponse.error("查询类型不能为空！");
+            }
+
+            if (ConsumerSearchTypeEnum.Potential.getCode() == searchType) {
+                params.put("dealOrder", 0);
+            } else if (ConsumerSearchTypeEnum.Deal.getCode() == searchType) {
+                params.put("dealOrder", 1);
+            } else {
+                return WebApiResponse.error("查询参数异常");
+            }
+
+            pageSize = json.getInteger("pageSize");
+            pageNum = json.getInteger("pageNum");
+
+            //客户编号
+            String consumerNo = json.getString("consumerNo");
+            if (!StringUtil.isEmptyString(consumerNo)) {
+                params.put("consumerNo", consumerNo);
+            }
+
+            //客户姓名
+            String name = json.getString("name");
+            if (!StringUtil.isEmptyString(name)) {
+                params.put("name", name);
+            }
+
+            //客户国籍
+            String country = json.getString("country");
+            if (!StringUtil.isEmptyString(country)) {
+                params.put("country", country);
+            }
+
+            //客户等级
+            String level = json.getString("level");
+            if (!StringUtil.isEmptyString(level)) {
+                params.put("level", level);
+            }
+
+            //是否有订单
+            String hasOrder = json.getString("hasOrder");
+            if (!StringUtil.isEmptyString(hasOrder)) {
+                params.put("hasOrder", hasOrder);
+            }
+        }
+
+        if (pageSize == null) {
+            pageSize = 1;
+        }
+        if (pageNum == null) {
+            pageNum = 30;
+        }
+
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        List<SalerConsumerDetailVo> consumerDetailVoList = consumerService.listSalerConsumerDetailVoByParams(params, start, size);
+        if (CollectionUtils.isEmpty(consumerDetailVoList)) {
+            return WebApiResponse.success(new ArrayList<>());
+        }
+        return WebApiResponse.success(consumerDetailVoList);
+    }
+
+
+    /**
      * 客户信息查询，注意用户权限
      *
      * @param
@@ -547,50 +640,35 @@ public class ConsumerController {
             pageSize = json.getInteger("pageSize");
             pageNum = json.getInteger("pageNum");
 
-            String source = json.getString("source");
-            if (!StringUtil.isEmptyString(source)) {
-                params.put("source", source);
-            }
 
-            String type = json.getString("type");
-            if (!StringUtil.isEmptyString(type)) {
-                params.put("type", type);
-            }
-
-            String country = json.getString("country");
-            if (!StringUtil.isEmptyString(country)) {
-                params.put("country", country);
-            }
-
-            String level = json.getString("level");
-            if (!StringUtil.isEmptyString(level)) {
-                params.put("level", level);
-            }
-
-            String name = json.getString("name");
-            if (!StringUtil.isEmptyString(name)) {
-                params.put("name", name);
-            }
-
+            //客户编号
             String consumerNo = json.getString("consumerNo");
             if (!StringUtil.isEmptyString(consumerNo)) {
                 params.put("consumerNo", consumerNo);
             }
 
+            //客户姓名
+            String name = json.getString("name");
+            if (!StringUtil.isEmptyString(name)) {
+                params.put("name", name);
+            }
 
+            //客户国籍
+            String country = json.getString("country");
+            if (!StringUtil.isEmptyString(country)) {
+                params.put("country", country);
+            }
+
+            //客户等级
+            String level = json.getString("level");
+            if (!StringUtil.isEmptyString(level)) {
+                params.put("level", level);
+            }
+
+            //是否有订单
             String hasOrder = json.getString("hasOrder");
             if (!StringUtil.isEmptyString(hasOrder)) {
                 params.put("hasOrder", hasOrder);
-            }
-
-            Long groupId = json.getLong("groupId");
-            if (groupId != null) {
-                params.put("groupId", groupId);
-            }
-
-            Long salerId = json.getLong("salerId");
-            if (salerId != null) {
-                params.put("salerId", salerId);
             }
 
             String startTime = json.getString("startTime");
@@ -602,6 +680,29 @@ public class ConsumerController {
             if (!StringUtil.isEmptyString(endTime)) {
                 params.put("endTime", DateUtil.formatFromString(endTime, DateUtil.FormatString));
             }
+
+
+            String source = json.getString("source");
+            if (!StringUtil.isEmptyString(source)) {
+                params.put("source", source);
+            }
+
+            String type = json.getString("type");
+            if (!StringUtil.isEmptyString(type)) {
+                params.put("type", type);
+            }
+
+
+            Long groupId = json.getLong("groupId");
+            if (groupId != null) {
+                params.put("groupId", groupId);
+            }
+
+            Long salerId = json.getLong("salerId");
+            if (salerId != null) {
+                params.put("salerId", salerId);
+            }
+
         }
 
         if (pageSize == null) {

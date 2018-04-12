@@ -4,6 +4,7 @@ import com.alipapa.smp.consumer.mapper.ConsumerMapper;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.ConsumerExample;
 import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
+import com.alipapa.smp.consumer.vo.SalerConsumerDetailVo;
 import com.alipapa.smp.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,6 +89,45 @@ public class ConsumerService {
 
 
     /**
+     * 潜在客户/存量客户查询
+     *
+     * @return
+     */
+    public List<SalerConsumerDetailVo> listSalerConsumerDetailVoByParams(Map<String, Object> params, Integer start, Integer size) {
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        Long count = consumerMapper.findSalerConsumerByParamCount(params);
+
+        List<SalerConsumerDetailVo> consumerDetailVoList = new ArrayList<>();
+        if (count != null && count > 0) {
+            params.put("start", start);
+            params.put("size", size);
+            List<Consumer> consumerList = consumerMapper.findSalerConsumerByParam(params);
+            if (!CollectionUtils.isEmpty(consumerList)) {
+                for (Consumer consumer : consumerList) {
+                    SalerConsumerDetailVo consumerDetailVo = new SalerConsumerDetailVo();
+                    consumerDetailVo.setConsumerNo(consumer.getConsumerNo());
+                    consumerDetailVo.setName(consumer.getName());
+
+                    consumerDetailVo.setCountry(consumer.getCountry());
+                    consumerDetailVo.setHasOrder(consumer.getHasOrder());
+                    consumerDetailVo.setLevel(consumer.getLevel());
+
+                    //TODO from订单管理
+                    consumerDetailVo.setTotalOrder(null);
+                    consumerDetailVo.setOrderAmount(null);
+
+                    consumerDetailVo.setTotalCount(count);
+                    consumerDetailVoList.add(consumerDetailVo);
+                }
+            }
+        }
+        return consumerDetailVoList;
+    }
+
+
+    /**
      * 客户查询
      *
      * @return
@@ -107,10 +147,11 @@ public class ConsumerService {
                 for (Consumer consumer : consumerList) {
                     ConsumerDetailVo consumerDetailVo = new ConsumerDetailVo();
                     consumerDetailVo.setConsumerNo(consumer.getConsumerNo());
+                    consumerDetailVo.setName(consumer.getName());
+
                     consumerDetailVo.setCountry(consumer.getCountry());
                     consumerDetailVo.setHasOrder(consumer.getHasOrder());
                     consumerDetailVo.setMainBusiness(consumer.getMainBusiness());
-                    consumerDetailVo.setName(consumer.getName());
                     consumerDetailVo.setSource(consumer.getSource());
                     consumerDetailVo.setType(consumer.getType());
 
