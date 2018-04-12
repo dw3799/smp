@@ -3,7 +3,7 @@ package com.alipapa.smp.consumer.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.enums.CategoryCode;
-import com.alipapa.smp.common.enums.ConsumerScope;
+import com.alipapa.smp.common.enums.ConsumerScopeEnum;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.Consumer;
@@ -15,7 +15,6 @@ import com.alipapa.smp.consumer.service.UserConsumerRelationService;
 import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
 import com.alipapa.smp.consumer.vo.ConsumerVo;
 import com.alipapa.smp.consumer.vo.SysDictVo;
-import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.StringUtil;
@@ -120,7 +119,7 @@ public class ConsumerController {
 
         Consumer consumer = consumerService.getConsumerByNameAndEmail(name, email);
         if (consumer != null) {
-            if (consumer.getScope() == ConsumerScope.Public.getCodeName()) {
+            if (consumer.getScope() == ConsumerScopeEnum.Public.getCodeName()) {
                 response.setData("2");
                 response.setError("客户已在资源池中，无须重复创建，请去抢本客户");
             } else {
@@ -148,9 +147,9 @@ public class ConsumerController {
         if (StringUtil.isEmptyString(name) || StringUtil.isEmptyString(email)) {
             return error("缺少必填参数");
         }
-        
+
         Consumer consumer = consumerService.getConsumerByNameAndEmail(name, email);
-        if (consumer != null && (consumer.getScope() == ConsumerScope.Private.getCodeName() || consumer.getScope() == ConsumerScope.Protected.getCodeName())) {
+        if (consumer != null && (consumer.getScope() == ConsumerScopeEnum.Private.getCodeName() || consumer.getScope() == ConsumerScopeEnum.Protected.getCodeName())) {
             //2:抛弃规则判断
             if (!sysDictService.checkDiscardingRules(userInfo, consumer.getId())) {
                 return error("根据抛弃规则，暂时无法跟进！");
@@ -174,8 +173,8 @@ public class ConsumerController {
             userConsumerRelation.setUpdatedTime(new Date());
             userConsumerRelationService.addUserConsumerRelation(userConsumerRelation);
 
-            if (consumer.getScope() == ConsumerScope.Private.getCodeName()) {
-                consumer.setScope(ConsumerScope.Protected.getCodeName());
+            if (consumer.getScope() == ConsumerScopeEnum.Private.getCodeName()) {
+                consumer.setScope(ConsumerScopeEnum.Protected.getCodeName());
                 consumerService.updateConsumer(consumer);
                 return WebApiResponse.success("1");
             }
@@ -239,7 +238,7 @@ public class ConsumerController {
             //1：判断客户是否已存在
             Consumer preConsumer = consumerService.getConsumerByNameAndEmail(name, email);
             if (preConsumer != null) {
-                if (preConsumer.getScope() == ConsumerScope.Public.getCodeName()) {
+                if (preConsumer.getScope() == ConsumerScopeEnum.Public.getCodeName()) {
                     return WebApiResponse.error("客户已在资源池中，无须重复创建，请去抢本客户");
                 } else {
                     return WebApiResponse.error("若已存在，不在资源池，有人跟进");
@@ -277,7 +276,7 @@ public class ConsumerController {
             consumer.setCreatedTime(new Date());
             consumer.setUpdatedTime(new Date());
             consumer.setCreateUser(userInfo.getUserNo());
-            consumer.setScope(ConsumerScope.Private.getCodeName());
+            consumer.setScope(ConsumerScopeEnum.Private.getCodeName());
             boolean result = consumerService.addConsumer(consumer);
 
             if (result) {
@@ -310,6 +309,8 @@ public class ConsumerController {
      */
     @RequestMapping(value = "/consumerDetail/{consumerId}", method = RequestMethod.GET)
     public WebApiResponse<ConsumerVo> consumerSelect(@PathVariable("consumerId") Long consumerId) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
         if (consumerId == null) {
             return WebApiResponse.error("consumerId不能为空！");
         }
@@ -341,6 +342,13 @@ public class ConsumerController {
         consumerVo.setUpdatedTime(DateUtil.formatToStrTime(consumer.getUpdatedTime()));
         consumerVo.setWechat(consumer.getWechat());
         consumerVo.setWhatsapp(consumer.getWhatsapp());
+        consumerVo.setIntention(consumer.getIntention());
+
+        if ("admin".equals(userInfo.getRoleName())) {
+            consumerVo.setIsCanEdit(1);
+        } else {
+            consumerVo.setIsCanEdit(0);
+        }
         return WebApiResponse.success(consumerVo);
     }
 

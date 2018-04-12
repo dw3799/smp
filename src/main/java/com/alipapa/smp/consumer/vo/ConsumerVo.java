@@ -17,6 +17,8 @@ public class ConsumerVo {
 
     private String email;
 
+    private String intention;
+
     private String facebook;
 
     private String whatsapp;
@@ -43,9 +45,28 @@ public class ConsumerVo {
 
     private String level;
 
+    private Integer isCanEdit;
+
     private String createdTime;
 
     private String updatedTime;//yyyy-mm-dd hh:mm:ss格式字符串
+
+
+    public String getIntention() {
+        return intention;
+    }
+
+    public void setIntention(String intention) {
+        this.intention = intention;
+    }
+
+    public Integer getIsCanEdit() {
+        return isCanEdit;
+    }
+
+    public void setIsCanEdit(Integer isCanEdit) {
+        this.isCanEdit = isCanEdit;
+    }
 
     public Long getId() {
         return id;
