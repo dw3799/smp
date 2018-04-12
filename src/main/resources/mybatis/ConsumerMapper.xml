@@ -636,4 +636,58 @@
     <include refid="queryConsumerSql"/>
     ) T
   </select>
+
+
+
+
+
+
+
+
+  <select id="findSalerConsumerByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+    <include refid="querySalerConsumerSql"/>
+    <trim prefix="limit" prefixOverrides=",">
+      <if test="start != null and start != ''">
+        #{start}
+      </if>
+      <if test="size != null and size != ''">
+        , #{size}
+      </if>
+    </trim>
+  </select>
+
+  <sql id="querySalerConsumerSql">
+    select cu.*
+    from consumer cu   LEFT JOIN  user_consumer_relation  ur  on ur.consumer_id=cu.id
+    where 1=1 AND  ur.is_del=0
+    <if test="country != null and country != ''">
+      and cu.country = #{country}
+    </if>
+    <if test="level != null and level != ''">
+      and cu.level = #{level}
+    </if>
+    <if test="name != null and name != ''">
+      and cu.name LIKE like CONCAT('%',#{name},'%')
+    </if>
+    <if test="consumerNo != null and consumerNo != ''">
+      and cu.consumer_no LIKE CONCAT('%',#{consumerNo},'%')
+    </if>
+    <if test="hasOrder != null and hasOrder != ''">
+      and cu.hasOrder = #{hasOrder}
+    </if>
+    <if test="userId != null">
+      and ur.user_id = #{userId}
+    </if>
+    <if test="dealOrder != null">
+      and ur.deal_order = #{dealOrder}
+    </if>
+    ORDER BY ur.updated_time DESC
+  </sql>
+
+  <select id="findSalerConsumerByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+    select count(*) from (
+    <include refid="queryConsumerSql"/>
+    ) T
+  </select>
+
 </mapper>
