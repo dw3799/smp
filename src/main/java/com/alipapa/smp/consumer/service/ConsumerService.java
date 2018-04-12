@@ -42,7 +42,7 @@ public class ConsumerService {
      * @return
      */
     public boolean updateConsumer(Consumer consumer) {
-        consumerMapper.updateByPrimaryKey(consumer);
+        consumerMapper.updateByPrimaryKeySelective(consumer);
         return true;
     }
 

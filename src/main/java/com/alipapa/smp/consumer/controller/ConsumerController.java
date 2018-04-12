@@ -361,7 +361,7 @@ public class ConsumerController {
      */
     @RequestMapping(value = "/updateConsumer", method = RequestMethod.POST)
     public WebApiResponse<String> updateConsumer(@RequestBody String jsonStr) {
-        //UserInfo userInfo = UserStatus.getUserInfo();
+        UserInfo userInfo = UserStatus.getUserInfo();
 
         if (jsonStr == null) {
             logger.error("提交的json格式数据不可以为空!");
@@ -387,12 +387,17 @@ public class ConsumerController {
                 return error("客户不存在");
             }
 
+            if (!consumer.getConsumerNo().equals(consumerNo)) {
+                return error("客户不存在");
+            }
+
             String name = json.getString("name");
             String country = json.getString("country");
             String mainBusiness = json.getString("mainBusiness");
             String source = json.getString("source");
             String type = json.getString("type");
             String email = json.getString("email");
+            String intention = json.getString("intention");
 
             //可为空
             String facebook = json.getString("facebook");
@@ -410,10 +415,76 @@ public class ConsumerController {
             String postalCode = json.getString("postalCode");
             String receivingAddress = json.getString("receivingAddress");
 
+            //客户更新参数校验
+            if ("admin".equals(userInfo.getRoleName())) {//管理员可编辑
+                if (StringUtil.isEmptyString(name) || StringUtil.isEmptyString(country) || StringUtil.isEmptyString(mainBusiness) || StringUtil.isEmptyString(source)
+                        || StringUtil.isEmptyString(type) || StringUtil.isEmptyString(email)) {
+                    return error("缺少必填参数");
+                }
+            } else {//其他人员只能补充
+                if (StringUtil.isNotEmptyString(name) && StringUtil.isNotEmptyString(consumer.getName()) && !name.equals(consumer.getName())) {
+                    return error("无权限修改客户信息:" + name);
+                }
+                if (StringUtil.isNotEmptyString(country) && StringUtil.isNotEmptyString(consumer.getCountry()) && !country.equals(consumer.getCountry())) {
+                    return error("无权限修改客户信息:" + country);
+                }
+                if (StringUtil.isNotEmptyString(mainBusiness) && StringUtil.isNotEmptyString(consumer.getMainBusiness()) && !mainBusiness.equals(consumer.getMainBusiness())) {
+                    return error("无权限修改客户信息:" + mainBusiness);
+                }
+                if (StringUtil.isNotEmptyString(email) && StringUtil.isNotEmptyString(consumer.getEmail()) && !email.equals(consumer.getEmail())) {
+                    return error("无权限修改客户信息:" + email);
+                }
+                if (StringUtil.isNotEmptyString(intention) && StringUtil.isNotEmptyString(consumer.getIntention()) && !intention.equals(consumer.getIntention())) {
+                    return error("无权限修改客户信息:" + intention);
+                }
 
-            if (StringUtil.isEmptyString(name) || StringUtil.isEmptyString(country) || StringUtil.isEmptyString(mainBusiness) || StringUtil.isEmptyString(source)
-                    || StringUtil.isEmptyString(type) || StringUtil.isEmptyString(email)) {
-                return error("缺少必填参数");
+                if (StringUtil.isNotEmptyString(facebook) && StringUtil.isNotEmptyString(consumer.getFacebook()) && !facebook.equals(consumer.getFacebook())) {
+                    return error("无权限修改客户信息:" + facebook);
+                }
+
+                if (StringUtil.isNotEmptyString(whatsapp) && StringUtil.isNotEmptyString(consumer.getWhatsapp()) && !whatsapp.equals(consumer.getWhatsapp())) {
+                    return error("无权限修改客户信息:" + whatsapp);
+                }
+
+                if (StringUtil.isNotEmptyString(whatsapp) && StringUtil.isNotEmptyString(consumer.getWhatsapp()) && !whatsapp.equals(consumer.getWhatsapp())) {
+                    return error("无权限修改客户信息:" + whatsapp);
+                }
+
+                if (StringUtil.isNotEmptyString(linkedin) && StringUtil.isNotEmptyString(consumer.getLinkedin()) && !linkedin.equals(consumer.getLinkedin())) {
+                    return error("无权限修改客户信息:" + linkedin);
+                }
+
+                if (StringUtil.isNotEmptyString(wechat) && StringUtil.isNotEmptyString(consumer.getWechat()) && !wechat.equals(consumer.getWechat())) {
+                    return error("无权限修改客户信息:" + wechat);
+                }
+
+                if (StringUtil.isNotEmptyString(qq) && StringUtil.isNotEmptyString(consumer.getQq()) && !qq.equals(consumer.getQq())) {
+                    return error("无权限修改客户信息:" + qq);
+                }
+
+                if (StringUtil.isNotEmptyString(companyAddress) && StringUtil.isNotEmptyString(consumer.getCompanyAddress()) && !companyAddress.equals(consumer.getCompanyAddress())) {
+                    return error("无权限修改客户信息:" + companyAddress);
+                }
+
+                if (StringUtil.isNotEmptyString(companyWebsite) && StringUtil.isNotEmptyString(consumer.getCompanyWebsite()) && !companyWebsite.equals(consumer.getCompanyWebsite())) {
+                    return error("无权限修改客户信息:" + companyWebsite);
+                }
+
+                if (StringUtil.isNotEmptyString(consignee) && StringUtil.isNotEmptyString(consumer.getConsignee()) && !consignee.equals(consumer.getConsignee())) {
+                    return error("无权限修改客户信息:" + consignee);
+                }
+
+                if (StringUtil.isNotEmptyString(telMobile) && StringUtil.isNotEmptyString(consumer.getTelMobile()) && !telMobile.equals(consumer.getTelMobile())) {
+                    return error("无权限修改客户信息:" + telMobile);
+                }
+
+                if (StringUtil.isNotEmptyString(postalCode) && StringUtil.isNotEmptyString(consumer.getPostalCode()) && !postalCode.equals(consumer.getPostalCode())) {
+                    return error("无权限修改客户信息:" + postalCode);
+                }
+
+                if (StringUtil.isNotEmptyString(receivingAddress) && StringUtil.isNotEmptyString(consumer.getReceivingAddress()) && !receivingAddress.equals(consumer.getReceivingAddress())) {
+                    return error("无权限修改客户信息:" + receivingAddress);
+                }
             }
 
             consumer.setConsumerNo(consumerNo);

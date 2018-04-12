@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- *
  * @Author liuwei
  */
 public class StringUtil implements Serializable {
@@ -91,6 +90,16 @@ public class StringUtil implements Serializable {
     public static boolean isEmptyString(String str) {
         return str == null ? true : str.trim().equals("") ? true : false;
     }
+
+    /**
+     * 判断传入的字符串是否为空串
+     *
+     * @return
+     */
+    public static boolean isNotEmptyString(String str) {
+        return !StringUtil.isEmptyString(str);
+    }
+
 
     /**
      * 替换模板中的变量。变量的标识符为${}。
@@ -405,7 +414,6 @@ public class StringUtil implements Serializable {
 
     /**
      * 把字节数组保存为一个文件
-     *
      */
     public static File getFileFromBytes(byte[] b, String outputFile) throws Exception {
         BufferedOutputStream stream = null;
@@ -654,7 +662,6 @@ public class StringUtil implements Serializable {
             return true;
         }
     }
-
 
 
     /**
