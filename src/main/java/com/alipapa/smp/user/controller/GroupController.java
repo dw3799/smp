@@ -7,6 +7,7 @@ import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserRoleService;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.user.vo.FuzzyUserVo;
+import com.alipapa.smp.user.vo.GroupSelectVo;
 import com.alipapa.smp.user.vo.GroupVo;
 import com.alipapa.smp.user.vo.GroupWithUserVo;
 import com.alipapa.smp.utils.WebApiResponse;
@@ -120,12 +121,14 @@ public class GroupController {
                 User member = userService.getUserById(Long.valueOf(userId));
                 member.setGroupId(savedGroup.getId());
                 member.setGroupNo(savedGroup.getGroupNo());
+                member.setIsLeader(0);
                 userService.updateUser(member);
             }
         }
 
         leader.setGroupId(savedGroup.getId());
         leader.setGroupNo(savedGroup.getGroupNo());
+        leader.setIsLeader(1);
         userService.updateUser(leader);
 
         return WebApiResponse.success("success");
@@ -172,6 +175,7 @@ public class GroupController {
 
         leader.setGroupId(group.getId());
         leader.setGroupNo(group.getGroupNo());
+        leader.setIsLeader(1);
 
         if (StringUtils.isNotBlank(members)) {
             String[] userIds = members.split(";");
@@ -179,6 +183,7 @@ public class GroupController {
                 User member = userService.getUserById(Long.valueOf(userId));
                 member.setGroupId(group.getId());
                 member.setGroupNo(group.getGroupNo());
+                member.setIsLeader(0);
                 userService.updateUser(member);
             }
         }
@@ -276,7 +281,7 @@ public class GroupController {
 
 
     /**
-     * 主管下拉列表
+     * 组查询，主管下拉列表
      *
      * @param
      * @return
@@ -299,6 +304,18 @@ public class GroupController {
             }
         }
         return WebApiResponse.success(fuzzyUserVoList);
+    }
+
+
+    /**
+     * 组查询-组列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/groupSelect", method = RequestMethod.GET)
+    public WebApiResponse<List<GroupSelectVo>> groupSelect() {
+        return WebApiResponse.success(groupService.listAllGroupSelect());
     }
 
 

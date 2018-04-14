@@ -25,6 +25,8 @@ public class User {
 
     private Date updatedTime;
 
+    private Integer isLeader;
+
     public Long getId() {
         return id;
     }
@@ -111,5 +113,13 @@ public class User {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public Integer getIsLeader() {
+        return isLeader;
+    }
+
+    public void setIsLeader(Integer isLeader) {
+        this.isLeader = isLeader;
     }
 }

@@ -2034,6 +2034,66 @@ public class ConsumerExample {
             addCriterion("updated_time not between", value1, value2, "updatedTime");
             return (Criteria) this;
         }
+
+        public Criteria andIntentionQuantityIsNull() {
+            addCriterion("intention_quantity is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityIsNotNull() {
+            addCriterion("intention_quantity is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityEqualTo(Long value) {
+            addCriterion("intention_quantity =", value, "intentionQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityNotEqualTo(Long value) {
+            addCriterion("intention_quantity <>", value, "intentionQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityGreaterThan(Long value) {
+            addCriterion("intention_quantity >", value, "intentionQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityGreaterThanOrEqualTo(Long value) {
+            addCriterion("intention_quantity >=", value, "intentionQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityLessThan(Long value) {
+            addCriterion("intention_quantity <", value, "intentionQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityLessThanOrEqualTo(Long value) {
+            addCriterion("intention_quantity <=", value, "intentionQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityIn(List<Long> values) {
+            addCriterion("intention_quantity in", values, "intentionQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityNotIn(List<Long> values) {
+            addCriterion("intention_quantity not in", values, "intentionQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityBetween(Long value1, Long value2) {
+            addCriterion("intention_quantity between", value1, value2, "intentionQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntentionQuantityNotBetween(Long value1, Long value2) {
+            addCriterion("intention_quantity not between", value1, value2, "intentionQuantity");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -2,6 +2,8 @@ package com.alipapa.smp.consumer.vo;
 
 public class ConsumerDetailVo {
 
+    private Long consumerId;
+
     private String consumerNo;
 
     private String name;
@@ -12,9 +14,13 @@ public class ConsumerDetailVo {
 
     private String source;
 
-    private String mainBusiness;
+    private String level;
 
-    private String hasOrder;
+    private String intention;
+
+    private Long intentionQuantity;
+
+    private String mainBusiness;
 
     private Integer totalOrder;
 
@@ -22,6 +28,38 @@ public class ConsumerDetailVo {
 
     private Long totalCount;
 
+
+    public Long getConsumerId() {
+        return consumerId;
+    }
+
+    public void setConsumerId(Long consumerId) {
+        this.consumerId = consumerId;
+    }
+
+    public Long getIntentionQuantity() {
+        return intentionQuantity;
+    }
+
+    public void setIntentionQuantity(Long intentionQuantity) {
+        this.intentionQuantity = intentionQuantity;
+    }
+
+    public String getIntention() {
+        return intention;
+    }
+
+    public void setIntention(String intention) {
+        this.intention = intention;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
 
     public Long getTotalCount() {
         return totalCount;
@@ -77,14 +115,6 @@ public class ConsumerDetailVo {
 
     public void setMainBusiness(String mainBusiness) {
         this.mainBusiness = mainBusiness;
-    }
-
-    public String getHasOrder() {
-        return hasOrder;
-    }
-
-    public void setHasOrder(String hasOrder) {
-        this.hasOrder = hasOrder;
     }
 
     public Integer getTotalOrder() {

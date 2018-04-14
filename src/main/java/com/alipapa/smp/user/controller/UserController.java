@@ -193,6 +193,7 @@ public class UserController {
             newUser.setUuid(UUID.randomUUID().toString());
             newUser.setPwd(MD5.digist("666666"));//默认密码
             newUser.setRemark(remark);
+            newUser.setIsLeader(0);
             if (StringUtils.isNotBlank(groupId)) {
                 Group group = groupService.getGroupById(Long.valueOf(groupId));
                 newUser.setGroupId(group.getId());
@@ -411,7 +412,6 @@ public class UserController {
     public WebApiResponse<List<GroupSelectVo>> groupSelect() {
         return WebApiResponse.success(groupService.listAllGroupSelect());
     }
-
 
     /*  public static void main(String[] args) {
 

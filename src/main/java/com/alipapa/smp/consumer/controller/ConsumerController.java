@@ -17,7 +17,12 @@ import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
 import com.alipapa.smp.consumer.vo.ConsumerVo;
 import com.alipapa.smp.consumer.vo.SalerConsumerDetailVo;
 import com.alipapa.smp.consumer.vo.SysDictVo;
+import com.alipapa.smp.user.pojo.Group;
+import com.alipapa.smp.user.pojo.User;
+import com.alipapa.smp.user.service.GroupService;
 import com.alipapa.smp.user.service.UserService;
+import com.alipapa.smp.user.vo.FuzzyUserVo;
+import com.alipapa.smp.user.vo.GroupSelectVo;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.StringUtil;
 import com.alipapa.smp.utils.WebApiResponse;
@@ -57,6 +62,8 @@ public class ConsumerController {
     @Autowired
     private UserConsumerRelationService userConsumerRelationService;
 
+    @Autowired
+    private GroupService groupService;
 
     /**
      * 客户相关下拉列表
@@ -524,14 +531,83 @@ public class ConsumerController {
         return WebApiResponse.error("更新客户信息失败");
     }
 
-
     /**
-     * 业务员，潜在客户/成交客户查询
+     * 我的客户查询-组列表
      *
      * @param
      * @return
      */
-    @RequestMapping(value = "/listSalerConsumer", method = RequestMethod.GET)
+    @RequestMapping(value = "/groupCondition", method = RequestMethod.GET)
+    public WebApiResponse<List<GroupSelectVo>> groupSelect() {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        if ("admin".equals(userInfo.getRoleName())) {//管理员返回所有组
+            return WebApiResponse.success(groupService.listAllGroupSelect());
+        }
+
+        User user = userService.getUserById(userInfo.getUserId());
+        if (1 == user.getIsLeader()) {
+            Group group = groupService.getGroupById(user.getGroupId());
+            GroupSelectVo groupSelectVo = new GroupSelectVo();
+            groupSelectVo.setGroupId(group.getId());
+            groupSelectVo.setGroupNo(group.getGroupNo());
+            groupSelectVo.setGroupName(group.getName());
+            List<GroupSelectVo> groupSelectVoList = new ArrayList<>();
+            groupSelectVoList.add(groupSelectVo);
+            return WebApiResponse.success(groupSelectVoList);
+        }
+
+        return WebApiResponse.success(null);
+    }
+
+
+    /**
+     * 我的客户查询-组员列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/memberCondition", method = RequestMethod.GET)
+    public WebApiResponse<List<FuzzyUserVo>> memberCondition() {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        if ("admin".equals(userInfo.getRoleName())) {//管理员返回所有人员
+            List<FuzzyUserVo> fuzzyUserVoList = userService.userSearch(null);
+            return WebApiResponse.success(fuzzyUserVoList);
+        }
+
+        User user = userService.getUserById(userInfo.getUserId());
+        if (1 == user.getIsLeader()) {
+            Group group = groupService.getGroupById(user.getGroupId());
+            List<User> userList = userService.listUserByGroupId(group.getId());
+
+            List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+            for (User member : userList) {
+                FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                fuzzyUserVo.setUserId(member.getId());
+                fuzzyUserVo.setUserNo(member.getUserNo());
+                fuzzyUserVo.setName(member.getName());
+                fuzzyUserVoList.add(fuzzyUserVo);
+            }
+            return WebApiResponse.success(fuzzyUserVoList);
+        } else {
+            FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+            fuzzyUserVo.setUserId(user.getId());
+            fuzzyUserVo.setUserNo(user.getUserNo());
+            fuzzyUserVo.setName(user.getName());
+            List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+            fuzzyUserVoList.add(fuzzyUserVo);
+            return WebApiResponse.success(fuzzyUserVoList);
+        }
+    }
+
+
+    /**
+     * 业务员，潜在客户/成交客户/我的客户查询
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listMyConsumer", method = RequestMethod.GET)
     public WebApiResponse<List<SalerConsumerDetailVo>> listPotentialOrDealConsumer(@RequestBody String jsonStr) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
@@ -546,8 +622,7 @@ public class ConsumerController {
                 logger.error("客户提交的数据解析失败: " + jsonStr);
                 return error("客户数据解析失败");
             }
-            //用户ID
-            params.put("userId", userInfo.getUserId());
+
 
             Long searchType = json.getLong("searchType");
 
@@ -557,11 +632,28 @@ public class ConsumerController {
 
             if (ConsumerSearchTypeEnum.Potential.getCode() == searchType) {
                 params.put("dealOrder", 0);
+                //用户ID
+                params.put("userId", userInfo.getUserId());
             } else if (ConsumerSearchTypeEnum.Deal.getCode() == searchType) {
                 params.put("dealOrder", 1);
+                //用户ID
+                params.put("userId", userInfo.getUserId());
+            } else if (ConsumerSearchTypeEnum.MyConsumer.getCode() == searchType) {
+                params.put("dealOrder", null);
+                //员工ID
+                Long userId = json.getLong("userId");
+                if (userId != null) {
+                    params.put("userId", userId);
+                }
+                //组ID
+                Long groupId = json.getLong("groupId");
+                if (userId != null) {
+                    params.put("groupId", groupId);
+                }
             } else {
                 return WebApiResponse.error("查询参数异常");
             }
+
 
             pageSize = json.getInteger("pageSize");
             pageNum = json.getInteger("pageNum");
@@ -617,12 +709,12 @@ public class ConsumerController {
 
 
     /**
-     * 客户信息查询，注意用户权限
+     * 抢客户、公共资源池客户信息查询
      *
      * @param
      * @return
      */
-    @RequestMapping(value = "/listConsumer", method = RequestMethod.GET)
+    @RequestMapping(value = "/listPublicConsumer", method = RequestMethod.GET)
     public WebApiResponse<List<ConsumerDetailVo>> listConsumer(@RequestBody String jsonStr) {
 
         Integer pageSize = null;
@@ -641,16 +733,15 @@ public class ConsumerController {
             pageNum = json.getInteger("pageNum");
 
 
-            //客户编号
-            String consumerNo = json.getString("consumerNo");
-            if (!StringUtil.isEmptyString(consumerNo)) {
-                params.put("consumerNo", consumerNo);
+            String source = json.getString("source");
+            if (!StringUtil.isEmptyString(source)) {
+                params.put("source", source);
             }
 
-            //客户姓名
-            String name = json.getString("name");
-            if (!StringUtil.isEmptyString(name)) {
-                params.put("name", name);
+
+            String type = json.getString("type");
+            if (!StringUtil.isEmptyString(type)) {
+                params.put("type", type);
             }
 
             //客户国籍
@@ -659,50 +750,31 @@ public class ConsumerController {
                 params.put("country", country);
             }
 
+
             //客户等级
             String level = json.getString("level");
             if (!StringUtil.isEmptyString(level)) {
                 params.put("level", level);
             }
 
-            //是否有订单
-            String hasOrder = json.getString("hasOrder");
-            if (!StringUtil.isEmptyString(hasOrder)) {
-                params.put("hasOrder", hasOrder);
-            }
-
-            String startTime = json.getString("startTime");
-            if (!StringUtil.isEmptyString(startTime)) {
-                params.put("startTime", DateUtil.formatFromString(startTime, DateUtil.FormatString));
-            }
-
-            String endTime = json.getString("endTime");
-            if (!StringUtil.isEmptyString(endTime)) {
-                params.put("endTime", DateUtil.formatFromString(endTime, DateUtil.FormatString));
+            //客户姓名
+            String name = json.getString("name");
+            if (!StringUtil.isEmptyString(name)) {
+                params.put("name", name);
             }
 
 
-            String source = json.getString("source");
-            if (!StringUtil.isEmptyString(source)) {
-                params.put("source", source);
+            //客户邮箱
+            String email = json.getString("email");
+            if (!StringUtil.isEmptyString(email)) {
+                params.put("email", email);
             }
 
-            String type = json.getString("type");
-            if (!StringUtil.isEmptyString(type)) {
-                params.put("type", type);
+            //客户意向
+            String intention = json.getString("intention");
+            if (!StringUtil.isEmptyString(intention)) {
+                params.put("intention", intention);
             }
-
-
-            Long groupId = json.getLong("groupId");
-            if (groupId != null) {
-                params.put("groupId", groupId);
-            }
-
-            Long salerId = json.getLong("salerId");
-            if (salerId != null) {
-                params.put("salerId", salerId);
-            }
-
         }
 
         if (pageSize == null) {

@@ -146,15 +146,17 @@ public class ConsumerService {
             if (!CollectionUtils.isEmpty(consumerList)) {
                 for (Consumer consumer : consumerList) {
                     ConsumerDetailVo consumerDetailVo = new ConsumerDetailVo();
+                    consumerDetailVo.setConsumerId(consumer.getId());
                     consumerDetailVo.setConsumerNo(consumer.getConsumerNo());
                     consumerDetailVo.setName(consumer.getName());
 
                     consumerDetailVo.setCountry(consumer.getCountry());
-                    consumerDetailVo.setHasOrder(consumer.getHasOrder());
+                    consumerDetailVo.setLevel(consumer.getLevel());
                     consumerDetailVo.setMainBusiness(consumer.getMainBusiness());
                     consumerDetailVo.setSource(consumer.getSource());
                     consumerDetailVo.setType(consumer.getType());
-
+                    consumerDetailVo.setIntention(consumer.getIntention());
+                    consumerDetailVo.setIntentionQuantity(consumer.getIntentionQuantity());
                     //TODO from订单管理
                     consumerDetailVo.setTotalOrder(null);
                     consumerDetailVo.setOrderAmount(null);

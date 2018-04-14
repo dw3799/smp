@@ -59,6 +59,8 @@ public class Consumer {
 
     private Date updatedTime;
 
+    private Long intentionQuantity;
+
     public Long getId() {
         return id;
     }
@@ -281,5 +283,13 @@ public class Consumer {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public Long getIntentionQuantity() {
+        return intentionQuantity;
+    }
+
+    public void setIntentionQuantity(Long intentionQuantity) {
+        this.intentionQuantity = intentionQuantity;
     }
 }

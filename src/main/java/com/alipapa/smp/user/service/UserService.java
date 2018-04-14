@@ -49,7 +49,7 @@ public class UserService {
         if (user == null || user.getId() == null) {
             return false;
         }
-        userMapper.updateByPrimaryKey(user);
+        userMapper.updateByPrimaryKeySelective(user);
         return true;
     }
 
@@ -162,8 +162,6 @@ public class UserService {
         }
         return null;
     }
-
-
 
 
     /**

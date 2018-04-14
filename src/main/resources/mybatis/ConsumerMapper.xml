@@ -1,131 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.alipapa.smp.consumer.mapper.ConsumerMapper">
-  <resultMap id="BaseResultMap" type="com.alipapa.smp.consumer.pojo.Consumer">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="consumer_no" jdbcType="VARCHAR" property="consumerNo" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="country" jdbcType="VARCHAR" property="country" />
-    <result column="main_business" jdbcType="VARCHAR" property="mainBusiness" />
-    <result column="source" jdbcType="VARCHAR" property="source" />
-    <result column="type" jdbcType="VARCHAR" property="type" />
-    <result column="email" jdbcType="VARCHAR" property="email" />
-    <result column="intention" jdbcType="VARCHAR" property="intention" />
-    <result column="facebook" jdbcType="VARCHAR" property="facebook" />
-    <result column="whatsapp" jdbcType="VARCHAR" property="whatsapp" />
-    <result column="linkedin" jdbcType="VARCHAR" property="linkedin" />
-    <result column="wechat" jdbcType="VARCHAR" property="wechat" />
-    <result column="qq" jdbcType="VARCHAR" property="qq" />
-    <result column="contacts" jdbcType="VARCHAR" property="contacts" />
-    <result column="company_address" jdbcType="VARCHAR" property="companyAddress" />
-    <result column="company_website" jdbcType="VARCHAR" property="companyWebsite" />
-    <result column="consignee" jdbcType="VARCHAR" property="consignee" />
-    <result column="tel_mobile" jdbcType="VARCHAR" property="telMobile" />
-    <result column="postal_code" jdbcType="VARCHAR" property="postalCode" />
-    <result column="receiving_address" jdbcType="VARCHAR" property="receivingAddress" />
-    <result column="level" jdbcType="VARCHAR" property="level" />
-    <result column="has_order" jdbcType="VARCHAR" property="hasOrder" />
-    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
-    <result column="scope" jdbcType="VARCHAR" property="scope" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
-    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
-  </resultMap>
-  <sql id="Example_Where_Clause">
-    <where>
-      <foreach collection="oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+<mapper namespace="com.alipapa.smp.consumer.mapper1.ConsumerMapper">
+    <resultMap id="BaseResultMap" type="com.alipapa.smp.consumer.pojo1.Consumer">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="consumer_no" jdbcType="VARCHAR" property="consumerNo"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="country" jdbcType="VARCHAR" property="country"/>
+        <result column="main_business" jdbcType="VARCHAR" property="mainBusiness"/>
+        <result column="source" jdbcType="VARCHAR" property="source"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="intention" jdbcType="VARCHAR" property="intention"/>
+        <result column="facebook" jdbcType="VARCHAR" property="facebook"/>
+        <result column="whatsapp" jdbcType="VARCHAR" property="whatsapp"/>
+        <result column="linkedin" jdbcType="VARCHAR" property="linkedin"/>
+        <result column="wechat" jdbcType="VARCHAR" property="wechat"/>
+        <result column="qq" jdbcType="VARCHAR" property="qq"/>
+        <result column="contacts" jdbcType="VARCHAR" property="contacts"/>
+        <result column="company_address" jdbcType="VARCHAR" property="companyAddress"/>
+        <result column="company_website" jdbcType="VARCHAR" property="companyWebsite"/>
+        <result column="consignee" jdbcType="VARCHAR" property="consignee"/>
+        <result column="tel_mobile" jdbcType="VARCHAR" property="telMobile"/>
+        <result column="postal_code" jdbcType="VARCHAR" property="postalCode"/>
+        <result column="receiving_address" jdbcType="VARCHAR" property="receivingAddress"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
+        <result column="has_order" jdbcType="VARCHAR" property="hasOrder"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="scope" jdbcType="VARCHAR" property="scope"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+        <result column="intention_quantity" jdbcType="BIGINT" property="intentionQuantity"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause">
-    <where>
-      <foreach collection="example.oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List">
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
     id, consumer_no, name, country, main_business, source, type, email, intention, facebook, 
     whatsapp, linkedin, wechat, qq, contacts, company_address, company_website, consignee, 
     tel_mobile, postal_code, receiving_address, level, has_order, create_user, scope, 
-    remark, created_time, updated_time
+    remark, created_time, updated_time, intention_quantity
   </sql>
-  <select id="selectByExample" parameterType="com.alipapa.smp.consumer.pojo.ConsumerExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from consumer
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from consumer
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <select id="selectByExample" parameterType="com.alipapa.smp.consumer.pojo1.ConsumerExample"
+            resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from consumer
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from consumer
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from consumer
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.alipapa.smp.consumer.pojo.ConsumerExample">
-    delete from consumer
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
+    <delete id="deleteByExample" parameterType="com.alipapa.smp.consumer.pojo1.ConsumerExample">
+        delete from consumer
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.alipapa.smp.consumer.pojo1.Consumer">
     insert into consumer (id, consumer_no, name, 
       country, main_business, source, 
       type, email, intention, 
@@ -135,7 +139,7 @@
       tel_mobile, postal_code, receiving_address, 
       level, has_order, create_user, 
       scope, remark, created_time, 
-      updated_time)
+      updated_time, intention_quantity)
     values (#{id,jdbcType=BIGINT}, #{consumerNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{country,jdbcType=VARCHAR}, #{mainBusiness,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, 
       #{type,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{intention,jdbcType=VARCHAR}, 
@@ -145,403 +149,417 @@
       #{telMobile,jdbcType=VARCHAR}, #{postalCode,jdbcType=VARCHAR}, #{receivingAddress,jdbcType=VARCHAR}, 
       #{level,jdbcType=VARCHAR}, #{hasOrder,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
       #{scope,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
-      #{updatedTime,jdbcType=TIMESTAMP})
+      #{updatedTime,jdbcType=TIMESTAMP}, #{intentionQuantity,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
-    insert into consumer
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="consumerNo != null">
-        consumer_no,
-      </if>
-      <if test="name != null">
-        name,
-      </if>
-      <if test="country != null">
-        country,
-      </if>
-      <if test="mainBusiness != null">
-        main_business,
-      </if>
-      <if test="source != null">
-        source,
-      </if>
-      <if test="type != null">
-        type,
-      </if>
-      <if test="email != null">
-        email,
-      </if>
-      <if test="intention != null">
-        intention,
-      </if>
-      <if test="facebook != null">
-        facebook,
-      </if>
-      <if test="whatsapp != null">
-        whatsapp,
-      </if>
-      <if test="linkedin != null">
-        linkedin,
-      </if>
-      <if test="wechat != null">
-        wechat,
-      </if>
-      <if test="qq != null">
-        qq,
-      </if>
-      <if test="contacts != null">
-        contacts,
-      </if>
-      <if test="companyAddress != null">
-        company_address,
-      </if>
-      <if test="companyWebsite != null">
-        company_website,
-      </if>
-      <if test="consignee != null">
-        consignee,
-      </if>
-      <if test="telMobile != null">
-        tel_mobile,
-      </if>
-      <if test="postalCode != null">
-        postal_code,
-      </if>
-      <if test="receivingAddress != null">
-        receiving_address,
-      </if>
-      <if test="level != null">
-        level,
-      </if>
-      <if test="hasOrder != null">
-        has_order,
-      </if>
-      <if test="createUser != null">
-        create_user,
-      </if>
-      <if test="scope != null">
-        scope,
-      </if>
-      <if test="remark != null">
-        remark,
-      </if>
-      <if test="createdTime != null">
-        created_time,
-      </if>
-      <if test="updatedTime != null">
-        updated_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="consumerNo != null">
-        #{consumerNo,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="country != null">
-        #{country,jdbcType=VARCHAR},
-      </if>
-      <if test="mainBusiness != null">
-        #{mainBusiness,jdbcType=VARCHAR},
-      </if>
-      <if test="source != null">
-        #{source,jdbcType=VARCHAR},
-      </if>
-      <if test="type != null">
-        #{type,jdbcType=VARCHAR},
-      </if>
-      <if test="email != null">
-        #{email,jdbcType=VARCHAR},
-      </if>
-      <if test="intention != null">
-        #{intention,jdbcType=VARCHAR},
-      </if>
-      <if test="facebook != null">
-        #{facebook,jdbcType=VARCHAR},
-      </if>
-      <if test="whatsapp != null">
-        #{whatsapp,jdbcType=VARCHAR},
-      </if>
-      <if test="linkedin != null">
-        #{linkedin,jdbcType=VARCHAR},
-      </if>
-      <if test="wechat != null">
-        #{wechat,jdbcType=VARCHAR},
-      </if>
-      <if test="qq != null">
-        #{qq,jdbcType=VARCHAR},
-      </if>
-      <if test="contacts != null">
-        #{contacts,jdbcType=VARCHAR},
-      </if>
-      <if test="companyAddress != null">
-        #{companyAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="companyWebsite != null">
-        #{companyWebsite,jdbcType=VARCHAR},
-      </if>
-      <if test="consignee != null">
-        #{consignee,jdbcType=VARCHAR},
-      </if>
-      <if test="telMobile != null">
-        #{telMobile,jdbcType=VARCHAR},
-      </if>
-      <if test="postalCode != null">
-        #{postalCode,jdbcType=VARCHAR},
-      </if>
-      <if test="receivingAddress != null">
-        #{receivingAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="level != null">
-        #{level,jdbcType=VARCHAR},
-      </if>
-      <if test="hasOrder != null">
-        #{hasOrder,jdbcType=VARCHAR},
-      </if>
-      <if test="createUser != null">
-        #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="scope != null">
-        #{scope,jdbcType=VARCHAR},
-      </if>
-      <if test="remark != null">
-        #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="createdTime != null">
-        #{createdTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatedTime != null">
-        #{updatedTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="com.alipapa.smp.consumer.pojo.ConsumerExample" resultType="java.lang.Long">
-    select count(*) from consumer
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map">
-    update consumer
-    <set>
-      <if test="record.id != null">
-        id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.consumerNo != null">
+    <insert id="insertSelective" parameterType="com.alipapa.smp.consumer.pojo1.Consumer">
+        insert into consumer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="consumerNo != null">
+                consumer_no,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="country != null">
+                country,
+            </if>
+            <if test="mainBusiness != null">
+                main_business,
+            </if>
+            <if test="source != null">
+                source,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="intention != null">
+                intention,
+            </if>
+            <if test="facebook != null">
+                facebook,
+            </if>
+            <if test="whatsapp != null">
+                whatsapp,
+            </if>
+            <if test="linkedin != null">
+                linkedin,
+            </if>
+            <if test="wechat != null">
+                wechat,
+            </if>
+            <if test="qq != null">
+                qq,
+            </if>
+            <if test="contacts != null">
+                contacts,
+            </if>
+            <if test="companyAddress != null">
+                company_address,
+            </if>
+            <if test="companyWebsite != null">
+                company_website,
+            </if>
+            <if test="consignee != null">
+                consignee,
+            </if>
+            <if test="telMobile != null">
+                tel_mobile,
+            </if>
+            <if test="postalCode != null">
+                postal_code,
+            </if>
+            <if test="receivingAddress != null">
+                receiving_address,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="hasOrder != null">
+                has_order,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="scope != null">
+                scope,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createdTime != null">
+                created_time,
+            </if>
+            <if test="updatedTime != null">
+                updated_time,
+            </if>
+            <if test="intentionQuantity != null">
+                intention_quantity,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="consumerNo != null">
+                #{consumerNo,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="country != null">
+                #{country,jdbcType=VARCHAR},
+            </if>
+            <if test="mainBusiness != null">
+                #{mainBusiness,jdbcType=VARCHAR},
+            </if>
+            <if test="source != null">
+                #{source,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="intention != null">
+                #{intention,jdbcType=VARCHAR},
+            </if>
+            <if test="facebook != null">
+                #{facebook,jdbcType=VARCHAR},
+            </if>
+            <if test="whatsapp != null">
+                #{whatsapp,jdbcType=VARCHAR},
+            </if>
+            <if test="linkedin != null">
+                #{linkedin,jdbcType=VARCHAR},
+            </if>
+            <if test="wechat != null">
+                #{wechat,jdbcType=VARCHAR},
+            </if>
+            <if test="qq != null">
+                #{qq,jdbcType=VARCHAR},
+            </if>
+            <if test="contacts != null">
+                #{contacts,jdbcType=VARCHAR},
+            </if>
+            <if test="companyAddress != null">
+                #{companyAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="companyWebsite != null">
+                #{companyWebsite,jdbcType=VARCHAR},
+            </if>
+            <if test="consignee != null">
+                #{consignee,jdbcType=VARCHAR},
+            </if>
+            <if test="telMobile != null">
+                #{telMobile,jdbcType=VARCHAR},
+            </if>
+            <if test="postalCode != null">
+                #{postalCode,jdbcType=VARCHAR},
+            </if>
+            <if test="receivingAddress != null">
+                #{receivingAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="hasOrder != null">
+                #{hasOrder,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="scope != null">
+                #{scope,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null">
+                #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="intentionQuantity != null">
+                #{intentionQuantity,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.alipapa.smp.consumer.pojo1.ConsumerExample"
+            resultType="java.lang.Long">
+        select count(*) from consumer
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update consumer
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.consumerNo != null">
+                consumer_no = #{record.consumerNo,jdbcType=VARCHAR},
+            </if>
+            <if test="record.name != null">
+                name = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.country != null">
+                country = #{record.country,jdbcType=VARCHAR},
+            </if>
+            <if test="record.mainBusiness != null">
+                main_business = #{record.mainBusiness,jdbcType=VARCHAR},
+            </if>
+            <if test="record.source != null">
+                source = #{record.source,jdbcType=VARCHAR},
+            </if>
+            <if test="record.type != null">
+                type = #{record.type,jdbcType=VARCHAR},
+            </if>
+            <if test="record.email != null">
+                email = #{record.email,jdbcType=VARCHAR},
+            </if>
+            <if test="record.intention != null">
+                intention = #{record.intention,jdbcType=VARCHAR},
+            </if>
+            <if test="record.facebook != null">
+                facebook = #{record.facebook,jdbcType=VARCHAR},
+            </if>
+            <if test="record.whatsapp != null">
+                whatsapp = #{record.whatsapp,jdbcType=VARCHAR},
+            </if>
+            <if test="record.linkedin != null">
+                linkedin = #{record.linkedin,jdbcType=VARCHAR},
+            </if>
+            <if test="record.wechat != null">
+                wechat = #{record.wechat,jdbcType=VARCHAR},
+            </if>
+            <if test="record.qq != null">
+                qq = #{record.qq,jdbcType=VARCHAR},
+            </if>
+            <if test="record.contacts != null">
+                contacts = #{record.contacts,jdbcType=VARCHAR},
+            </if>
+            <if test="record.companyAddress != null">
+                company_address = #{record.companyAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="record.companyWebsite != null">
+                company_website = #{record.companyWebsite,jdbcType=VARCHAR},
+            </if>
+            <if test="record.consignee != null">
+                consignee = #{record.consignee,jdbcType=VARCHAR},
+            </if>
+            <if test="record.telMobile != null">
+                tel_mobile = #{record.telMobile,jdbcType=VARCHAR},
+            </if>
+            <if test="record.postalCode != null">
+                postal_code = #{record.postalCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.receivingAddress != null">
+                receiving_address = #{record.receivingAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="record.level != null">
+                level = #{record.level,jdbcType=VARCHAR},
+            </if>
+            <if test="record.hasOrder != null">
+                has_order = #{record.hasOrder,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createUser != null">
+                create_user = #{record.createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="record.scope != null">
+                scope = #{record.scope,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createdTime != null">
+                created_time = #{record.createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updatedTime != null">
+                updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.intentionQuantity != null">
+                intention_quantity = #{record.intentionQuantity,jdbcType=BIGINT},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update consumer
+        set id = #{record.id,jdbcType=BIGINT},
         consumer_no = #{record.consumerNo,jdbcType=VARCHAR},
-      </if>
-      <if test="record.name != null">
         name = #{record.name,jdbcType=VARCHAR},
-      </if>
-      <if test="record.country != null">
         country = #{record.country,jdbcType=VARCHAR},
-      </if>
-      <if test="record.mainBusiness != null">
         main_business = #{record.mainBusiness,jdbcType=VARCHAR},
-      </if>
-      <if test="record.source != null">
         source = #{record.source,jdbcType=VARCHAR},
-      </if>
-      <if test="record.type != null">
         type = #{record.type,jdbcType=VARCHAR},
-      </if>
-      <if test="record.email != null">
         email = #{record.email,jdbcType=VARCHAR},
-      </if>
-      <if test="record.intention != null">
         intention = #{record.intention,jdbcType=VARCHAR},
-      </if>
-      <if test="record.facebook != null">
         facebook = #{record.facebook,jdbcType=VARCHAR},
-      </if>
-      <if test="record.whatsapp != null">
         whatsapp = #{record.whatsapp,jdbcType=VARCHAR},
-      </if>
-      <if test="record.linkedin != null">
         linkedin = #{record.linkedin,jdbcType=VARCHAR},
-      </if>
-      <if test="record.wechat != null">
         wechat = #{record.wechat,jdbcType=VARCHAR},
-      </if>
-      <if test="record.qq != null">
         qq = #{record.qq,jdbcType=VARCHAR},
-      </if>
-      <if test="record.contacts != null">
         contacts = #{record.contacts,jdbcType=VARCHAR},
-      </if>
-      <if test="record.companyAddress != null">
         company_address = #{record.companyAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="record.companyWebsite != null">
         company_website = #{record.companyWebsite,jdbcType=VARCHAR},
-      </if>
-      <if test="record.consignee != null">
         consignee = #{record.consignee,jdbcType=VARCHAR},
-      </if>
-      <if test="record.telMobile != null">
         tel_mobile = #{record.telMobile,jdbcType=VARCHAR},
-      </if>
-      <if test="record.postalCode != null">
         postal_code = #{record.postalCode,jdbcType=VARCHAR},
-      </if>
-      <if test="record.receivingAddress != null">
         receiving_address = #{record.receivingAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="record.level != null">
         level = #{record.level,jdbcType=VARCHAR},
-      </if>
-      <if test="record.hasOrder != null">
         has_order = #{record.hasOrder,jdbcType=VARCHAR},
-      </if>
-      <if test="record.createUser != null">
         create_user = #{record.createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="record.scope != null">
         scope = #{record.scope,jdbcType=VARCHAR},
-      </if>
-      <if test="record.remark != null">
         remark = #{record.remark,jdbcType=VARCHAR},
-      </if>
-      <if test="record.createdTime != null">
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.updatedTime != null">
         updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map">
-    update consumer
-    set id = #{record.id,jdbcType=BIGINT},
-      consumer_no = #{record.consumerNo,jdbcType=VARCHAR},
-      name = #{record.name,jdbcType=VARCHAR},
-      country = #{record.country,jdbcType=VARCHAR},
-      main_business = #{record.mainBusiness,jdbcType=VARCHAR},
-      source = #{record.source,jdbcType=VARCHAR},
-      type = #{record.type,jdbcType=VARCHAR},
-      email = #{record.email,jdbcType=VARCHAR},
-      intention = #{record.intention,jdbcType=VARCHAR},
-      facebook = #{record.facebook,jdbcType=VARCHAR},
-      whatsapp = #{record.whatsapp,jdbcType=VARCHAR},
-      linkedin = #{record.linkedin,jdbcType=VARCHAR},
-      wechat = #{record.wechat,jdbcType=VARCHAR},
-      qq = #{record.qq,jdbcType=VARCHAR},
-      contacts = #{record.contacts,jdbcType=VARCHAR},
-      company_address = #{record.companyAddress,jdbcType=VARCHAR},
-      company_website = #{record.companyWebsite,jdbcType=VARCHAR},
-      consignee = #{record.consignee,jdbcType=VARCHAR},
-      tel_mobile = #{record.telMobile,jdbcType=VARCHAR},
-      postal_code = #{record.postalCode,jdbcType=VARCHAR},
-      receiving_address = #{record.receivingAddress,jdbcType=VARCHAR},
-      level = #{record.level,jdbcType=VARCHAR},
-      has_order = #{record.hasOrder,jdbcType=VARCHAR},
-      create_user = #{record.createUser,jdbcType=VARCHAR},
-      scope = #{record.scope,jdbcType=VARCHAR},
-      remark = #{record.remark,jdbcType=VARCHAR},
-      created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
-    update consumer
-    <set>
-      <if test="consumerNo != null">
-        consumer_no = #{consumerNo,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="country != null">
-        country = #{country,jdbcType=VARCHAR},
-      </if>
-      <if test="mainBusiness != null">
-        main_business = #{mainBusiness,jdbcType=VARCHAR},
-      </if>
-      <if test="source != null">
-        source = #{source,jdbcType=VARCHAR},
-      </if>
-      <if test="type != null">
-        type = #{type,jdbcType=VARCHAR},
-      </if>
-      <if test="email != null">
-        email = #{email,jdbcType=VARCHAR},
-      </if>
-      <if test="intention != null">
-        intention = #{intention,jdbcType=VARCHAR},
-      </if>
-      <if test="facebook != null">
-        facebook = #{facebook,jdbcType=VARCHAR},
-      </if>
-      <if test="whatsapp != null">
-        whatsapp = #{whatsapp,jdbcType=VARCHAR},
-      </if>
-      <if test="linkedin != null">
-        linkedin = #{linkedin,jdbcType=VARCHAR},
-      </if>
-      <if test="wechat != null">
-        wechat = #{wechat,jdbcType=VARCHAR},
-      </if>
-      <if test="qq != null">
-        qq = #{qq,jdbcType=VARCHAR},
-      </if>
-      <if test="contacts != null">
-        contacts = #{contacts,jdbcType=VARCHAR},
-      </if>
-      <if test="companyAddress != null">
-        company_address = #{companyAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="companyWebsite != null">
-        company_website = #{companyWebsite,jdbcType=VARCHAR},
-      </if>
-      <if test="consignee != null">
-        consignee = #{consignee,jdbcType=VARCHAR},
-      </if>
-      <if test="telMobile != null">
-        tel_mobile = #{telMobile,jdbcType=VARCHAR},
-      </if>
-      <if test="postalCode != null">
-        postal_code = #{postalCode,jdbcType=VARCHAR},
-      </if>
-      <if test="receivingAddress != null">
-        receiving_address = #{receivingAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="level != null">
-        level = #{level,jdbcType=VARCHAR},
-      </if>
-      <if test="hasOrder != null">
-        has_order = #{hasOrder,jdbcType=VARCHAR},
-      </if>
-      <if test="createUser != null">
-        create_user = #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="scope != null">
-        scope = #{scope,jdbcType=VARCHAR},
-      </if>
-      <if test="remark != null">
-        remark = #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="createdTime != null">
-        created_time = #{createdTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatedTime != null">
-        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
+        intention_quantity = #{record.intentionQuantity,jdbcType=BIGINT}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.consumer.pojo1.Consumer">
+        update consumer
+        <set>
+            <if test="consumerNo != null">
+                consumer_no = #{consumerNo,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="country != null">
+                country = #{country,jdbcType=VARCHAR},
+            </if>
+            <if test="mainBusiness != null">
+                main_business = #{mainBusiness,jdbcType=VARCHAR},
+            </if>
+            <if test="source != null">
+                source = #{source,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="intention != null">
+                intention = #{intention,jdbcType=VARCHAR},
+            </if>
+            <if test="facebook != null">
+                facebook = #{facebook,jdbcType=VARCHAR},
+            </if>
+            <if test="whatsapp != null">
+                whatsapp = #{whatsapp,jdbcType=VARCHAR},
+            </if>
+            <if test="linkedin != null">
+                linkedin = #{linkedin,jdbcType=VARCHAR},
+            </if>
+            <if test="wechat != null">
+                wechat = #{wechat,jdbcType=VARCHAR},
+            </if>
+            <if test="qq != null">
+                qq = #{qq,jdbcType=VARCHAR},
+            </if>
+            <if test="contacts != null">
+                contacts = #{contacts,jdbcType=VARCHAR},
+            </if>
+            <if test="companyAddress != null">
+                company_address = #{companyAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="companyWebsite != null">
+                company_website = #{companyWebsite,jdbcType=VARCHAR},
+            </if>
+            <if test="consignee != null">
+                consignee = #{consignee,jdbcType=VARCHAR},
+            </if>
+            <if test="telMobile != null">
+                tel_mobile = #{telMobile,jdbcType=VARCHAR},
+            </if>
+            <if test="postalCode != null">
+                postal_code = #{postalCode,jdbcType=VARCHAR},
+            </if>
+            <if test="receivingAddress != null">
+                receiving_address = #{receivingAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                level = #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="hasOrder != null">
+                has_order = #{hasOrder,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="scope != null">
+                scope = #{scope,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="intentionQuantity != null">
+                intention_quantity = #{intentionQuantity,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.consumer.pojo1.Consumer">
     update consumer
     set consumer_no = #{consumerNo,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
@@ -569,125 +587,117 @@
       scope = #{scope,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      intention_quantity = #{intentionQuantity,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 
 
-  <select id="selectMaxId" resultType="java.lang.Long">
+    <select id="selectMaxId" resultType="java.lang.Long">
     select max(id) from consumer
   </select>
 
 
-  <select id="findConsumerByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
-    <include refid="queryConsumerSql"/>
-    <trim prefix="limit" prefixOverrides=",">
-      <if test="start != null and start != ''">
-        #{start}
-      </if>
-      <if test="size != null and size != ''">
-        , #{size}
-      </if>
-    </trim>
-  </select>
+    <select id="findConsumerByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        <include refid="queryConsumerSql"/>
+        <trim prefix="limit" prefixOverrides=",">
+            <if test="start != null and start != ''">
+                #{start}
+            </if>
+            <if test="size != null and size != ''">
+                , #{size}
+            </if>
+        </trim>
+    </select>
 
-  <sql id="queryConsumerSql">
-    select *
-    from consumer cu
-    where 1=1
-    <if test="source != null and source != ''">
-      and cu.source = #{source}
-    </if>
-    <if test="type != null and type != ''">
-      and cu.type = #{type}
-    </if>
-    <if test="country != null and country != ''">
-      and cu.country = #{country}
-    </if>
-    <if test="level != null and level != ''">
-      and cu.level = #{level}
-    </if>
-    <if test="name != null and name != ''">
-      and cu.name LIKE like CONCAT('%',#{name},'%')
-    </if>
-    <if test="consumerNo != null and consumerNo != ''">
-      and cu.consumer_no LIKE CONCAT('%',#{consumerNo},'%')
-    </if>
-    <if test="hasOrder != null and hasOrder != ''">
-      and cu.hasOrder = #{hasOrder}
-    </if>
-    <if test="groupId != null">
-      and cu.belong_group = #{groupId}
-    </if>
-    <if test="salerId != null">
-      and cu.belong_user = #{salerId}
-    </if>
-    <if test="startTime != null">
-      and cu.created_time &gt;= #{startTime}
-    </if>
-    <if test="endTime != null">
-      and cu.created_time &lt;= #{endTime}
-    </if>
-    ORDER BY cu.created_time DESC
-  </sql>
+    <sql id="queryConsumerSql">
+        select *
+        from consumer cu
+        where 1=1 AND cu.scope='Public'
+        <if test="source != null and source != ''">
+            and cu.source = #{source}
+        </if>
+        <if test="type != null and type != ''">
+            and cu.type = #{type}
+        </if>
+        <if test="country != null and country != ''">
+            and cu.country = #{country}
+        </if>
+        <if test="level != null and level != ''">
+            and cu.level = #{level}
+        </if>
+        <if test="name != null and name != ''">
+            and cu.name LIKE like CONCAT('%',#{name},'%')
+        </if>
+        <if test="consumerNo != null and consumerNo != ''">
+            and cu.consumer_no LIKE CONCAT('%',#{consumerNo},'%')
+        </if>
+        <if test="email != null and email != ''">
+            and cu.email LIKE CONCAT('%',#{email},'%')
+        </if>
+        <if test="level != null and level != ''">
+            and cu.level = #{level}
+        </if>
+        <if test="intention != null and intention != ''">
+            and cu.intention = #{intention}
+        </if>
+        ORDER BY cu.created_time DESC
+    </sql>
 
-  <select id="findConsumerByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
-    select count(*) from (
-    <include refid="queryConsumerSql"/>
-    ) T
-  </select>
+    <select id="findConsumerByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+        select count(*) from (
+        <include refid="queryConsumerSql"/>
+        ) T
+    </select>
 
 
+    <select id="findSalerConsumerByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        <include refid="querySalerConsumerSql"/>
+        <trim prefix="limit" prefixOverrides=",">
+            <if test="start != null and start != ''">
+                #{start}
+            </if>
+            <if test="size != null and size != ''">
+                , #{size}
+            </if>
+        </trim>
+    </select>
 
+    <sql id="querySalerConsumerSql">
+        select cu.*
+        from consumer cu LEFT JOIN user_consumer_relation ur on ur.consumer_id=cu.id LEFT JOIN `user` u on
+        ur.user_id=u.id
+        where 1=1 AND ur.is_del=0
+        <if test="country != null and country != ''">
+            and cu.country = #{country}
+        </if>
+        <if test="level != null and level != ''">
+            and cu.level = #{level}
+        </if>
+        <if test="name != null and name != ''">
+            and cu.name LIKE like CONCAT('%',#{name},'%')
+        </if>
+        <if test="consumerNo != null and consumerNo != ''">
+            and cu.consumer_no LIKE CONCAT('%',#{consumerNo},'%')
+        </if>
+        <if test="hasOrder != null and hasOrder != ''">
+            and cu.hasOrder = #{hasOrder}
+        </if>
+        <if test="userId != null">
+            and ur.user_id = #{userId}
+        </if>
+        <if test="dealOrder != null">
+            and ur.deal_order = #{dealOrder}
+        </if>
+        <if test="groupId != null">
+            and u.group_id = #{groupId}
+        </if>
+        ORDER BY ur.updated_time DESC
+    </sql>
 
-
-
-
-
-  <select id="findSalerConsumerByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
-    <include refid="querySalerConsumerSql"/>
-    <trim prefix="limit" prefixOverrides=",">
-      <if test="start != null and start != ''">
-        #{start}
-      </if>
-      <if test="size != null and size != ''">
-        , #{size}
-      </if>
-    </trim>
-  </select>
-
-  <sql id="querySalerConsumerSql">
-    select cu.*
-    from consumer cu   LEFT JOIN  user_consumer_relation  ur  on ur.consumer_id=cu.id
-    where 1=1 AND  ur.is_del=0
-    <if test="country != null and country != ''">
-      and cu.country = #{country}
-    </if>
-    <if test="level != null and level != ''">
-      and cu.level = #{level}
-    </if>
-    <if test="name != null and name != ''">
-      and cu.name LIKE like CONCAT('%',#{name},'%')
-    </if>
-    <if test="consumerNo != null and consumerNo != ''">
-      and cu.consumer_no LIKE CONCAT('%',#{consumerNo},'%')
-    </if>
-    <if test="hasOrder != null and hasOrder != ''">
-      and cu.hasOrder = #{hasOrder}
-    </if>
-    <if test="userId != null">
-      and ur.user_id = #{userId}
-    </if>
-    <if test="dealOrder != null">
-      and ur.deal_order = #{dealOrder}
-    </if>
-    ORDER BY ur.updated_time DESC
-  </sql>
-
-  <select id="findSalerConsumerByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
-    select count(*) from (
-    <include refid="queryConsumerSql"/>
-    ) T
-  </select>
-
+    <select id="findSalerConsumerByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+        select count(*) from (
+        <include refid="queryConsumerSql"/>
+        ) T
+    </select>
 </mapper>

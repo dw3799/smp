@@ -834,6 +834,66 @@ public class UserExample {
             addCriterion("updated_time not between", value1, value2, "updatedTime");
             return (Criteria) this;
         }
+
+        public Criteria andIsLeaderIsNull() {
+            addCriterion("is_leader is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderIsNotNull() {
+            addCriterion("is_leader is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderEqualTo(Integer value) {
+            addCriterion("is_leader =", value, "isLeader");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderNotEqualTo(Integer value) {
+            addCriterion("is_leader <>", value, "isLeader");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderGreaterThan(Integer value) {
+            addCriterion("is_leader >", value, "isLeader");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderGreaterThanOrEqualTo(Integer value) {
+            addCriterion("is_leader >=", value, "isLeader");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderLessThan(Integer value) {
+            addCriterion("is_leader <", value, "isLeader");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderLessThanOrEqualTo(Integer value) {
+            addCriterion("is_leader <=", value, "isLeader");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderIn(List<Integer> values) {
+            addCriterion("is_leader in", values, "isLeader");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderNotIn(List<Integer> values) {
+            addCriterion("is_leader not in", values, "isLeader");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderBetween(Integer value1, Integer value2) {
+            addCriterion("is_leader between", value1, value2, "isLeader");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsLeaderNotBetween(Integer value1, Integer value2) {
+            addCriterion("is_leader not between", value1, value2, "isLeader");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
