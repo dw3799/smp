@@ -173,4 +173,28 @@ public class UserService {
         return userMapper.selectMaxId();
     }
 
+
+    /**
+     * 获取客户跟进员工
+     *
+     * @return
+     */
+    public List<FuzzyUserVo> listConsumerFollowers(Long consumerId, Long groupId) {
+        List<User> userList = userMapper.listConsumerFollowers(consumerId, groupId);
+
+        if (!CollectionUtils.isEmpty(userList)) {
+            List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+            for (User user : userList) {
+                FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                fuzzyUserVo.setUserId(user.getId());
+                fuzzyUserVo.setName(user.getName());
+                fuzzyUserVo.setUserNo(user.getUserNo());
+                fuzzyUserVoList.add(fuzzyUserVo);
+            }
+            return fuzzyUserVoList;
+        }
+        return null;
+    }
+
+
 }

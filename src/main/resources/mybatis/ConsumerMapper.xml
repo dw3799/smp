@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.alipapa.smp.consumer.mapper1.ConsumerMapper">
-    <resultMap id="BaseResultMap" type="com.alipapa.smp.consumer.pojo1.Consumer">
+<mapper namespace="com.alipapa.smp.consumer.mapper.ConsumerMapper">
+    <resultMap id="BaseResultMap" type="com.alipapa.smp.consumer.pojo.Consumer">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="consumer_no" jdbcType="VARCHAR" property="consumerNo"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
@@ -98,7 +98,7 @@
     tel_mobile, postal_code, receiving_address, level, has_order, create_user, scope, 
     remark, created_time, updated_time, intention_quantity
   </sql>
-    <select id="selectByExample" parameterType="com.alipapa.smp.consumer.pojo1.ConsumerExample"
+    <select id="selectByExample" parameterType="com.alipapa.smp.consumer.pojo.ConsumerExample"
             resultMap="BaseResultMap">
         select
         <if test="distinct">
@@ -123,13 +123,13 @@
     delete from consumer
     where id = #{id,jdbcType=BIGINT}
   </delete>
-    <delete id="deleteByExample" parameterType="com.alipapa.smp.consumer.pojo1.ConsumerExample">
+    <delete id="deleteByExample" parameterType="com.alipapa.smp.consumer.pojo.ConsumerExample">
         delete from consumer
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.alipapa.smp.consumer.pojo1.Consumer">
+    <insert id="insert" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
     insert into consumer (id, consumer_no, name, 
       country, main_business, source, 
       type, email, intention, 
@@ -151,7 +151,7 @@
       #{scope,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
       #{updatedTime,jdbcType=TIMESTAMP}, #{intentionQuantity,jdbcType=BIGINT})
   </insert>
-    <insert id="insertSelective" parameterType="com.alipapa.smp.consumer.pojo1.Consumer">
+    <insert id="insertSelective" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
         insert into consumer
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -332,7 +332,7 @@
             </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.alipapa.smp.consumer.pojo1.ConsumerExample"
+    <select id="countByExample" parameterType="com.alipapa.smp.consumer.pojo.ConsumerExample"
             resultType="java.lang.Long">
         select count(*) from consumer
         <if test="_parameter != null">
@@ -469,7 +469,7 @@
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.consumer.pojo1.Consumer">
+    <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
         update consumer
         <set>
             <if test="consumerNo != null">
@@ -559,7 +559,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.consumer.pojo1.Consumer">
+    <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
     update consumer
     set consumer_no = #{consumerNo,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},

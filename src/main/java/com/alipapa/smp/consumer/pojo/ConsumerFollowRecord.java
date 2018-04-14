@@ -23,6 +23,8 @@ public class ConsumerFollowRecord {
 
     private Date updatedTime;
 
+    private String userName;
+
     public Long getId() {
         return id;
     }
@@ -101,5 +103,13 @@ public class ConsumerFollowRecord {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName == null ? null : userName.trim();
     }
 }

@@ -28,4 +28,8 @@ public interface ConsumerFollowRecordMapper {
     int updateByPrimaryKeySelective(ConsumerFollowRecord record);
 
     int updateByPrimaryKey(ConsumerFollowRecord record);
+
+    List<ConsumerFollowRecord> listGroupConsumerFollowRecord(@Param("consumerId") Long consumerId, @Param("groupId") Long groupId);
+
+
 }

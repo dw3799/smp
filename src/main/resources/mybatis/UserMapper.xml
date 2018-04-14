@@ -335,4 +335,19 @@
     <select id="selectMaxId" resultType="java.lang.Long">
     select max(id) from user
   </select>
+
+
+    <select id="listConsumerFollowers" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select DISTINCT u.*
+        from `user` u LEFT JOIN consumer_follow_record fr on fr.user_id=u.id
+        where 1=1
+        <if test="groupId != null">
+            and u.group_id = #{groupId}
+        </if>
+        <if test="consumerId != null">
+            and fr.consumer_id = #{consumerId}
+        </if>
+        ORDER BY fr.created_time DESC
+    </select>
+
 </mapper>

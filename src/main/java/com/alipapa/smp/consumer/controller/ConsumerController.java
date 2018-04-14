@@ -8,15 +8,14 @@ import com.alipapa.smp.common.enums.ConsumerSearchTypeEnum;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.Consumer;
+import com.alipapa.smp.consumer.pojo.ConsumerFollowRecord;
 import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.pojo.UserConsumerRelation;
+import com.alipapa.smp.consumer.service.ConsumerFollowRecordService;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.consumer.service.UserConsumerRelationService;
-import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
-import com.alipapa.smp.consumer.vo.ConsumerVo;
-import com.alipapa.smp.consumer.vo.SalerConsumerDetailVo;
-import com.alipapa.smp.consumer.vo.SysDictVo;
+import com.alipapa.smp.consumer.vo.*;
 import com.alipapa.smp.user.pojo.Group;
 import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.service.GroupService;
@@ -64,6 +63,9 @@ public class ConsumerController {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private ConsumerFollowRecordService consumerFollowRecordService;
 
     /**
      * 客户相关下拉列表
@@ -794,4 +796,110 @@ public class ConsumerController {
         return WebApiResponse.success(consumerDetailVoList);
     }
 
+
+    /**
+     * 客户跟进记录
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/follow-record", method = RequestMethod.GET)
+    public WebApiResponse<List<FollowRecordVo>> listFollowRecords(@RequestParam("consumerId") Long consumerId, @RequestParam(name = "userId", required = false) Long userId) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        User user = userService.getUserById(userInfo.getUserId());
+
+        List<ConsumerFollowRecord> consumerFollowRecordList = null;
+
+        if (userId == null) {//未指定用户时查询所有
+            if ("admin".equals(userInfo.getRoleName())) {
+                consumerFollowRecordList = consumerFollowRecordService.listConsumerFollowRecord(consumerId, null);
+            } else if (1 == user.getIsLeader()) {
+                consumerFollowRecordList = consumerFollowRecordService.listGroupConsumerFollowRecord(consumerId, userInfo.getUserId(), user.getGroupId());
+            } else {
+                consumerFollowRecordList = consumerFollowRecordService.listConsumerFollowRecord(consumerId, userInfo.getUserId());
+            }
+        } else {
+            consumerFollowRecordList = consumerFollowRecordService.listConsumerFollowRecord(consumerId, userId);
+        }
+
+        if (!CollectionUtils.isEmpty(consumerFollowRecordList)) {
+            List<FollowRecordVo> followRecordVoList = new ArrayList<>();
+            for (ConsumerFollowRecord consumerFollowRecord : consumerFollowRecordList) {
+                FollowRecordVo followRecordVo = new FollowRecordVo();
+                followRecordVo.setFollowRecordId(consumerFollowRecord.getId());
+                followRecordVo.setConsumerId(consumerFollowRecord.getConsumerId());
+                followRecordVo.setFollowUser(consumerFollowRecord.getUserNo());
+                followRecordVo.setContent(consumerFollowRecord.getContent());
+                followRecordVoList.add(followRecordVo);
+            }
+            return WebApiResponse.success(followRecordVoList);
+        }
+
+        return WebApiResponse.success(null);
+    }
+
+
+    /**
+     * 跟进人下拉列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/follower-select", method = RequestMethod.GET)
+    public WebApiResponse<List<FuzzyUserVo>> listFollowerSelect(@RequestParam("consumerId") Long consumerId) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        User user = userService.getUserById(userInfo.getUserId());
+
+        if ("admin".equals(userInfo.getRoleName())) {//管理员返回所有人员
+            List<FuzzyUserVo> fuzzyUserVoList = userService.listConsumerFollowers(consumerId, null);
+            return WebApiResponse.success(fuzzyUserVoList);
+        } else if (1 == user.getIsLeader()) {
+            Group group = groupService.getGroupById(user.getGroupId());
+            List<FuzzyUserVo> fuzzyUserVoList = userService.listConsumerFollowers(consumerId, group.getId());
+            return WebApiResponse.success(fuzzyUserVoList);
+        } else {
+            FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+            fuzzyUserVo.setUserId(user.getId());
+            fuzzyUserVo.setUserNo(user.getUserNo());
+            fuzzyUserVo.setName(user.getName());
+            List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+            fuzzyUserVoList.add(fuzzyUserVo);
+            return WebApiResponse.success(fuzzyUserVoList);
+        }
+    }
+
+
+    /**
+     * 保存跟进记录
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/saveFollowRecord", method = RequestMethod.POST)
+    public WebApiResponse<String> listFollowerSelect(@RequestParam("consumerId") Long consumerId, @RequestParam("content") String content, @RequestParam("day") String day) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        User user = userService.getUserById(userInfo.getUserId());
+
+        if (consumerId == null || StringUtil.isEmptyString(content) || StringUtil.isEmptyString(day)) {
+            return WebApiResponse.error("参数异常！");
+        }
+
+        Consumer consumer = consumerService.getConsumerById(consumerId);
+        if (user == null || consumer == null) {
+            return WebApiResponse.error("参数异常！");
+        }
+        ConsumerFollowRecord consumerFollowRecord = new ConsumerFollowRecord();
+        consumerFollowRecord.setConsumerNo(consumer.getConsumerNo());
+        consumerFollowRecord.setConsumerId(consumerId);
+        consumerFollowRecord.setContent(content);
+        consumerFollowRecord.setFollowTime(DateUtil.formatToStr(new Date()));
+        consumerFollowRecord.setCreatedTime(new Date());
+        consumerFollowRecord.setUserId(user.getId());
+        consumerFollowRecord.setUserNo(user.getUserNo());
+        consumerFollowRecord.setUserName(user.getName());
+        consumerFollowRecord.setNextFollowTime(DateUtil.getSomeDay(new Date(), Integer.valueOf(day), "yyyyMMdd"));
+        consumerFollowRecord.setUpdatedTime(new Date());
+        consumerFollowRecordService.insert(consumerFollowRecord);
+        return WebApiResponse.success("success");
+    }
 }

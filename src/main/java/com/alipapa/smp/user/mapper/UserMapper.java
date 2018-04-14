@@ -33,4 +33,8 @@ public interface UserMapper {
     List<User> fuzzyUserSearch(Map<String, String> params);
 
     Long selectMaxId();
+
+    List<User> listConsumerFollowers(@Param("consumerId") Long consumerId, @Param("groupId") Long groupId);
+
+
 }
