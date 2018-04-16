@@ -23,6 +23,9 @@ public class DateUtil extends DateUtils {
 
     public static final String FormatString = "yyyy-MM-dd HH:mm:ss";
 
+    public static final String FormatString_yyyyMMdd = "yyyyMMdd";
+
+
     private DateUtil() {
     }
 

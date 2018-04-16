@@ -689,6 +689,32 @@ public class ConsumerController {
             if (!StringUtil.isEmptyString(hasOrder)) {
                 params.put("hasOrder", hasOrder);
             }
+
+            //上次联系时间开始
+            String preContactTimeStart = json.getString("preContactTimeStart");
+            if (!StringUtil.isEmptyString(preContactTimeStart)) {
+                params.put("preContactTimeStart", DateUtil.formatFromString(preContactTimeStart, DateUtil.FormatString_yyyyMMdd));
+            }
+
+            //上次联系时间结束
+            String preContactTimeEnd = json.getString("preContactTimeEnd");
+            if (!StringUtil.isEmptyString(preContactTimeEnd)) {
+                Date end = DateUtil.formatFromString(preContactTimeEnd, DateUtil.FormatString_yyyyMMdd);
+                params.put("preContactTimeEnd", DateUtil.getSomeDayDateToTime(end, 1));
+            }
+
+            //下次联系时间开始
+            String nextContactTimeStart = json.getString("nextContactTimeStart");
+            if (!StringUtil.isEmptyString(nextContactTimeStart)) {
+                params.put("nextContactTimeStart", DateUtil.formatFromString(nextContactTimeStart, DateUtil.FormatString_yyyyMMdd));
+            }
+
+            //下次联系时间结束
+            String nextContactTimeEnd = json.getString("nextContactTimeEnd");
+            if (!StringUtil.isEmptyString(nextContactTimeEnd)) {
+                Date end = DateUtil.formatFromString(nextContactTimeEnd, DateUtil.FormatString_yyyyMMdd);
+                params.put("nextContactTimeEnd", DateUtil.getSomeDayDateToTime(end, 1));
+            }
         }
 
         if (pageSize == null) {

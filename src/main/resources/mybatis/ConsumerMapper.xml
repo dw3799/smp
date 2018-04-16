@@ -641,7 +641,7 @@
         <if test="intention != null and intention != ''">
             and cu.intention = #{intention}
         </if>
-        ORDER BY cu.created_time DESC
+        ORDER BY cu.intention_quantity DESC,cu.created_time DESC
     </sql>
 
     <select id="findConsumerByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
@@ -691,6 +691,18 @@
         </if>
         <if test="groupId != null">
             and u.group_id = #{groupId}
+        </if>
+        <if test="preContactTimeStart != null">
+            and ur.created_time > #{preContactTimeStart}
+        </if>
+        <if test="preContactTimeEnd != null">
+            and ur.created_time <= #{preContactTimeEnd}
+        </if>
+        <if test="nextContactTimeStart != null">
+            and ur.created_time >= #{nextContactTimeStart}
+        </if>
+        <if test="nextContactTimeEnd != null">
+            and ur.created_time <= #{nextContactTimeEnd}
         </if>
         ORDER BY ur.updated_time DESC
     </sql>
