@@ -10,6 +10,8 @@
     <result column="is_del" jdbcType="INTEGER" property="isDel" />
     <result column="has_order" jdbcType="INTEGER" property="hasOrder" />
     <result column="deal_order" jdbcType="INTEGER" property="dealOrder" />
+    <result column="follow_time" jdbcType="TIMESTAMP" property="followTime" />
+    <result column="next_follow_time" jdbcType="TIMESTAMP" property="nextFollowTime" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
   </resultMap>
@@ -72,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, consumer_id, consumer_no, user_id, user_no, is_del, has_order, deal_order, created_time, 
-    updated_time
+    id, consumer_id, consumer_no, user_id, user_no, is_del, has_order, deal_order, follow_time, 
+    next_follow_time, created_time, updated_time
   </sql>
   <select id="selectByExample" parameterType="com.alipapa.smp.consumer.pojo.UserConsumerRelationExample" resultMap="BaseResultMap">
     select
@@ -108,12 +110,14 @@
   <insert id="insert" parameterType="com.alipapa.smp.consumer.pojo.UserConsumerRelation">
     insert into user_consumer_relation (id, consumer_id, consumer_no, 
       user_id, user_no, is_del, 
-      has_order, deal_order, created_time, 
-      updated_time)
+      has_order, deal_order, follow_time, 
+      next_follow_time, created_time, updated_time
+      )
     values (#{id,jdbcType=BIGINT}, #{consumerId,jdbcType=BIGINT}, #{consumerNo,jdbcType=VARCHAR}, 
       #{userId,jdbcType=BIGINT}, #{userNo,jdbcType=VARCHAR}, #{isDel,jdbcType=INTEGER}, 
-      #{hasOrder,jdbcType=INTEGER}, #{dealOrder,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, 
-      #{updatedTime,jdbcType=TIMESTAMP})
+      #{hasOrder,jdbcType=INTEGER}, #{dealOrder,jdbcType=INTEGER}, #{followTime,jdbcType=TIMESTAMP}, 
+      #{nextFollowTime,jdbcType=TIMESTAMP}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.alipapa.smp.consumer.pojo.UserConsumerRelation">
     insert into user_consumer_relation
@@ -141,6 +145,12 @@
       </if>
       <if test="dealOrder != null">
         deal_order,
+      </if>
+      <if test="followTime != null">
+        follow_time,
+      </if>
+      <if test="nextFollowTime != null">
+        next_follow_time,
       </if>
       <if test="createdTime != null">
         created_time,
@@ -173,6 +183,12 @@
       </if>
       <if test="dealOrder != null">
         #{dealOrder,jdbcType=INTEGER},
+      </if>
+      <if test="followTime != null">
+        #{followTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nextFollowTime != null">
+        #{nextFollowTime,jdbcType=TIMESTAMP},
       </if>
       <if test="createdTime != null">
         #{createdTime,jdbcType=TIMESTAMP},
@@ -215,6 +231,12 @@
       <if test="record.dealOrder != null">
         deal_order = #{record.dealOrder,jdbcType=INTEGER},
       </if>
+      <if test="record.followTime != null">
+        follow_time = #{record.followTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.nextFollowTime != null">
+        next_follow_time = #{record.nextFollowTime,jdbcType=TIMESTAMP},
+      </if>
       <if test="record.createdTime != null">
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
       </if>
@@ -236,6 +258,8 @@
       is_del = #{record.isDel,jdbcType=INTEGER},
       has_order = #{record.hasOrder,jdbcType=INTEGER},
       deal_order = #{record.dealOrder,jdbcType=INTEGER},
+      follow_time = #{record.followTime,jdbcType=TIMESTAMP},
+      next_follow_time = #{record.nextFollowTime,jdbcType=TIMESTAMP},
       created_time = #{record.createdTime,jdbcType=TIMESTAMP},
       updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
@@ -266,6 +290,12 @@
       <if test="dealOrder != null">
         deal_order = #{dealOrder,jdbcType=INTEGER},
       </if>
+      <if test="followTime != null">
+        follow_time = #{followTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nextFollowTime != null">
+        next_follow_time = #{nextFollowTime,jdbcType=TIMESTAMP},
+      </if>
       <if test="createdTime != null">
         created_time = #{createdTime,jdbcType=TIMESTAMP},
       </if>
@@ -284,6 +314,8 @@
       is_del = #{isDel,jdbcType=INTEGER},
       has_order = #{hasOrder,jdbcType=INTEGER},
       deal_order = #{dealOrder,jdbcType=INTEGER},
+      follow_time = #{followTime,jdbcType=TIMESTAMP},
+      next_follow_time = #{nextFollowTime,jdbcType=TIMESTAMP},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}

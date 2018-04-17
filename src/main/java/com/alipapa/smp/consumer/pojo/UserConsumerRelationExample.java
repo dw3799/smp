@@ -605,6 +605,126 @@ public class UserConsumerRelationExample {
             return (Criteria) this;
         }
 
+        public Criteria andFollowTimeIsNull() {
+            addCriterion("follow_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeIsNotNull() {
+            addCriterion("follow_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeEqualTo(Date value) {
+            addCriterion("follow_time =", value, "followTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeNotEqualTo(Date value) {
+            addCriterion("follow_time <>", value, "followTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeGreaterThan(Date value) {
+            addCriterion("follow_time >", value, "followTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("follow_time >=", value, "followTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeLessThan(Date value) {
+            addCriterion("follow_time <", value, "followTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeLessThanOrEqualTo(Date value) {
+            addCriterion("follow_time <=", value, "followTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeIn(List<Date> values) {
+            addCriterion("follow_time in", values, "followTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeNotIn(List<Date> values) {
+            addCriterion("follow_time not in", values, "followTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeBetween(Date value1, Date value2) {
+            addCriterion("follow_time between", value1, value2, "followTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFollowTimeNotBetween(Date value1, Date value2) {
+            addCriterion("follow_time not between", value1, value2, "followTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeIsNull() {
+            addCriterion("next_follow_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeIsNotNull() {
+            addCriterion("next_follow_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeEqualTo(Date value) {
+            addCriterion("next_follow_time =", value, "nextFollowTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeNotEqualTo(Date value) {
+            addCriterion("next_follow_time <>", value, "nextFollowTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeGreaterThan(Date value) {
+            addCriterion("next_follow_time >", value, "nextFollowTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("next_follow_time >=", value, "nextFollowTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeLessThan(Date value) {
+            addCriterion("next_follow_time <", value, "nextFollowTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeLessThanOrEqualTo(Date value) {
+            addCriterion("next_follow_time <=", value, "nextFollowTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeIn(List<Date> values) {
+            addCriterion("next_follow_time in", values, "nextFollowTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeNotIn(List<Date> values) {
+            addCriterion("next_follow_time not in", values, "nextFollowTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeBetween(Date value1, Date value2) {
+            addCriterion("next_follow_time between", value1, value2, "nextFollowTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andNextFollowTimeNotBetween(Date value1, Date value2) {
+            addCriterion("next_follow_time not between", value1, value2, "nextFollowTime");
+            return (Criteria) this;
+        }
+
         public Criteria andCreatedTimeIsNull() {
             addCriterion("created_time is null");
             return (Criteria) this;

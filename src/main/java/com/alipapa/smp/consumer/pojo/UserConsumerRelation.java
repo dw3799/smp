@@ -13,11 +13,15 @@ public class UserConsumerRelation {
 
     private String userNo;
 
-    private Integer isDel;// 0正常，1y已回收  2已抛弃
+    private Integer isDel;
 
     private Integer hasOrder;
 
     private Integer dealOrder;
+
+    private Date followTime;
+
+    private Date nextFollowTime;
 
     private Date createdTime;
 
@@ -85,6 +89,22 @@ public class UserConsumerRelation {
 
     public void setDealOrder(Integer dealOrder) {
         this.dealOrder = dealOrder;
+    }
+
+    public Date getFollowTime() {
+        return followTime;
+    }
+
+    public void setFollowTime(Date followTime) {
+        this.followTime = followTime;
+    }
+
+    public Date getNextFollowTime() {
+        return nextFollowTime;
+    }
+
+    public void setNextFollowTime(Date nextFollowTime) {
+        this.nextFollowTime = nextFollowTime;
     }
 
     public Date getCreatedTime() {
