@@ -664,7 +664,7 @@
     </select>
 
     <sql id="querySalerConsumerSql">
-        select cu.*
+        select DISTINCT cu.*
         from consumer cu LEFT JOIN user_consumer_relation ur on ur.consumer_id=cu.id LEFT JOIN `user` u on
         ur.user_id=u.id
         where 1=1 AND ur.is_del=0

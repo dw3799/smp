@@ -113,7 +113,8 @@ public class ConsumerService {
                     consumerDetailVo.setCountry(consumer.getCountry());
                     consumerDetailVo.setHasOrder(consumer.getHasOrder());
                     consumerDetailVo.setLevel(consumer.getLevel());
-
+                    consumerDetailVo.setIsDiscard(1);
+                    
                     //TODO from订单管理
                     consumerDetailVo.setTotalOrder(null);
                     consumerDetailVo.setOrderAmount(null);

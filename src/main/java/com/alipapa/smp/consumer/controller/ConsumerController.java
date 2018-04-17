@@ -903,7 +903,7 @@ public class ConsumerController {
      * @return
      */
     @RequestMapping(value = "/saveFollowRecord", method = RequestMethod.POST)
-    public WebApiResponse<String> listFollowerSelect(@RequestParam("consumerId") Long consumerId, @RequestParam("content") String content, @RequestParam("day") String day) {
+    public WebApiResponse<String> saveFollowRecord(@RequestParam("consumerId") Long consumerId, @RequestParam("content") String content, @RequestParam("day") String day) {
         UserInfo userInfo = UserStatus.getUserInfo();
         User user = userService.getUserById(userInfo.getUserId());
 

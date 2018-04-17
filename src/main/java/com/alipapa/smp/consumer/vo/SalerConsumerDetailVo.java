@@ -18,6 +18,8 @@ public class SalerConsumerDetailVo {
 
     private String nextContactTime;
 
+    private Integer isDiscard;//是否可抛弃，管理员及业务主管不可抛弃非本人的客户
+
     private Integer totalOrder;
 
     private Long orderAmount;
@@ -36,6 +38,14 @@ public class SalerConsumerDetailVo {
     orderAmount:"200万",//订单总额
     totalCount:124//总数，分页用*/
 
+
+    public Integer getIsDiscard() {
+        return isDiscard;
+    }
+
+    public void setIsDiscard(Integer isDiscard) {
+        this.isDiscard = isDiscard;
+    }
 
     public Long getConsumerId() {
         return consumerId;
