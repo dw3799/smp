@@ -6,6 +6,7 @@ package com.alipapa.smp.common.enums;
 public enum FellowUpRulesEnum {
 
     // private Integer isDel;// 0正常，1y已回收  2已抛弃
+    Normal(0, "Normal", "回收"),
 
     Reclaim(1, "Reclaim", "回收"),
 

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.enums.CategoryCode;
 import com.alipapa.smp.common.enums.ConsumerScopeEnum;
 import com.alipapa.smp.common.enums.ConsumerSearchTypeEnum;
+import com.alipapa.smp.common.enums.FellowUpRulesEnum;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.Consumer;
@@ -693,27 +694,25 @@ public class ConsumerController {
             //上次联系时间开始
             String preContactTimeStart = json.getString("preContactTimeStart");
             if (!StringUtil.isEmptyString(preContactTimeStart)) {
-                params.put("preContactTimeStart", DateUtil.formatFromString(preContactTimeStart, DateUtil.FormatString_yyyyMMdd));
+                params.put("preContactTimeStart", preContactTimeStart);
             }
 
             //上次联系时间结束
             String preContactTimeEnd = json.getString("preContactTimeEnd");
             if (!StringUtil.isEmptyString(preContactTimeEnd)) {
-                Date end = DateUtil.formatFromString(preContactTimeEnd, DateUtil.FormatString_yyyyMMdd);
-                params.put("preContactTimeEnd", DateUtil.getSomeDayDateToTime(end, 1));
+                params.put("preContactTimeEnd", preContactTimeEnd);
             }
 
             //下次联系时间开始
             String nextContactTimeStart = json.getString("nextContactTimeStart");
             if (!StringUtil.isEmptyString(nextContactTimeStart)) {
-                params.put("nextContactTimeStart", DateUtil.formatFromString(nextContactTimeStart, DateUtil.FormatString_yyyyMMdd));
+                params.put("nextContactTimeStart", nextContactTimeStart);
             }
 
             //下次联系时间结束
             String nextContactTimeEnd = json.getString("nextContactTimeEnd");
             if (!StringUtil.isEmptyString(nextContactTimeEnd)) {
-                Date end = DateUtil.formatFromString(nextContactTimeEnd, DateUtil.FormatString_yyyyMMdd);
-                params.put("nextContactTimeEnd", DateUtil.getSomeDayDateToTime(end, 1));
+                params.put("nextContactTimeEnd", nextContactTimeEnd);
             }
         }
 
@@ -926,6 +925,12 @@ public class ConsumerController {
         consumerFollowRecord.setNextFollowTime(DateUtil.getSomeDay(new Date(), Integer.valueOf(day), "yyyyMMdd"));
         consumerFollowRecord.setUpdatedTime(new Date());
         consumerFollowRecordService.insert(consumerFollowRecord);
+
+        UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumerId, userInfo.getUserId(), FellowUpRulesEnum.Normal.getCode());
+        if (userConsumerRelation != null) {
+            userConsumerRelation.setFollowTime(new Date());
+            userConsumerRelation.setNextFollowTime(DateUtil.getSomeDayDateToTime(new Date(), Integer.valueOf(day)));
+        }
         return WebApiResponse.success("success");
     }
 }

@@ -692,17 +692,17 @@
         <if test="groupId != null">
             and u.group_id = #{groupId}
         </if>
-        <if test="preContactTimeStart != null">
-            and ur.created_time > #{preContactTimeStart}
+        <if test="preContactTimeStart != null and  preContactTimeStart != '' ">
+            <![CDATA[ and ur.follow_time >= to_date(#{preContactTimeStart,jdbcType=DATE},'yyyyMMdd')]]>
         </if>
-        <if test="preContactTimeEnd != null">
-            and ur.created_time <= #{preContactTimeEnd}
+        <if test="preContactTimeEnd != null and  preContactTimeEnd != '' ">
+            <![CDATA[ and ur.follow_time <= to_date(#{preContactTimeEnd,jdbcType=DATE},'yyyyMMdd')]]>
         </if>
-        <if test="nextContactTimeStart != null">
-            and ur.created_time >= #{nextContactTimeStart}
+        <if test="nextContactTimeStart != null and  nextContactTimeStart != '' ">
+            <![CDATA[ and ur.next_follow_time >= to_date(#{nextContactTimeStart,jdbcType=DATE},'yyyyMMdd')]]>
         </if>
-        <if test="nextContactTimeEnd != null">
-            and ur.created_time <= #{nextContactTimeEnd}
+        <if test="nextContactTimeEnd != null and  nextContactTimeEnd != '' ">
+            <![CDATA[ and ur.next_follow_time <= to_date(#{nextContactTimeEnd,jdbcType=DATE},'yyyyMMdd')]]>
         </if>
         ORDER BY ur.updated_time DESC
     </sql>
