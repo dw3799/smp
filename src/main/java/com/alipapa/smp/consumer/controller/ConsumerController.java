@@ -181,6 +181,7 @@ public class ConsumerController {
             userConsumerRelation.setIsDel(0);
             userConsumerRelation.setHasOrder(0);
             userConsumerRelation.setDealOrder(0);
+            userConsumerRelation.setFollowTime(new Date());
             userConsumerRelation.setCreatedTime(new Date());
             userConsumerRelation.setUpdatedTime(new Date());
             userConsumerRelationService.addUserConsumerRelation(userConsumerRelation);
@@ -302,6 +303,7 @@ public class ConsumerController {
                 userConsumerRelation.setIsDel(0);
                 userConsumerRelation.setHasOrder(0);
                 userConsumerRelation.setDealOrder(0);
+                userConsumerRelation.setFollowTime(new Date());
                 userConsumerRelation.setCreatedTime(new Date());
                 userConsumerRelation.setUpdatedTime(new Date());
                 userConsumerRelationService.addUserConsumerRelation(userConsumerRelation);
@@ -963,8 +965,22 @@ public class ConsumerController {
         if (userConsumerRelation == null) {
             return WebApiResponse.error("您未跟进该客户，无权限记录！");
         }
+        //更新客户关系表，抛弃状态
+        userConsumerRelation.setIsDel(FellowUpRulesEnum.Discard.getCode());
+        userConsumerRelation.setUpdatedTime(new Date());
+        userConsumerRelationService.updateUserConsumerRelation(userConsumerRelation);
 
-        return WebApiResponse.success("");
+        //更新客户scope
+        List<UserConsumerRelation> userConsumerRelationList = userConsumerRelationService.listAllValidRelationByConsumerId(consumerId);
+        if (CollectionUtils.isEmpty(userConsumerRelationList)) {
+            //无人跟进
+            consumer.setScope(ConsumerScopeEnum.Public.getCodeName());
+        } else if (userConsumerRelationList.size() <= 1 && ConsumerScopeEnum.Protected.getCodeName().equals(consumer.getScope())) {
+            //非公共资源池多人跟进变成单人跟进
+            consumer.setScope(ConsumerScopeEnum.Private.getCodeName());
+        }
+        consumerService.updateConsumer(consumer);
+        return WebApiResponse.success("success");
     }
 
 
@@ -990,13 +1006,106 @@ public class ConsumerController {
         if (!ConsumerScopeEnum.Public.getCodeName().equals(consumer.getScope())) {
             return WebApiResponse.error("该客户非公共资源池客户！");
         }
-        UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumerId, userInfo.getUserId(), FellowUpRulesEnum.Normal.getCode());
 
-        if (userConsumerRelation != null) {
-            return WebApiResponse.error("您已跟进该客户");
+        //1:抛弃规则判断
+        if (!sysDictService.checkDiscardingRules(userInfo, consumer.getId())) {
+            return error("根据抛弃规则，暂时无法跟进！");
         }
 
-        return WebApiResponse.success("");
+        //2:抛弃规则判断
+        if (!sysDictService.checkReclaimRules(userInfo, consumer.getId())) {
+            return error("根据回收规则，暂时无法跟进！");
+        }
+
+        boolean result = relateUserAndConsumer(consumer, user);
+        if (!result) {
+            return error("客户跟进中！");
+        }
+        return WebApiResponse.success("success");
     }
 
+
+    /**
+     * 资源池客户分配
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/assign-consumer", method = RequestMethod.GET)
+    public WebApiResponse<String> assignConsumer(@RequestParam("consumerIds") String consumerIds, @RequestParam("userIds") String userIds) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        User user = userService.getUserById(userInfo.getUserId());
+        if (StringUtil.isEmptyString(consumerIds) || StringUtil.isEmptyString(userIds)) {
+            return WebApiResponse.error("参数异常！");
+        }
+
+        if ("admin".equals(userInfo.getRoleName())) {
+            return WebApiResponse.error("管理员不允许操作！");
+        } else if (1 != user.getIsLeader()) {
+            return WebApiResponse.error("没有权限！");
+        }
+
+        String[] userIdArray = userIds.split(";");
+        for (String userId : userIdArray) {
+            User member = userService.getUserById(Long.valueOf(userId));
+            if (member == null) {
+                continue;
+            }
+            String[] consumerIdArray = consumerIds.split(";");
+            for (String consumerId : consumerIdArray) {
+                Consumer consumer = consumerService.getConsumerById(Long.valueOf(consumerId));
+                if (consumer == null) {
+                    logger.error("客户不存在，consumerId=" + consumerId);
+                    continue;
+                }
+                relateUserAndConsumer(consumer, member);
+            }
+        }
+        return WebApiResponse.success("success");
+    }
+
+    /**
+     * 关联用户及客户
+     *
+     * @param consumer
+     * @param user
+     * @return
+     */
+    private boolean relateUserAndConsumer(Consumer consumer, User user) {
+        UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumer.getId(), user.getId(), FellowUpRulesEnum.Normal.getCode());
+        if (userConsumerRelation != null) {
+            return false;
+        }
+
+        //过期关联
+        UserConsumerRelation invalidRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumer.getId(), user.getId(), null);
+        if (invalidRelation != null) {
+            invalidRelation.setIsDel(0);
+            invalidRelation.setConsumerId(consumer.getId());
+            invalidRelation.setConsumerNo(consumer.getConsumerNo());
+            invalidRelation.setUserId(user.getId());
+            invalidRelation.setUserNo(user.getUserNo());
+            invalidRelation.setIsDel(0);
+            invalidRelation.setHasOrder(0);
+            invalidRelation.setDealOrder(0);
+            invalidRelation.setFollowTime(new Date());
+            invalidRelation.setUpdatedTime(new Date());
+            userConsumerRelationService.updateUserConsumerRelation(invalidRelation);
+        } else {
+            //创建关联关系
+            UserConsumerRelation newUserConsumerRelation = new UserConsumerRelation();
+            newUserConsumerRelation.setConsumerId(consumer.getId());
+            newUserConsumerRelation.setConsumerNo(consumer.getConsumerNo());
+            newUserConsumerRelation.setUserId(user.getId());
+            newUserConsumerRelation.setUserNo(user.getUserNo());
+            newUserConsumerRelation.setIsDel(0);
+            newUserConsumerRelation.setHasOrder(0);
+            newUserConsumerRelation.setDealOrder(0);
+            newUserConsumerRelation.setFollowTime(new Date());
+            newUserConsumerRelation.setCreatedTime(new Date());
+            newUserConsumerRelation.setUpdatedTime(new Date());
+            userConsumerRelationService.addUserConsumerRelation(newUserConsumerRelation);
+        }
+        return true;
+    }
 }

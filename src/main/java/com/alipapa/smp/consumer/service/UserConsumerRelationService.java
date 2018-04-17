@@ -22,7 +22,7 @@ public class UserConsumerRelationService {
      * @param consumerId
      * @return
      */
-    public List<UserConsumerRelation> listAllRelationByConsumerId(Long consumerId) {
+    public List<UserConsumerRelation> listAllValidRelationByConsumerId(Long consumerId) {
         if (consumerId == null) {
             return null;
         }
@@ -67,15 +67,14 @@ public class UserConsumerRelationService {
         UserConsumerRelationExample example = new UserConsumerRelationExample();
         UserConsumerRelationExample.Criteria criteria = example.createCriteria();
         criteria.andConsumerIdEqualTo(consumerId);
-        criteria.andIsDelEqualTo(isDel);
         criteria.andUserIdEqualTo(userId);
-
+        if (isDel != null) {
+            criteria.andIsDelEqualTo(isDel);
+        }
         List<UserConsumerRelation> userConsumerRelationList = userConsumerRelationMapper.selectByExample(example);
-
         if (CollectionUtils.isEmpty(userConsumerRelationList)) {
             return null;
         }
-
         return userConsumerRelationList.get(0);
     }
 }
