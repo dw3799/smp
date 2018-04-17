@@ -48,6 +48,18 @@ public class UserConsumerRelationService {
 
 
     /**
+     * 更新员工客户关联
+     *
+     * @param userConsumerRelation
+     * @return
+     */
+    public boolean updateUserConsumerRelation(UserConsumerRelation userConsumerRelation) {
+        userConsumerRelationMapper.updateByPrimaryKey(userConsumerRelation);
+        return true;
+    }
+
+
+    /**
      * @param consumerId
      * @return
      */

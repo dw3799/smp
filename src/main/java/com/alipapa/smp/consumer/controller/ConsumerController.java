@@ -913,6 +913,12 @@ public class ConsumerController {
         if (user == null || consumer == null) {
             return WebApiResponse.error("参数异常！");
         }
+
+        UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumerId, userInfo.getUserId(), FellowUpRulesEnum.Normal.getCode());
+
+        if (userConsumerRelation == null) {
+            return WebApiResponse.error("您未跟进该客户，无权限记录！");
+        }
         ConsumerFollowRecord consumerFollowRecord = new ConsumerFollowRecord();
         consumerFollowRecord.setConsumerNo(consumer.getConsumerNo());
         consumerFollowRecord.setConsumerId(consumerId);
@@ -926,11 +932,71 @@ public class ConsumerController {
         consumerFollowRecord.setUpdatedTime(new Date());
         consumerFollowRecordService.insert(consumerFollowRecord);
 
-        UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumerId, userInfo.getUserId(), FellowUpRulesEnum.Normal.getCode());
-        if (userConsumerRelation != null) {
-            userConsumerRelation.setFollowTime(new Date());
-            userConsumerRelation.setNextFollowTime(DateUtil.getSomeDayDateToTime(new Date(), Integer.valueOf(day)));
-        }
+        userConsumerRelation.setFollowTime(new Date());
+        userConsumerRelation.setNextFollowTime(DateUtil.getSomeDayDateToTime(new Date(), Integer.valueOf(day)));
+        userConsumerRelationService.updateUserConsumerRelation(userConsumerRelation);
         return WebApiResponse.success("success");
     }
+
+
+    /**
+     * 抛弃客户
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/discard-consumer", method = RequestMethod.GET)
+    public WebApiResponse<String> discardConsumer(@RequestParam("consumerId") Long consumerId) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        User user = userService.getUserById(userInfo.getUserId());
+        if (consumerId == null) {
+            return WebApiResponse.error("参数异常！");
+        }
+
+        Consumer consumer = consumerService.getConsumerById(consumerId);
+        if (user == null || consumer == null) {
+            return WebApiResponse.error("参数异常！");
+        }
+
+        UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumerId, userInfo.getUserId(), FellowUpRulesEnum.Normal.getCode());
+
+        if (userConsumerRelation == null) {
+            return WebApiResponse.error("您未跟进该客户，无权限记录！");
+        }
+
+        return WebApiResponse.success("");
+    }
+
+
+    /**
+     * 从公共资源池抢客户
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/grab-consumer", method = RequestMethod.GET)
+    public WebApiResponse<String> grabConsumer(@RequestParam("consumerId") Long consumerId) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        User user = userService.getUserById(userInfo.getUserId());
+        if (consumerId == null) {
+            return WebApiResponse.error("参数异常！");
+        }
+
+        Consumer consumer = consumerService.getConsumerById(consumerId);
+        if (user == null || consumer == null) {
+            return WebApiResponse.error("参数异常！");
+        }
+
+        if (!ConsumerScopeEnum.Public.getCodeName().equals(consumer.getScope())) {
+            return WebApiResponse.error("该客户非公共资源池客户！");
+        }
+        UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumerId, userInfo.getUserId(), FellowUpRulesEnum.Normal.getCode());
+
+        if (userConsumerRelation != null) {
+            return WebApiResponse.error("您已跟进该客户");
+        }
+
+        return WebApiResponse.success("");
+    }
+
 }
