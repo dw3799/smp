@@ -229,9 +229,6 @@
             <if test="record.createdTime != null">
                 created_time = #{record.createdTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.updatedTime != null">
-                updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="record.userName != null">
                 user_name = #{record.userName,jdbcType=VARCHAR},
             </if>
@@ -251,7 +248,6 @@
         follow_time = #{record.followTime,jdbcType=VARCHAR},
         next_follow_time = #{record.nextFollowTime,jdbcType=VARCHAR},
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
         user_name = #{record.userName,jdbcType=VARCHAR}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -284,9 +280,6 @@
             <if test="createdTime != null">
                 created_time = #{createdTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="updatedTime != null">
-                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="userName != null">
                 user_name = #{userName,jdbcType=VARCHAR},
             </if>
@@ -303,7 +296,6 @@
       follow_time = #{followTime,jdbcType=VARCHAR},
       next_follow_time = #{nextFollowTime,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       user_name = #{userName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>

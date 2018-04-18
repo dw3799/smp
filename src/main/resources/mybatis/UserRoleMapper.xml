@@ -230,9 +230,6 @@
             <if test="record.createdTime != null">
                 created_time = #{record.createdTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.updatedTime != null">
-                updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
-            </if>
         </set>
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -248,8 +245,7 @@
         role_id = #{record.roleId,jdbcType=BIGINT},
         role_name = #{record.roleName,jdbcType=VARCHAR},
         expire_time = #{record.expireTime,jdbcType=TIMESTAMP},
-        created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
+        created_time = #{record.createdTime,jdbcType=TIMESTAMP}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
@@ -281,9 +277,6 @@
             <if test="createdTime != null">
                 created_time = #{createdTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="updatedTime != null">
-                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-            </if>
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
@@ -296,9 +289,8 @@
       role_id = #{roleId,jdbcType=BIGINT},
       role_name = #{roleName,jdbcType=VARCHAR},
       expire_time = #{expireTime,jdbcType=TIMESTAMP},
-      created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
+      where id = #{id,jdbcType=BIGINT}
   </update>
 
 

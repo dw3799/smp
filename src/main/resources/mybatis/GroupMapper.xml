@@ -208,9 +208,6 @@
       <if test="record.createdTime != null">
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.updatedTime != null">
-        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
-      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -225,8 +222,7 @@
       leader_name = #{record.leaderName,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       partent_group_id = #{record.partentGroupId,jdbcType=BIGINT},
-      created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
+      created_time = #{record.createdTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -255,9 +251,6 @@
       <if test="createdTime != null">
         created_time = #{createdTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updatedTime != null">
-        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -269,8 +262,7 @@
       leader_name = #{leaderName,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       partent_group_id = #{partentGroupId,jdbcType=BIGINT},
-      created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 

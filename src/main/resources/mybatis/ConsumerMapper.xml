@@ -423,9 +423,6 @@
             <if test="record.createdTime != null">
                 created_time = #{record.createdTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.updatedTime != null">
-                updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="record.intentionQuantity != null">
                 intention_quantity = #{record.intentionQuantity,jdbcType=BIGINT},
             </if>
@@ -463,7 +460,6 @@
         scope = #{record.scope,jdbcType=VARCHAR},
         remark = #{record.remark,jdbcType=VARCHAR},
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
         intention_quantity = #{record.intentionQuantity,jdbcType=BIGINT}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -550,9 +546,6 @@
             <if test="createdTime != null">
                 created_time = #{createdTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="updatedTime != null">
-                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="intentionQuantity != null">
                 intention_quantity = #{intentionQuantity,jdbcType=BIGINT},
             </if>
@@ -587,7 +580,6 @@
       scope = #{scope,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       intention_quantity = #{intentionQuantity,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>

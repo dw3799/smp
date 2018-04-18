@@ -192,9 +192,6 @@
             <if test="createdTime != null">
                 #{createdTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="updatedTime != null">
-                #{updatedTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="isLeader != null">
                 #{isLeader,jdbcType=INTEGER},
             </if>
@@ -240,9 +237,6 @@
             <if test="record.createdTime != null">
                 created_time = #{record.createdTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.updatedTime != null">
-                updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="record.isLeader != null">
                 is_leader = #{record.isLeader,jdbcType=INTEGER},
             </if>
@@ -263,7 +257,6 @@
         create_user = #{record.createUser,jdbcType=VARCHAR},
         remark = #{record.remark,jdbcType=VARCHAR},
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
         is_leader = #{record.isLeader,jdbcType=INTEGER}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -299,9 +292,6 @@
             <if test="createdTime != null">
                 created_time = #{createdTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="updatedTime != null">
-                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="isLeader != null">
                 is_leader = #{isLeader,jdbcType=INTEGER},
             </if>
@@ -319,7 +309,6 @@
       create_user = #{createUser,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       is_leader = #{isLeader,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
