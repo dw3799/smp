@@ -2,6 +2,7 @@ package com.alipapa.smp.consumer.mapper;
 
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.ConsumerExample;
+import com.alipapa.smp.consumer.pojo.ConsumerExt;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public interface ConsumerMapper {
 
     Long selectMaxId();
 
-    List<Consumer> findSalerConsumerByParam(Map<String, Object> params);
+    List<ConsumerExt> findSalerConsumerByParam(Map<String, Object> params);
 
     long findSalerConsumerByParamCount(Map<String, Object> params);
 

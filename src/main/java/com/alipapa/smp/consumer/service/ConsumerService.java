@@ -3,17 +3,16 @@ package com.alipapa.smp.consumer.service;
 import com.alipapa.smp.consumer.mapper.ConsumerMapper;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.ConsumerExample;
+import com.alipapa.smp.consumer.pojo.ConsumerExt;
 import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
 import com.alipapa.smp.consumer.vo.SalerConsumerDetailVo;
+import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ConsumerService {
@@ -100,12 +99,17 @@ public class ConsumerService {
         Long count = consumerMapper.findSalerConsumerByParamCount(params);
 
         List<SalerConsumerDetailVo> consumerDetailVoList = new ArrayList<>();
+        HashSet<String> consumerIdSet = new HashSet<>();
         if (count != null && count > 0) {
             params.put("start", start);
             params.put("size", size);
-            List<Consumer> consumerList = consumerMapper.findSalerConsumerByParam(params);
+            List<ConsumerExt> consumerList = consumerMapper.findSalerConsumerByParam(params);
             if (!CollectionUtils.isEmpty(consumerList)) {
-                for (Consumer consumer : consumerList) {
+                for (ConsumerExt consumer : consumerList) {
+                    if (consumerIdSet.contains(String.valueOf(consumer.getId()))) {
+                        continue;
+                    }
+                    consumerIdSet.add(String.valueOf(consumer.getId()));
                     SalerConsumerDetailVo consumerDetailVo = new SalerConsumerDetailVo();
                     consumerDetailVo.setConsumerNo(consumer.getConsumerNo());
                     consumerDetailVo.setName(consumer.getName());
@@ -114,7 +118,11 @@ public class ConsumerService {
                     consumerDetailVo.setHasOrder(consumer.getHasOrder());
                     consumerDetailVo.setLevel(consumer.getLevel());
                     consumerDetailVo.setIsDiscard(1);
-                    
+
+                    consumerDetailVo.setContactTime(DateUtil.formatToStr(consumer.getFollowTime()));
+                    consumerDetailVo.setNextContactTime(DateUtil.formatToStr(consumer.getNextFollowTime()));
+
+
                     //TODO from订单管理
                     consumerDetailVo.setTotalOrder(null);
                     consumerDetailVo.setOrderAmount(null);

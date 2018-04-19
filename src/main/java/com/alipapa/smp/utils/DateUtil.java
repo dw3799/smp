@@ -30,6 +30,9 @@ public class DateUtil extends DateUtils {
     }
 
     public static String formatToStr(Date date) {
+        if (date == null) {
+            return null;
+        }
         return DateFormatUtils.format(date, "yyyyMMdd");
     }
 
