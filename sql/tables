@@ -1,83 +1,269 @@
-use alipapa_smp;
+/*
+ Navicat MySQL Data Transfer
 
+ Source Server         : smp
+ Source Server Type    : MySQL
+ Source Server Version : 50720
+ Source Host           : localhost
+ Source Database       : alipapa_smp
+
+ Target Server Type    : MySQL
+ Target Server Version : 50720
+ File Encoding         : utf-8
+
+ Date: 04/19/2018 10:28:47 AM
+*/
+
+SET NAMES utf8;
+SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for stock_manage
+--  Table structure for `consumer`
 -- ----------------------------
-DROP TABLE IF EXISTS `stock_manage`;
-CREATE TABLE `stock_manage` (
+DROP TABLE IF EXISTS `consumer`;
+CREATE TABLE `consumer` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `type` varchar(100) DEFAULT '' COMMENT '型号',
-  `colour` varchar(10) DEFAULT '' COMMENT '颜色',
-  `qty` int(11) DEFAULT NULL COMMENT '数量',
-  `shelfno` varchar(30) DEFAULT '' COMMENT '货架号',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='库存表';
-
-
-
-
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `name` varchar(32) NOT NULL COMMENT '登录名',
-  `cn_name` varchar(32) NOT NULL COMMENT '中文名称',
-  `user_no` varchar(100) NOT NULL COMMENT '用户唯一标识',
-  `pwd` varchar(50) NOT NULL COMMENT '加密后的密码',
-  `create_user` varchar(50) DEFAULT NULL COMMENT '创建人',
+  `consumer_no` varchar(50) NOT NULL COMMENT '客户编号',
+  `name` varchar(50) NOT NULL COMMENT '客户姓名',
+  `country` varchar(50) NOT NULL COMMENT '客户国籍',
+  `main_business` varchar(100) NOT NULL COMMENT '主营业务',
+  `source` varchar(20) NOT NULL COMMENT '客户来源',
+  `type` varchar(20) NOT NULL COMMENT '客户类型,贸易商等',
+  `email` varchar(100) NOT NULL COMMENT '电子邮箱',
+  `intention` varchar(100) DEFAULT NULL COMMENT '客户意向',
+  `facebook` varchar(100) DEFAULT NULL COMMENT 'facebook',
+  `whatsapp` varchar(100) DEFAULT NULL COMMENT 'Whatsapp',
+  `linkedin` varchar(100) DEFAULT NULL COMMENT 'LinkedIn',
+  `wechat` varchar(100) DEFAULT NULL COMMENT 'Wechat',
+  `qq` varchar(100) DEFAULT NULL COMMENT 'QQ',
+  `contacts` varchar(100) DEFAULT NULL COMMENT '联系方式，多个;隔开',
+  `company_address` varchar(100) DEFAULT NULL COMMENT '公司地址',
+  `company_website` varchar(100) DEFAULT NULL COMMENT '公司网址',
+  `consignee` varchar(30) DEFAULT NULL COMMENT '收件人',
+  `tel_mobile` varchar(30) DEFAULT NULL COMMENT '联系电话',
+  `postal_code` varchar(30) DEFAULT NULL COMMENT '邮政编码',
+  `receiving_address` varchar(100) DEFAULT NULL COMMENT '收货地址',
+  `level` varchar(10) DEFAULT NULL COMMENT '客户等级',
+  `has_order` varchar(10) DEFAULT NULL COMMENT '是否有订单',
+  `create_user` varchar(50) NOT NULL COMMENT '创建人，存uuid',
+  `scope` varchar(10) NOT NULL COMMENT '作用域，PRIVATE/PUBLIC/PROTECTED',
   `remark` varchar(100) DEFAULT NULL COMMENT '备注',
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY  `uk_name` (`name`),
-  KEY `idx_login` (`name`, `pwd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
-
-
-DROP TABLE IF EXISTS `user_role`;
-CREATE TABLE `user_role` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `token` varchar(100) DEFAULT '' COMMENT 'token',
-  `user_id` bigint(20) NOT NULL COMMENT '用户id',
-  `user_no` varchar(100) NOT NULL COMMENT '用户唯一标识',
-  `role_id` bigint(20) NOT NULL COMMENT '角色id',
-  `group_id` bigint(20) DEFAULT NULL COMMENT '用户组Id',
-  `group_no` varchar(100) NOT NULL COMMENT '组编号',
-  `expire_time`  datetime  NULL COMMENT 'token过期时间',
-  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `intention_quantity` bigint(20) DEFAULT NULL COMMENT '意向数量',
   PRIMARY KEY (`id`),
-  KEY `idx_user_no` (`user_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户角色表';
+  UNIQUE KEY `uk_name` (`name`,`email`),
+  KEY `idx_no` (`consumer_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户表';
 
-
-
-DROP TABLE IF EXISTS `role`;
-CREATE TABLE `role` (
+-- ----------------------------
+--  Table structure for `consumer_follow_record`
+-- ----------------------------
+DROP TABLE IF EXISTS `consumer_follow_record`;
+CREATE TABLE `consumer_follow_record` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `role_name` varchar(100) DEFAULT '' COMMENT '角色简称',
-  `description` varchar(100) NOT NULL COMMENT '角色描述',
-  `remark` varchar(200) NOT NULL COMMENT '备注',
+  `consumer_id` bigint(20) NOT NULL COMMENT '客户ID',
+  `consumer_no` varchar(50) NOT NULL COMMENT '客户编号',
+  `user_id` bigint(20) NOT NULL COMMENT '跟进人ID',
+  `user_no` varchar(100) NOT NULL COMMENT '跟进人NO',
+  `content` varchar(1000) DEFAULT NULL COMMENT '跟进内容',
+  `follow_time` varchar(20) NOT NULL COMMENT '跟进时间',
+  `next_follow_time` varchar(20) DEFAULT NULL COMMENT '下次跟进时间',
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `user_name` varchar(50) NOT NULL COMMENT '姓名',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统角色表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='跟进记录表';
 
-
+-- ----------------------------
+--  Table structure for `group`
+-- ----------------------------
 DROP TABLE IF EXISTS `group`;
 CREATE TABLE `group` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   `group_no` varchar(100) NOT NULL COMMENT '组编号',
   `name` varchar(100) NOT NULL COMMENT '组名称',
-  `leader_id` bigint(20) NOT NULL COMMENT '组长id',
+  `leader_id` bigint(20) DEFAULT NULL COMMENT '组长id',
+  `leader_name` varchar(100) DEFAULT NULL COMMENT '组长名称',
   `remark` varchar(200) DEFAULT NULL COMMENT '备注',
   `partent_group_id` bigint(20) DEFAULT NULL COMMENT '上级组织Id',
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='组织架构表';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='组织架构表';
 
+-- ----------------------------
+--  Records of `group`
+-- ----------------------------
+BEGIN;
+INSERT INTO `group` VALUES ('2', 'G001', '财务组', null, null, null, null, '2018-03-26 18:23:09', '2018-03-26 18:23:09'), ('3', 'G003', '仓储组', '1', 'admin', null, null, '2018-03-26 18:23:25', '2018-03-26 18:23:25'), ('4', 'G004', '业务二组', null, null, null, null, '2018-03-26 18:40:20', '2018-03-26 18:40:20'), ('5', 'G005', '业务san组', '2', 'liuwei', null, null, '2018-03-26 18:43:16', '2018-03-26 18:43:16');
+COMMIT;
 
+-- ----------------------------
+--  Table structure for `permission_item`
+-- ----------------------------
+DROP TABLE IF EXISTS `permission_item`;
+CREATE TABLE `permission_item` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
+  `name` varchar(100) NOT NULL COMMENT '名称',
+  `icon` varchar(255) DEFAULT NULL COMMENT '图标',
+  `url` varchar(255) DEFAULT NULL COMMENT '跳转链接',
+  `level` int(11) DEFAULT NULL COMMENT '层级',
+  `sort` int(11) DEFAULT NULL COMMENT '排序',
+  `parent_id` bigint(20) DEFAULT NULL COMMENT '父级Id',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_parent_id` (`parent_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COMMENT='权限列表';
+
+-- ----------------------------
+--  Records of `permission_item`
+-- ----------------------------
+BEGIN;
+INSERT INTO `permission_item` VALUES ('1', '订单管理', null, null, '1', '1', null, '2018-03-20 19:19:39', '2018-03-20 19:19:45'), ('2', '我的订单', null, null, '2', '1', '1', '2018-03-20 19:20:34', '2018-03-20 19:20:34'), ('3', '创建订单', null, null, '2', '2', '1', '2018-03-20 19:20:48', '2018-03-20 19:21:01'), ('4', '客户管理', null, null, '1', '2', null, '2018-03-20 19:21:29', '2018-03-20 19:21:36'), ('5', '我的客户', null, null, '2', '1', '4', '2018-03-20 19:21:55', '2018-03-20 19:22:06'), ('6', '潜在客户', null, null, '2', '2', '4', '2018-03-20 19:23:13', '2018-04-10 18:49:12'), ('7', '成交客户', null, null, '2', '3', '4', '2018-03-20 19:23:23', '2018-04-10 18:49:35'), ('8', '创建客户', null, null, '2', '4', '4', '2018-03-20 19:23:32', '2018-04-10 18:50:48'), ('9', '供应商/产品管理', null, null, '1', '3', null, '2018-03-20 19:24:28', '2018-03-20 19:27:15'), ('10', '供应商/产品查询', null, null, '2', '1', '9', '2018-03-20 19:25:26', '2018-03-20 19:25:26'), ('11', '报表分析', null, null, '1', '4', null, '2018-03-20 19:25:58', '2018-03-20 19:27:18'), ('12', '客户分析', null, null, '2', '1', '11', '2018-03-20 19:26:35', '2018-03-20 19:27:41'), ('13', '业务指标', null, null, '2', '2', '11', '2018-03-20 19:26:44', '2018-03-20 19:27:43'), ('14', '利润分析', null, null, '2', '3', '11', '2018-03-20 19:26:54', '2018-03-20 19:27:45'), ('15', '权限管理', null, null, '1', '5', null, '2018-03-20 19:28:18', '2018-03-20 19:29:02'), ('16', '人员维护', null, null, '2', '1', '15', '2018-03-20 19:28:37', '2018-03-20 19:29:32'), ('17', '创建组', null, null, '2', '2', '15', '2018-03-20 19:28:45', '2018-03-20 19:29:34'), ('18', '组查询', null, null, '2', '3', '15', '2018-03-20 19:28:52', '2018-03-20 19:29:37'), ('19', '仓储管理', null, null, '1', '6', null, '2018-03-20 19:30:05', '2018-03-20 19:30:52'), ('20', '入库管理', null, null, '2', '1', '19', '2018-03-20 19:30:14', '2018-03-20 19:31:15'), ('21', '质检管理', null, null, '2', '2', '19', '2018-03-20 19:30:32', '2018-03-20 19:31:16'), ('22', '出库管理', null, null, '2', '3', '19', '2018-03-20 19:30:39', '2018-03-20 19:31:19'), ('23', '待跟进事项', null, null, '1', '7', null, '2018-03-20 19:31:42', '2018-03-20 19:32:32'), ('24', '流程审批', null, null, '2', '1', '23', '2018-03-20 19:32:25', '2018-03-20 19:32:46'), ('25', '抢客户', null, null, '1', '2', null, '2018-04-10 18:48:59', '2018-04-10 18:48:59'), ('26', '公共资源池', null, null, '1', '2', null, '2018-04-10 19:01:09', '2018-04-10 19:01:09');
+COMMIT;
+
+-- ----------------------------
+--  Table structure for `role`
+-- ----------------------------
+DROP TABLE IF EXISTS `role`;
+CREATE TABLE `role` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `role_name` varchar(100) NOT NULL COMMENT '角色简称',
+  `description` varchar(100) NOT NULL COMMENT '角色描述',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='系统角色表';
+
+-- ----------------------------
+--  Records of `role`
+-- ----------------------------
+BEGIN;
+INSERT INTO `role` VALUES ('1', 'saler', '业务员', null, '2018-03-08 19:15:57', '2018-03-13 18:36:08'), ('2', 'supervisor', '业务主管', null, '2018-03-08 19:17:04', '2018-03-13 18:36:19'), ('3', 'financial', '财务人员', null, '2018-03-08 19:17:56', '2018-03-13 18:37:01'), ('4', 'cashier', '出纳人员', null, '2018-03-08 19:18:49', '2018-03-13 18:37:06'), ('5', 'buyer', '采购人员', null, '2018-03-08 19:20:53', '2018-03-13 18:37:11'), ('6', 'storage', '仓储人员', null, '2018-03-08 19:22:12', '2018-03-13 18:37:15'), ('7', 'documentation', '单证', null, '2018-03-08 19:23:51', '2018-03-13 18:37:22'), ('8', 'admin', '管理员', null, '2018-03-08 19:24:12', '2018-03-13 18:37:26');
+COMMIT;
+
+-- ----------------------------
+--  Table structure for `role_permission`
+-- ----------------------------
+DROP TABLE IF EXISTS `role_permission`;
+CREATE TABLE `role_permission` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
+  `role_id` bigint(20) DEFAULT NULL COMMENT '角色ID',
+  `permission_id` bigint(20) DEFAULT NULL COMMENT '权限ID',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=utf8 COMMENT='角色权限';
+
+-- ----------------------------
+--  Records of `role_permission`
+-- ----------------------------
+BEGIN;
+INSERT INTO `role_permission` VALUES ('1', '1', '1', '2018-03-25 09:07:37', '2018-03-25 09:07:37'), ('49', '1', '2', '2018-03-25 18:12:09', '2018-03-25 18:12:09'), ('50', '1', '3', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('51', '1', '4', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('52', '1', '25', '2018-03-25 18:12:10', '2018-04-10 18:53:32'), ('53', '1', '6', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('54', '1', '7', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('55', '1', '8', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('56', '1', '23', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('57', '1', '24', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('58', '2', '1', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('59', '2', '2', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('60', '2', '3', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('61', '2', '4', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('62', '2', '25', '2018-03-25 18:12:10', '2018-04-10 18:54:40'), ('63', '2', '5', '2018-03-25 18:12:10', '2018-04-10 18:54:48'), ('65', '2', '8', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('66', '2', '23', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('67', '2', '24', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('68', '2', '11', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('69', '2', '12', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('70', '2', '13', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('71', '3', '4', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('72', '3', '5', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('73', '3', '11', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('74', '3', '12', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('75', '3', '13', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('76', '3', '14', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('77', '3', '23', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('78', '3', '24', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('79', '4', '23', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('80', '4', '24', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('81', '5', '1', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('82', '5', '2', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('83', '5', '9', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('84', '5', '10', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('85', '5', '23', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('86', '5', '24', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('87', '6', '19', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('88', '6', '20', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('89', '6', '21', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('90', '6', '23', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('91', '6', '24', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('92', '7', '19', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('93', '7', '22', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('94', '7', '23', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('95', '7', '24', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('96', '8', '1', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('97', '8', '2', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('98', '8', '3', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('99', '8', '4', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('100', '8', '5', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('101', '8', '9', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('102', '8', '10', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('103', '8', '11', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('104', '8', '12', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('105', '8', '13', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('106', '8', '14', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('107', '8', '15', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('108', '8', '16', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('109', '8', '17', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('110', '8', '18', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('111', '8', '19', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('112', '8', '20', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('113', '8', '21', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('114', '8', '22', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('115', '8', '23', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('116', '8', '24', '2018-03-25 18:12:10', '2018-03-25 18:12:10'), ('117', '8', '26', '2018-03-25 18:12:10', '2018-04-10 19:01:21');
+COMMIT;
+
+-- ----------------------------
+--  Table structure for `sys_dict`
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_dict`;
+CREATE TABLE `sys_dict` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
+  `category_code` varchar(255) NOT NULL COMMENT '分类编码',
+  `dict_text` varchar(255) NOT NULL COMMENT '字典文本',
+  `dict_value` varchar(255) NOT NULL COMMENT '字典值',
+  `sort` int(11) DEFAULT NULL COMMENT '排序',
+  `status` int(11) DEFAULT NULL COMMENT '删除状态：0：正常，1：删除',
+  `readonly` int(11) DEFAULT NULL COMMENT '是否只读：0：false，1：true',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_category_code` (`category_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8 COMMENT='系统字典表';
+
+-- ----------------------------
+--  Records of `sys_dict`
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_dict` VALUES ('1', 'ConsumerCountry', '美国', 'USA', '1', '1', '1', '2018-03-14 19:56:20', '2018-03-14 19:56:26'), ('2', 'ConsumerCountry', '中国', 'CN', '2', '1', '1', '2018-03-14 19:56:52', '2018-03-14 19:56:57'), ('3', 'ConsumerLevel', 'A', 'A', '1', '1', '1', '2018-03-14 19:57:46', '2018-03-14 19:57:51'), ('4', 'ConsumerLevel', 'B', 'B', '2', '1', '1', '2018-03-14 19:58:03', '2018-03-14 19:58:10'), ('5', 'ConsumerLevel', 'C', 'C', '3', '1', '1', '2018-03-14 19:58:27', '2018-03-14 19:58:27'), ('6', 'ConsumerLevel', 'D', 'D', '4', '1', '1', '2018-03-14 19:58:44', '2018-03-14 19:58:44'), ('7', 'ConsumerLevel', 'E', 'E', '5', '1', '1', '2018-03-14 19:59:05', '2018-03-14 19:59:05'), ('8', 'ConsumerType', '零售商', 'LINGSHOU', '1', '1', '1', '2018-03-14 20:00:33', '2018-03-14 20:00:40'), ('9', 'ConsumerType', '批发商', 'PIFA', '2', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('10', 'ConsumerType', '贸易商', 'MAOYI', '3', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('11', 'ConsumerType', '品牌商', 'PINPAI', '4', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('12', 'ConsumerSource', '展会', 'ZHANHUI', '1', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('13', 'ConsumerSource', 'IFQ', 'IFQ', '2', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('14', 'ConsumerSource', '访客营销', 'FANGKE', '3', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('15', 'ConsumerSource', '阿里询盘', 'ALIBABA', '4', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('16', 'ConsumerSource', '地推', 'DITUI', '5', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('17', 'ConsumerSource', '转介绍', 'JIESHAO', '6', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('18', 'ConsumerSource', '公司官网', 'GUANWANG', '7', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('19', 'ConsumerSource', '社交软件', 'SHEJIAO', '8', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('20', 'ConsumerSource', '6688', '6688', '9', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('21', 'ConsumerIntention', '棉布手提袋', '棉布手提袋', '1', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('22', 'ConsumerIntention', '棉布束口袋', '棉布束口袋', '2', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('23', 'ConsumerIntention', '棉布抽绳袋', '棉布抽绳袋', '3', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('24', 'ConsumerIntention', '涤纶束口袋', '涤纶束口袋', '4', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('25', 'ConsumerIntention', '棉布化妆包', '棉布化妆包', '5', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('26', 'ConsumerIntention', '无纺布袋', '无纺布袋', '6', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('27', 'ConsumerIntention', '绒布袋', '绒布袋', '7', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('28', 'ConsumerIntention', '头巾', '头巾', '8', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('29', 'ConsumerIntention', '抱枕', '抱枕', '9', '1', '1', '2018-03-14 20:01:46', '2018-03-14 20:02:27'), ('30', 'ConsumerReclaimRules', 'NEW_PRIVATE_ONE', '30', '1', '1', '1', '2018-03-14 20:01:46', '2018-04-18 17:08:38'), ('31', 'ConsumerReclaimRules', 'NEW_PROTECTED_MANY', '30', '2', '1', '1', '2018-03-14 20:01:46', '2018-04-18 17:09:01'), ('32', 'ConsumerReclaimRules', 'NEW_PUBLIC_ONE', '30', '3', '1', '1', '2018-03-14 20:01:46', '2018-04-18 17:09:14'), ('33', 'ConsumerReclaimRules', 'NEW_PUBLIC_MANY', '30', '4', '1', '1', '2018-03-14 20:01:46', '2018-04-18 17:09:23'), ('34', 'ConsumerReclaimRules', 'DEAL_BOTH_ONE', '60', '5', '1', '1', '2018-03-14 20:01:46', '2018-04-18 17:09:44'), ('35', 'ConsumerReclaimRules', 'DEAL_BOTH_MANY', '60', '6', '1', '1', '2018-03-14 20:01:46', '2018-04-18 17:09:54'), ('36', 'ConsumerDiscardingRules', 'Discard', '30', '1', '1', '1', '2018-03-14 20:01:46', '2018-04-11 19:16:10'), ('37', 'ConsumerDiscardingRules', 'Reclaim', '30', '2', '1', '1', '2018-03-14 20:01:46', '2018-04-11 19:17:07');
+COMMIT;
+
+-- ----------------------------
+--  Table structure for `user`
+-- ----------------------------
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `name` varchar(32) NOT NULL COMMENT '登录名',
+  `user_no` varchar(100) NOT NULL COMMENT '用户唯一标识',
+  `uuid` varchar(64) DEFAULT NULL COMMENT '唯一标识',
+  `pwd` varchar(50) NOT NULL COMMENT '加密后的密码',
+  `group_id` bigint(20) DEFAULT NULL COMMENT '用户组Id',
+  `group_no` varchar(100) DEFAULT NULL COMMENT '组编号',
+  `create_user` varchar(50) DEFAULT NULL COMMENT '创建人',
+  `remark` varchar(100) DEFAULT NULL COMMENT '备注',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `is_leader` int(10) DEFAULT '0' COMMENT '是否为组长',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_name` (`name`),
+  KEY `idx_login` (`name`,`pwd`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='用户表';
+
+-- ----------------------------
+--  Records of `user`
+-- ----------------------------
+BEGIN;
+INSERT INTO `user` VALUES ('1', 'admin', 'U2018001', 'f379eaf3c831b04de153469d1bec345e', 'f379eaf3c831b04de153469d1bec345e', '3', 'G003', null, null, '2018-03-25 09:29:37', '2018-03-25 09:30:08', '0'), ('2', 'liuwei', '20180002', 'bf36f6a8-1451-4185-af56-740023e81d60', 'f379eaf3c831b04de153469d1bec345e', '5', 'G005', 'U2018001', null, '2018-03-25 10:12:52', '2018-03-25 10:12:52', '0'), ('3', 'xiaoguang', '20180003', '9017daed-ded4-4a8b-b55f-cccdd14dd558', 'f379eaf3c831b04de153469d1bec345e', '3', 'G003', 'U2018001', null, '2018-03-25 10:27:28', '2018-03-25 10:27:28', '0');
+COMMIT;
+
+-- ----------------------------
+--  Table structure for `user_consumer_relation`
+-- ----------------------------
+DROP TABLE IF EXISTS `user_consumer_relation`;
+CREATE TABLE `user_consumer_relation` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `consumer_id` bigint(20) NOT NULL COMMENT '客户ID',
+  `consumer_no` varchar(50) NOT NULL COMMENT '客户编号',
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+  `user_no` varchar(100) NOT NULL COMMENT '用户NO',
+  `is_del` int(11) DEFAULT '0' COMMENT '是否已经抛弃',
+  `has_order` int(11) DEFAULT '0' COMMENT '是否下订单，0无下单，1已下单',
+  `deal_order` int(11) DEFAULT '0' COMMENT '是否有订单成交，0无成交，1已成交',
+  `follow_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '上次跟进时间',
+  `next_follow_time` datetime DEFAULT NULL COMMENT '下次跟进时间',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工客户关联表';
+
+-- ----------------------------
+--  Table structure for `user_role`
+-- ----------------------------
+DROP TABLE IF EXISTS `user_role`;
+CREATE TABLE `user_role` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `token` varchar(100) DEFAULT '' COMMENT 'token',
+  `user_id` bigint(20) NOT NULL COMMENT '用户id',
+  `user_no` varchar(100) NOT NULL COMMENT '用户编号',
+  `uuid` varchar(100) NOT NULL COMMENT '用户唯一标识',
+  `role_id` bigint(20) NOT NULL COMMENT '角色id',
+  `role_name` varchar(100) DEFAULT '' COMMENT '角色简称',
+  `expire_time` datetime DEFAULT NULL COMMENT 'token过期时间',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`,`role_id`),
+  KEY `idx_user_no` (`user_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='用户角色表';
+
+-- ----------------------------
+--  Records of `user_role`
+-- ----------------------------
+BEGIN;
+INSERT INTO `user_role` VALUES ('1', '670e8a43b246801ca1eaca97b3e19189', '1', 'U2018001', 'f379eaf3c831b04de153469d1bec345e', '8', 'admin', '2018-03-28 19:04:18', '2018-03-25 09:32:00', '2018-03-25 09:32:00'), ('2', 'a0a080f42e6f13b3a2df133f073095dd', '2', '20180002', 'bf36f6a8-1451-4185-af56-740023e81d60', '1', 'saler', '2018-03-26 18:04:01', '2018-03-25 10:12:52', '2018-03-25 10:12:52'), ('3', null, '2', '20180002', 'bf36f6a8-1451-4185-af56-740023e81d60', '8', 'admin', null, '2018-03-25 10:12:52', '2018-03-25 10:12:52'), ('4', null, '3', '20180003', '9017daed-ded4-4a8b-b55f-cccdd14dd558', '2', 'supervisor', null, '2018-03-25 10:27:28', '2018-03-25 10:27:28');
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS = 1;
