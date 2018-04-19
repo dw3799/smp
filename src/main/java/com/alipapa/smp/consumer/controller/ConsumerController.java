@@ -1090,6 +1090,7 @@ public class ConsumerController {
             invalidRelation.setHasOrder(0);
             invalidRelation.setDealOrder(0);
             invalidRelation.setFollowTime(new Date());
+            invalidRelation.setNextFollowTime(null);
             invalidRelation.setUpdatedTime(new Date());
             userConsumerRelationService.updateUserConsumerRelation(invalidRelation);
         } else {

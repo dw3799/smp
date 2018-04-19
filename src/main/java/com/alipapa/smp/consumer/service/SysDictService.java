@@ -28,6 +28,24 @@ public class SysDictService {
 
 
     /**
+     * @param id
+     * @return
+     */
+    public SysDict getSysDictById(Long id) {
+        return sysDictMapper.selectByPrimaryKey(id);
+    }
+
+    /**
+     * @param sysDict
+     * @return
+     */
+    public boolean updateSysDict(SysDict sysDict) {
+        sysDictMapper.updateByPrimaryKey(sysDict);
+        return true;
+    }
+
+
+    /**
      * @param categoryCode
      * @return
      */
@@ -96,6 +114,21 @@ public class SysDictService {
             }
         }
         return true;
+    }
+
+
+    /**
+     * 获取所有可用不可用的配置
+     *
+     * @param categoryCode
+     * @return
+     */
+    public List<SysDict> listAllRuleConfig(String categoryCode) {
+        SysDictExample example = new SysDictExample();
+        SysDictExample.Criteria criteria = example.createCriteria();
+        criteria.andCategoryCodeEqualTo(categoryCode);
+        example.setOrderByClause("sort");
+        return sysDictMapper.selectByExample(example);
     }
 
 

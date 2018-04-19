@@ -13,17 +13,17 @@ public enum ReclaimRulesEnum {
             35	ConsumerReclaimRules	老客户非公多人跟进	60	6	1	1	2018-03-14 20:01:46	2018-03-14 20:02:27*/
 
 
-    NEW_PRIVATE_ONE(1, "NEW_PRIVATE_ONE", "新客户非公一人跟进"),
+    NEW_PRIVATE_ONE(1, "NEW_PRIVATE_ONE", "N天未跟进的非公共资源池-单人跟进-新客户回收规则"),
 
-    NEW_PROTECTED_MANY(2, "NEW_PROTECTED_MANY", "新客户非公多人跟进"),
+    NEW_PROTECTED_MANY(2, "NEW_PROTECTED_MANY", "N天未跟进的非公共资源池-多人跟进-新客户回收规则"),
 
-    NEW_PUBLIC_ONE(3, "NEW_PUBLIC_ONE", "新客户公共一人跟进"),
+    NEW_PUBLIC_ONE(3, "NEW_PUBLIC_ONE", "N天未跟进的公共资源池-单人跟进-新客户回收规则"),
 
-    NEW_PUBLIC_MANY(4, "NEW_PUBLIC_MANY", "新客户公共多人跟进"),
+    NEW_PUBLIC_MANY(4, "NEW_PUBLIC_MANY", "N天未跟进的公共资源池-多人跟进-新客户回收规则"),
 
-    DEAL_BOTH_ONE(5, "DEAL_BOTH_ONE", "老客户非公一人跟进"),
+    DEAL_BOTH_ONE(5, "DEAL_BOTH_ONE", "N天未跟进的-单人跟进-老客户回收规则"),
 
-    DEAL_BOTH_MANY(6, "DEAL_BOTH_MANY", "老客户非公多人跟进");
+    DEAL_BOTH_MANY(6, "DEAL_BOTH_MANY", "N天未跟进的-多人跟进-老客户回收规则");
 
     ReclaimRulesEnum(int code, String codeName, String dec) {
         this.code = code;
@@ -53,6 +53,16 @@ public enum ReclaimRulesEnum {
         ReclaimRulesEnum[] consumerScopeEnums = ReclaimRulesEnum.values();
         for (ReclaimRulesEnum consumerScopeEnum : consumerScopeEnums) {
             if (consumerScopeEnum.getCode() == code) {
+                return consumerScopeEnum;
+            }
+        }
+        return null;
+    }
+
+    public static ReclaimRulesEnum getValueByCodeName(String codeName) {
+        ReclaimRulesEnum[] consumerScopeEnums = ReclaimRulesEnum.values();
+        for (ReclaimRulesEnum consumerScopeEnum : consumerScopeEnums) {
+            if (consumerScopeEnum.getCodeName() == codeName) {
                 return consumerScopeEnum;
             }
         }
