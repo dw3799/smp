@@ -967,6 +967,7 @@ public class ConsumerController {
         }
         //更新客户关系表，抛弃状态
         userConsumerRelation.setIsDel(FellowUpRulesEnum.Discard.getCode());
+        userConsumerRelation.setFollowTime(new Date());
         userConsumerRelation.setUpdatedTime(new Date());
         userConsumerRelationService.updateUserConsumerRelation(userConsumerRelation);
 

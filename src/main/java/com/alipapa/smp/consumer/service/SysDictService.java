@@ -67,7 +67,7 @@ public class SysDictService {
             List<SysDict> sysDictList = this.listSysDict(CategoryCode.discarding_rules.getCodeName(), FellowUpRulesEnum.Discard.getCodeName());
             if (!CollectionUtils.isEmpty(sysDictList)) {
                 String timeDay = sysDictList.get(0).getDictValue();
-                Date levelTime = DateUtil.getSomeDayDateToTime(discardRelation.getUpdatedTime(), Integer.valueOf(timeDay));
+                Date levelTime = DateUtil.getSomeDayDateToTime(discardRelation.getFollowTime(), Integer.valueOf(timeDay));
                 if (levelTime.after(new Date())) {
                     return false;
                 }
@@ -89,7 +89,7 @@ public class SysDictService {
             List<SysDict> sysDictList = this.listSysDict(CategoryCode.discarding_rules.getCodeName(), FellowUpRulesEnum.Reclaim.getCodeName());
             if (!CollectionUtils.isEmpty(sysDictList)) {
                 String timeDay = sysDictList.get(0).getDictValue();
-                Date levelTime = DateUtil.getSomeDayDateToTime(reclaimRelation.getUpdatedTime(), Integer.valueOf(timeDay));
+                Date levelTime = DateUtil.getSomeDayDateToTime(reclaimRelation.getFollowTime(), Integer.valueOf(timeDay));
                 if (levelTime.after(new Date())) {
                     return false;
                 }

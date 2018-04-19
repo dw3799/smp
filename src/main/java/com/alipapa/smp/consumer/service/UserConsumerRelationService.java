@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -34,6 +35,26 @@ public class UserConsumerRelationService {
 
         return userConsumerRelationMapper.selectByExample(example);
     }
+
+    /**
+     * 查询客户的所有跟进人
+     *
+     * @param consumerId
+     * @return
+     */
+    public long countAllValidRelationByConsumerId(Long consumerId) {
+        if (consumerId == null) {
+            return 0;
+        }
+
+        UserConsumerRelationExample example = new UserConsumerRelationExample();
+        UserConsumerRelationExample.Criteria criteria = example.createCriteria();
+        criteria.andConsumerIdEqualTo(consumerId);
+        criteria.andIsDelEqualTo(0);
+
+        return userConsumerRelationMapper.countByExample(example);
+    }
+
 
     /**
      * 创建员工客户关联
@@ -76,5 +97,45 @@ public class UserConsumerRelationService {
             return null;
         }
         return userConsumerRelationList.get(0);
+    }
+
+
+    /**
+     * 按上次跟进时间查询未下单跟进关系
+     *
+     * @param followTime
+     * @return
+     */
+    public List<UserConsumerRelation> listNewValidRelationByFollowTime(Date followTime) {
+        if (followTime == null) {
+            return null;
+        }
+        UserConsumerRelationExample example = new UserConsumerRelationExample();
+        UserConsumerRelationExample.Criteria criteria = example.createCriteria();
+        criteria.andFollowTimeIsNotNull();
+        criteria.andFollowTimeLessThan(followTime);
+        criteria.andIsDelEqualTo(0);
+        criteria.andHasOrderEqualTo(0);
+        return userConsumerRelationMapper.selectByExample(example);
+    }
+
+
+    /**
+     * 按上次跟进时间查询未下单跟进关系
+     *
+     * @param followTime
+     * @return
+     */
+    public List<UserConsumerRelation> listDealValidRelationByFollowTime(Date followTime) {
+        if (followTime == null) {
+            return null;
+        }
+        UserConsumerRelationExample example = new UserConsumerRelationExample();
+        UserConsumerRelationExample.Criteria criteria = example.createCriteria();
+        criteria.andFollowTimeIsNotNull();
+        criteria.andFollowTimeLessThan(followTime);
+        criteria.andIsDelEqualTo(0);
+        criteria.andHasOrderEqualTo(1);
+        return userConsumerRelationMapper.selectByExample(example);
     }
 }
