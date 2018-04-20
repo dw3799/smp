@@ -1110,4 +1110,71 @@ public class ConsumerController {
         }
         return true;
     }
+
+
+    /**
+     * 待跟进客户
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listFollowRemindConsumer", method = RequestMethod.GET)
+    public WebApiResponse<List<SalerConsumerDetailVo>> listFollowRemindConsumer() {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        Integer pageSize = null;
+        Integer pageNum = null;
+        Map<String, Object> params = new HashMap<>();
+
+
+        params.put("dealOrder", null);
+        //员工ID
+        params.put("userId", userInfo.getUserId());
+
+        Date date = DateUtil.getSomeDayDateToTime(new Date(), 1);
+        params.put("nextContactTimeEnd", DateUtil.formatToStr(date));
+
+
+        if (pageSize == null) {
+            pageSize = 1;
+        }
+        if (pageNum == null) {
+            pageNum = 30;
+        }
+
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        List<SalerConsumerDetailVo> consumerDetailVoList = consumerService.listSalerConsumerDetailVoByParams(params, start, size);
+        if (CollectionUtils.isEmpty(consumerDetailVoList)) {
+            return WebApiResponse.success(new ArrayList<>());
+        }
+        return WebApiResponse.success(consumerDetailVoList);
+    }
+
+
+    /**
+     * 待跟进客户总数
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/countFollowRemindConsumer", method = RequestMethod.GET)
+    public WebApiResponse<Long> countFollowRemindConsumer() {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        Map<String, Object> params = new HashMap<>();
+
+        //员工ID
+        params.put("userId", userInfo.getUserId());
+        Date date = DateUtil.getSomeDayDateToTime(new Date(), 1);
+        params.put("nextContactTimeEnd", DateUtil.formatToStr(date));
+        params.put("dealOrder", null);
+
+        Long count = consumerService.findSalerConsumerByParamCount(params);
+        return WebApiResponse.success(count);
+    }
+
+
 }

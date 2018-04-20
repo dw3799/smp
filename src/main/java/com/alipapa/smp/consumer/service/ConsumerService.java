@@ -88,6 +88,21 @@ public class ConsumerService {
 
 
     /**
+     * 总数
+     *
+     * @param params
+     * @return
+     */
+    public Long findSalerConsumerByParamCount(Map<String, Object> params) {
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        Long count = consumerMapper.findSalerConsumerByParamCount(params);
+        return count;
+    }
+
+
+    /**
      * 潜在客户/存量客户查询
      *
      * @return
