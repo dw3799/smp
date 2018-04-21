@@ -46,6 +46,16 @@ public class SysDictService {
 
 
     /**
+     * @param sysDict
+     * @return
+     */
+    public boolean insertSysDict(SysDict sysDict) {
+        sysDictMapper.insert(sysDict);
+        return true;
+    }
+
+
+    /**
      * @param categoryCode
      * @return
      */
