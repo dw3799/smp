@@ -145,6 +145,7 @@ public class ConsumerService {
                     SalerConsumerDetailVo consumerDetailVo = new SalerConsumerDetailVo();
                     consumerDetailVo.setConsumerNo(consumer.getConsumerNo());
                     consumerDetailVo.setName(consumer.getName());
+                    consumerDetailVo.setConsumerId(consumer.getId());
 
                     consumerDetailVo.setCountry(consumer.getCountry());
                     consumerDetailVo.setHasOrder(consumer.getHasOrder());

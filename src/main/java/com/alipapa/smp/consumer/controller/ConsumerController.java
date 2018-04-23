@@ -502,7 +502,8 @@ public class ConsumerController {
             consumer.setSource(source);
             consumer.setType(type);
             consumer.setEmail(email);
-
+            consumer.setIntention(intention);
+            
             consumer.setFacebook(facebook);
             consumer.setWhatsapp(whatsapp);
             consumer.setLinkedin(linkedin);
@@ -733,75 +734,71 @@ public class ConsumerController {
      * @return
      */
     @RequestMapping(value = "/listPublicConsumer", method = RequestMethod.GET)
-    public WebApiResponse<List<ConsumerDetailVo>> listConsumer(@RequestBody String jsonStr) {
+    public WebApiResponse<List<ConsumerDetailVo>> listConsumer(HttpServletRequest request) {
 
         Integer pageSize = null;
         Integer pageNum = null;
         Map<String, Object> params = new HashMap<>();
 
 
-        if (jsonStr != null) {
-            JSONObject json = JSON.parseObject(jsonStr);
-            if (json == null) {
-                logger.error("客户提交的数据解析失败: " + jsonStr);
-                return error("客户数据解析失败");
-            }
-
-            pageSize = json.getInteger("pageSize");
-            pageNum = json.getInteger("pageNum");
-
-
-            String source = json.getString("source");
-            if (!StringUtil.isEmptyString(source)) {
-                params.put("source", source);
-            }
-
-
-            String type = json.getString("type");
-            if (!StringUtil.isEmptyString(type)) {
-                params.put("type", type);
-            }
-
-            //客户国籍
-            String country = json.getString("country");
-            if (!StringUtil.isEmptyString(country)) {
-                params.put("country", country);
-            }
-
-
-            //客户等级
-            String level = json.getString("level");
-            if (!StringUtil.isEmptyString(level)) {
-                params.put("level", level);
-            }
-
-            //客户姓名
-            String name = json.getString("name");
-            if (!StringUtil.isEmptyString(name)) {
-                params.put("name", name);
-            }
-
-
-            //客户邮箱
-            String email = json.getString("email");
-            if (!StringUtil.isEmptyString(email)) {
-                params.put("email", email);
-            }
-
-            //客户意向
-            String intention = json.getString("intention");
-            if (!StringUtil.isEmptyString(intention)) {
-                params.put("intention", intention);
-            }
+        String source = request.getParameter("source");
+        if (!StringUtil.isEmptyString(source)) {
+            params.put("source", source);
         }
 
+
+        String type = request.getParameter("type");
+        if (!StringUtil.isEmptyString(type)) {
+            params.put("type", type);
+        }
+
+        //客户国籍
+        String country = request.getParameter("country");
+        if (!StringUtil.isEmptyString(country)) {
+            params.put("country", country);
+        }
+
+
+        //客户等级
+        String level = request.getParameter("level");
+        if (!StringUtil.isEmptyString(level)) {
+            params.put("level", level);
+        }
+
+        //客户姓名
+        String name = request.getParameter("name");
+        if (!StringUtil.isEmptyString(name)) {
+            params.put("name", name);
+        }
+
+
+        //客户邮箱
+        String email = request.getParameter("email");
+        if (!StringUtil.isEmptyString(email)) {
+            params.put("email", email);
+        }
+
+        //客户意向
+        String intention = request.getParameter("intention");
+        if (!StringUtil.isEmptyString(intention)) {
+            params.put("intention", intention);
+        }
+
+
+        String pageSizeString = request.getParameter("pageSize");
+        if (StringUtil.isNotEmptyString(pageSizeString)) {
+            pageSize = Integer.valueOf(pageSizeString);
+        }
+        String pageNumString = request.getParameter("pageNum");
+        if (StringUtil.isNotEmptyString(pageNumString)) {
+            pageNum = Integer.valueOf(pageNumString);
+        }
         if (pageSize == null) {
             pageSize = 30;
         }
         if (pageNum == null) {
             pageNum = 1;
         }
-
         Integer start = (pageNum - 1) * pageSize;
         Integer size = pageSize;
 
