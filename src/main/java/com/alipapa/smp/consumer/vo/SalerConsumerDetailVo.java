@@ -39,6 +39,7 @@ public class SalerConsumerDetailVo {
     totalCount:124//总数，分页用*/
 
 
+
     public Integer getIsDiscard() {
         return isDiscard;
     }

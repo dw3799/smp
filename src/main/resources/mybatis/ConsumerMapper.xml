@@ -65,6 +65,7 @@
         <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
         <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
         <result column="intention_quantity" jdbcType="BIGINT" property="intentionQuantity"/>
+        <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
     </resultMap>
 
 
@@ -692,7 +693,7 @@
     </select>
 
     <sql id="querySalerConsumerSql">
-        select cu.*, ur.follow_time, ur.next_follow_time
+        select cu.*, ur.follow_time, ur.next_follow_time, u.user_no
         from consumer cu LEFT JOIN user_consumer_relation ur on ur.consumer_id=cu.id LEFT JOIN `user` u on
         ur.user_id=u.id
         where 1=1 AND ur.is_del=0
@@ -737,7 +738,7 @@
 
     <select id="findSalerConsumerByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
         select count(*) from (
-        <include refid="queryConsumerSql"/>
+        <include refid="querySalerConsumerSql"/>
         ) T
     </select>
 </mapper>

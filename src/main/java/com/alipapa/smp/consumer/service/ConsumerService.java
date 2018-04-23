@@ -1,5 +1,6 @@
 package com.alipapa.smp.consumer.service;
 
+import com.alipapa.smp.consumer.controller.ConsumerController;
 import com.alipapa.smp.consumer.mapper.ConsumerMapper;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.ConsumerExample;
@@ -8,6 +9,8 @@ import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
 import com.alipapa.smp.consumer.vo.SalerConsumerDetailVo;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -16,6 +19,7 @@ import java.util.*;
 
 @Service
 public class ConsumerService {
+    private static Logger logger = LoggerFactory.getLogger(ConsumerService.class);
 
     @Autowired
     private ConsumerMapper consumerMapper;
@@ -109,19 +113,30 @@ public class ConsumerService {
      *
      * @return
      */
-    public List<SalerConsumerDetailVo> listSalerConsumerDetailVoByParams(Map<String, Object> params, Integer start, Integer size) {
+    public List<SalerConsumerDetailVo> listSalerConsumerDetailVoByParams(Map<String, Object> params, Integer start, Integer size, String userNo) {
         if (params == null) {
             params = new HashMap<>();
         }
         Long count = consumerMapper.findSalerConsumerByParamCount(params);
 
+        Iterator<Map.Entry<String, Object>> it = params.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Object> entry = it.next();
+            logger.info("key= " + entry.getKey() + " and value= " + entry.getValue());
+        }
+
+
+        logger.info("findSalerConsumerByParamCount:" + count);
         List<SalerConsumerDetailVo> consumerDetailVoList = new ArrayList<>();
         HashSet<String> consumerIdSet = new HashSet<>();
         if (count != null && count > 0) {
             params.put("start", start);
             params.put("size", size);
             List<ConsumerExt> consumerList = consumerMapper.findSalerConsumerByParam(params);
+
             if (!CollectionUtils.isEmpty(consumerList)) {
+                logger.info("consumerList:" + consumerList.size());
+
                 for (ConsumerExt consumer : consumerList) {
                     if (consumerIdSet.contains(String.valueOf(consumer.getId()))) {
                         continue;
@@ -134,8 +149,12 @@ public class ConsumerService {
                     consumerDetailVo.setCountry(consumer.getCountry());
                     consumerDetailVo.setHasOrder(consumer.getHasOrder());
                     consumerDetailVo.setLevel(consumer.getLevel());
-                    consumerDetailVo.setIsDiscard(1);
 
+                    if (userNo.equals(consumer.getUserNo())) {
+                        consumerDetailVo.setIsDiscard(1);
+                    } else {
+                        consumerDetailVo.setIsDiscard(0);
+                    }
                     consumerDetailVo.setContactTime(DateUtil.formatToStr(consumer.getFollowTime()));
                     consumerDetailVo.setNextContactTime(DateUtil.formatToStr(consumer.getNextFollowTime()));
 

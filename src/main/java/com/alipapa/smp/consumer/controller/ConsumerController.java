@@ -604,7 +604,7 @@ public class ConsumerController {
      * @return
      */
     @RequestMapping(value = "/listMyConsumer", method = RequestMethod.GET)
-    public WebApiResponse<List<SalerConsumerDetailVo>> listPotentialOrDealConsumer(@RequestBody String jsonStr) {
+    public WebApiResponse<List<SalerConsumerDetailVo>> listPotentialOrDealConsumer(HttpServletRequest request) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
         Integer pageSize = null;
@@ -612,115 +612,113 @@ public class ConsumerController {
         Map<String, Object> params = new HashMap<>();
 
 
-        if (jsonStr != null) {
-            JSONObject json = JSON.parseObject(jsonStr);
-            if (json == null) {
-                logger.error("客户提交的数据解析失败: " + jsonStr);
-                return error("客户数据解析失败");
-            }
+        String searchTypeString = request.getParameter("searchType");
 
-
-            Long searchType = json.getLong("searchType");
-
-            if (searchType == null) {
-                return WebApiResponse.error("查询类型不能为空！");
-            }
-
-            if (ConsumerSearchTypeEnum.Potential.getCode() == searchType) {
-                params.put("dealOrder", 0);
-                //用户ID
-                params.put("userId", userInfo.getUserId());
-            } else if (ConsumerSearchTypeEnum.Deal.getCode() == searchType) {
-                params.put("dealOrder", 1);
-                //用户ID
-                params.put("userId", userInfo.getUserId());
-            } else if (ConsumerSearchTypeEnum.MyConsumer.getCode() == searchType) {
-                params.put("dealOrder", null);
-                //员工ID
-                Long userId = json.getLong("userId");
-                if (userId != null) {
-                    params.put("userId", userId);
-                }
-                //组ID
-                Long groupId = json.getLong("groupId");
-                if (userId != null) {
-                    params.put("groupId", groupId);
-                }
-            } else {
-                return WebApiResponse.error("查询参数异常");
-            }
-
-
-            pageSize = json.getInteger("pageSize");
-            pageNum = json.getInteger("pageNum");
-
-            //客户编号
-            String consumerNo = json.getString("consumerNo");
-            if (!StringUtil.isEmptyString(consumerNo)) {
-                params.put("consumerNo", consumerNo);
-            }
-
-            //客户姓名
-            String name = json.getString("name");
-            if (!StringUtil.isEmptyString(name)) {
-                params.put("name", name);
-            }
-
-            //客户国籍
-            String country = json.getString("country");
-            if (!StringUtil.isEmptyString(country)) {
-                params.put("country", country);
-            }
-
-            //客户等级
-            String level = json.getString("level");
-            if (!StringUtil.isEmptyString(level)) {
-                params.put("level", level);
-            }
-
-            //是否有订单
-            String hasOrder = json.getString("hasOrder");
-            if (!StringUtil.isEmptyString(hasOrder)) {
-                params.put("hasOrder", hasOrder);
-            }
-
-            //上次联系时间开始
-            String preContactTimeStart = json.getString("preContactTimeStart");
-            if (!StringUtil.isEmptyString(preContactTimeStart)) {
-                params.put("preContactTimeStart", preContactTimeStart);
-            }
-
-            //上次联系时间结束
-            String preContactTimeEnd = json.getString("preContactTimeEnd");
-            if (!StringUtil.isEmptyString(preContactTimeEnd)) {
-                params.put("preContactTimeEnd", preContactTimeEnd);
-            }
-
-            //下次联系时间开始
-            String nextContactTimeStart = json.getString("nextContactTimeStart");
-            if (!StringUtil.isEmptyString(nextContactTimeStart)) {
-                params.put("nextContactTimeStart", nextContactTimeStart);
-            }
-
-            //下次联系时间结束
-            String nextContactTimeEnd = json.getString("nextContactTimeEnd");
-            if (!StringUtil.isEmptyString(nextContactTimeEnd)) {
-                params.put("nextContactTimeEnd", nextContactTimeEnd);
-            }
+        if (StringUtil.isEmptyString(searchTypeString)) {
+            return WebApiResponse.error("查询类型不能为空！");
         }
 
+
+        Long searchType = Long.valueOf(searchTypeString);
+
+        if (ConsumerSearchTypeEnum.Potential.getCode() == searchType) {
+            params.put("dealOrder", 0);
+            //用户ID
+            params.put("userId", userInfo.getUserId());
+        } else if (ConsumerSearchTypeEnum.Deal.getCode() == searchType) {
+            params.put("dealOrder", 1);
+            //用户ID
+            params.put("userId", userInfo.getUserId());
+        } else if (ConsumerSearchTypeEnum.MyConsumer.getCode() == searchType) {
+            //员工ID
+            String userIdString = request.getParameter("userId");
+            if (StringUtil.isNotEmptyString(userIdString)) {
+                params.put("userId", Long.valueOf(userIdString));
+            }
+            //组ID
+            String groupIdString = request.getParameter("groupId");
+            if (StringUtil.isNotEmptyString(groupIdString)) {
+                params.put("groupId", Long.valueOf(groupIdString));
+            }
+        } else {
+            return WebApiResponse.error("查询参数异常");
+        }
+
+        //客户编号
+        String consumerNo = request.getParameter("consumerNo");
+        if (!StringUtil.isEmptyString(consumerNo)) {
+            params.put("consumerNo", consumerNo);
+        }
+
+        //客户姓名
+        String name = request.getParameter("name");
+        if (!StringUtil.isEmptyString(name)) {
+            params.put("name", name);
+        }
+
+        //客户国籍
+        String country = request.getParameter("country");
+        if (!StringUtil.isEmptyString(country)) {
+            params.put("country", country);
+        }
+
+        //客户等级
+        String level = request.getParameter("level");
+        if (!StringUtil.isEmptyString(level)) {
+            params.put("level", level);
+        }
+
+        //是否有订单
+        String hasOrder = request.getParameter("hasOrder");
+        if (!StringUtil.isEmptyString(hasOrder)) {
+            params.put("hasOrder", hasOrder);
+        }
+
+        //上次联系时间开始
+        String preContactTimeStart = request.getParameter("preContactTimeStart");
+        if (!StringUtil.isEmptyString(preContactTimeStart)) {
+            params.put("preContactTimeStart", preContactTimeStart);
+        }
+
+        //上次联系时间结束
+        String preContactTimeEnd = request.getParameter("preContactTimeEnd");
+        if (!StringUtil.isEmptyString(preContactTimeEnd)) {
+            params.put("preContactTimeEnd", preContactTimeEnd);
+        }
+
+        //下次联系时间开始
+        String nextContactTimeStart = request.getParameter("nextContactTimeStart");
+        if (!StringUtil.isEmptyString(nextContactTimeStart)) {
+            params.put("nextContactTimeStart", nextContactTimeStart);
+        }
+
+        //下次联系时间结束
+        String nextContactTimeEnd = request.getParameter("nextContactTimeEnd");
+        if (!StringUtil.isEmptyString(nextContactTimeEnd)) {
+            params.put("nextContactTimeEnd", nextContactTimeEnd);
+        }
+
+
+        String pageSizeString = request.getParameter("pageSize");
+        if (StringUtil.isNotEmptyString(pageSizeString)) {
+            pageSize = Integer.valueOf(pageSizeString);
+        }
+        String pageNumString = request.getParameter("pageNum");
+        if (StringUtil.isNotEmptyString(pageNumString)) {
+            pageNum = Integer.valueOf(pageNumString);
+        }
         if (pageSize == null) {
-            pageSize = 1;
+            pageSize = 30;
         }
         if (pageNum == null) {
-            pageNum = 30;
+            pageNum = 1;
         }
 
 
         Integer start = (pageNum - 1) * pageSize;
         Integer size = pageSize;
 
-        List<SalerConsumerDetailVo> consumerDetailVoList = consumerService.listSalerConsumerDetailVoByParams(params, start, size);
+        List<SalerConsumerDetailVo> consumerDetailVoList = consumerService.listSalerConsumerDetailVoByParams(params, start, size, userInfo.getUserNo());
         if (CollectionUtils.isEmpty(consumerDetailVoList)) {
             return WebApiResponse.success(new ArrayList<>());
         }
@@ -798,10 +796,10 @@ public class ConsumerController {
         }
 
         if (pageSize == null) {
-            pageSize = 1;
+            pageSize = 30;
         }
         if (pageNum == null) {
-            pageNum = 30;
+            pageNum = 1;
         }
 
         Integer start = (pageNum - 1) * pageSize;
@@ -1117,8 +1115,6 @@ public class ConsumerController {
         Integer pageNum = null;
         Map<String, Object> params = new HashMap<>();
 
-
-        params.put("dealOrder", null);
         //员工ID
         params.put("userId", userInfo.getUserId());
 
@@ -1127,17 +1123,17 @@ public class ConsumerController {
 
 
         if (pageSize == null) {
-            pageSize = 1;
+            pageSize = 30;
         }
         if (pageNum == null) {
-            pageNum = 30;
+            pageNum = 1;
         }
 
 
         Integer start = (pageNum - 1) * pageSize;
         Integer size = pageSize;
 
-        List<SalerConsumerDetailVo> consumerDetailVoList = consumerService.listSalerConsumerDetailVoByParams(params, start, size);
+        List<SalerConsumerDetailVo> consumerDetailVoList = consumerService.listSalerConsumerDetailVoByParams(params, start, size, userInfo.getUserNo());
         if (CollectionUtils.isEmpty(consumerDetailVoList)) {
             return WebApiResponse.success(new ArrayList<>());
         }

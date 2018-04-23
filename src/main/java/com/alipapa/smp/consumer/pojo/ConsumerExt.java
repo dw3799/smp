@@ -65,6 +65,16 @@ public class ConsumerExt {
 
     private Long intentionQuantity;
 
+    private String userNo;
+
+
+    public String getUserNo() {
+        return userNo;
+    }
+
+    public void setUserNo(String userNo) {
+        this.userNo = userNo;
+    }
 
     public Date getFollowTime() {
         return followTime;
