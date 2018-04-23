@@ -24,8 +24,12 @@ public class ExcelExport {
     /**
      * 生成excel并下载
      */
-    public static void exportExcel(String longString, List<ArrayList<String>> failedList, HttpServletResponse response) {
-        File newFile = createNewFile("", "");
+    public static void exportExcel(String longString, List<ArrayList<String>> failedList, HttpServletResponse response, String pathPrefix) {
+
+        String basePath = Thread.currentThread().getContextClassLoader().getResource("").toString() + File.separator + "template";
+
+
+        File newFile = createNewFile(basePath, pathPrefix);
 
         //******************新文件写入数据，并下载************************************
         InputStream is = null;

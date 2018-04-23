@@ -65,7 +65,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public WebApiResponse<LoginInfo> userLogin(@RequestParam("userNo") String userNo, @RequestParam("pwd") String pwd, @RequestParam("roleName") String roleName) {
+    public WebApiResponse<LoginInfo> userLogin(@RequestParam("userNo") String userNo, @RequestParam("pwd") String pwd, @RequestParam("role") String roleName) {
         if (StringUtils.isBlank(userNo) || StringUtils.isBlank(pwd) || StringUtils.isBlank(roleName)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");

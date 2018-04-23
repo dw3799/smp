@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static com.alipapa.smp.utils.WebApiResponse.error;
@@ -80,7 +81,7 @@ public class ConsumerController {
             return WebApiResponse.error("参数有误！");
         }
 
-        List<SysDictVo> sysDictVoList = null;
+        List<SysDictVo> sysDictVoList = new ArrayList<>();
         if (CategoryCode.order.getCode() == categoryCode) {
             SysDictVo sysDictVo = new SysDictVo();
             sysDictVo.setId(100l);
@@ -133,10 +134,10 @@ public class ConsumerController {
         if (consumer != null) {
             if (consumer.getScope() == ConsumerScopeEnum.Public.getCodeName()) {
                 response.setData("2");
-                response.setError("客户已在资源池中，无须重复创建，请去抢本客户");
+                response.setError("客户已在公共资源池中，无须重复创建，请去抢本客户");
             } else {
                 response.setData("3");
-                response.setError("若已存在，不在资源池，有人跟进");
+                response.setError("已存在，且不在公共资源池，是否继续跟进");
             }
         } else {
             response.setData("1");
@@ -161,7 +162,8 @@ public class ConsumerController {
         }
 
         Consumer consumer = consumerService.getConsumerByNameAndEmail(name, email);
-        if (consumer != null && (consumer.getScope() == ConsumerScopeEnum.Private.getCodeName() || consumer.getScope() == ConsumerScopeEnum.Protected.getCodeName())) {
+        logger.info("consumer:" + consumer.getConsumerNo() + ",scope=" + consumer.getScope());
+        if (consumer != null && (ConsumerScopeEnum.Private.getCodeName().equals(consumer.getScope()) || ConsumerScopeEnum.Protected.getCodeName().equals(consumer.getScope()))) {
             //2:抛弃规则判断
             if (!sysDictService.checkDiscardingRules(userInfo, consumer.getId())) {
                 return error("根据抛弃规则，暂时无法跟进！");
@@ -172,25 +174,15 @@ public class ConsumerController {
                 return error("根据回收规则，暂时无法跟进！");
             }
 
-            //创建关联关系
-            UserConsumerRelation userConsumerRelation = new UserConsumerRelation();
-            userConsumerRelation.setConsumerId(consumer.getId());
-            userConsumerRelation.setConsumerNo(consumer.getConsumerNo());
-            userConsumerRelation.setUserId(userInfo.getUserId());
-            userConsumerRelation.setUserNo(userInfo.getUserNo());
-            userConsumerRelation.setIsDel(0);
-            userConsumerRelation.setHasOrder(0);
-            userConsumerRelation.setDealOrder(0);
-            userConsumerRelation.setFollowTime(new Date());
-            userConsumerRelation.setCreatedTime(new Date());
-            userConsumerRelation.setUpdatedTime(new Date());
-            userConsumerRelationService.addUserConsumerRelation(userConsumerRelation);
+            User user = userService.getUserById(userInfo.getUserId());
+            boolean result = relateUserAndConsumer(consumer, user);
 
-            if (consumer.getScope() == ConsumerScopeEnum.Private.getCodeName()) {
+
+            if (result && ConsumerScopeEnum.Private.getCodeName().equals(consumer.getScope())) {
                 consumer.setScope(ConsumerScopeEnum.Protected.getCodeName());
                 consumerService.updateConsumer(consumer);
-                return WebApiResponse.success("1");
             }
+            return WebApiResponse.success("1");
         }
         return WebApiResponse.success("2");
     }
@@ -202,45 +194,45 @@ public class ConsumerController {
      * @return
      */
     @RequestMapping(value = "/addConsumer", method = RequestMethod.POST)
-    public WebApiResponse<String> addConsumer(@RequestBody String jsonStr) {
+    public WebApiResponse<String> addConsumer(HttpServletRequest request) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
-        if (jsonStr == null) {
+ /*       if (jsonStr == null) {
             logger.error("提交的json格式数据不可以为空!");
             return error("输入的信息不可以为空");
-        }
+        }*/
         try {
-            JSONObject json = JSON.parseObject(jsonStr);
+/*            JSONObject json = JSON.parseObject(jsonStr);
             if (json == null) {
                 logger.error("客户提交的数据解析失败: " + jsonStr);
                 return error("客户数据解析失败");
-            }
+            }*/
 
             //不能为空
-            String name = json.getString("name");
-            String country = json.getString("country");
-            String mainBusiness = json.getString("mainBusiness");
-            String source = json.getString("source");
-            String type = json.getString("type");
-            String email = json.getString("email");
+            String name = request.getParameter("name");
+            String country = request.getParameter("country");
+            String mainBusiness = request.getParameter("mainBusiness");
+            String source = request.getParameter("source");
+            String type = request.getParameter("type");
+            String email = request.getParameter("email");
 
-            String intention = json.getString("intention");
+            String intention = request.getParameter("intention");
 
             //可为空
-            String facebook = json.getString("facebook");
-            String whatsapp = json.getString("whatsapp");
-            String linkedin = json.getString("linkedin");
-            String wechat = json.getString("wechat");
-            String qq = json.getString("qq");
-            String contacts = json.getString("contacts");
-            String companyAddress = json.getString("companyAddress");
-            String companyWebsite = json.getString("companyWebsite");
+            String facebook = request.getParameter("facebook");
+            String whatsapp = request.getParameter("whatsapp");
+            String linkedin = request.getParameter("linkedin");
+            String wechat = request.getParameter("wechat");
+            String qq = request.getParameter("qq");
+            String contacts = request.getParameter("contacts");
+            String companyAddress = request.getParameter("companyAddress");
+            String companyWebsite = request.getParameter("companyWebsite");
 
             //收货地址
-            String consignee = json.getString("consignee");
-            String telMobile = json.getString("telMobile");
-            String postalCode = json.getString("postalCode");
-            String receivingAddress = json.getString("receivingAddress");
+            String consignee = request.getParameter("consignee");
+            String telMobile = request.getParameter("telMobile");
+            String postalCode = request.getParameter("postalCode");
+            String receivingAddress = request.getParameter("receivingAddress");
 
 
             if (StringUtil.isEmptyString(name) || StringUtil.isEmptyString(country) || StringUtil.isEmptyString(mainBusiness) || StringUtil.isEmptyString(source)
@@ -261,6 +253,9 @@ public class ConsumerController {
             Consumer consumer = new Consumer();
             //YYYYMMDD+随机四位数
             Long consumerId = consumerService.getLatestConsumerId();
+            if (consumerId == null) {
+                consumerId = 0l;
+            }
             consumer.setConsumerNo(DateUtil.formatToStr(new Date()) + String.format("%04d", consumerId + 1));
 
             //拓传参数
@@ -310,6 +305,7 @@ public class ConsumerController {
                 return WebApiResponse.success("success");
             }
         } catch (Exception ex) {
+            logger.error("", ex);
             return error("添加客户异常");
         }
         return WebApiResponse.error("添加客户失败");
@@ -374,27 +370,22 @@ public class ConsumerController {
      * @return
      */
     @RequestMapping(value = "/updateConsumer", method = RequestMethod.POST)
-    public WebApiResponse<String> updateConsumer(@RequestBody String jsonStr) {
+    public WebApiResponse<String> updateConsumer(HttpServletRequest request) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
-        if (jsonStr == null) {
-            logger.error("提交的json格式数据不可以为空!");
-            return error("输入的信息不可以为空");
-        }
         try {
-            JSONObject json = JSON.parseObject(jsonStr);
-            if (json == null) {
-                logger.error("客户提交的数据解析失败: " + jsonStr);
-                return error("客户数据解析失败");
-            }
-
             //不能为空
-            Long id = json.getLong("consumerId");
-            String consumerNo = json.getString("consumerNo");
+            String idString = request.getParameter("consumerId");
 
-            if (StringUtil.isEmptyString(consumerNo) || id == null) {
+
+            String consumerNo = request.getParameter("consumerNo");
+
+            if (StringUtil.isEmptyString(consumerNo) || StringUtil.isEmptyString(consumerNo)) {
                 return error("缺少必填参数");
             }
+
+            Long id = Long.valueOf(idString);
+
 
             Consumer consumer = consumerService.getConsumerById(id);
             if (consumer == null) {
@@ -405,29 +396,29 @@ public class ConsumerController {
                 return error("客户不存在");
             }
 
-            String name = json.getString("name");
-            String country = json.getString("country");
-            String mainBusiness = json.getString("mainBusiness");
-            String source = json.getString("source");
-            String type = json.getString("type");
-            String email = json.getString("email");
-            String intention = json.getString("intention");
+            String name = request.getParameter("name");
+            String country = request.getParameter("country");
+            String mainBusiness = request.getParameter("mainBusiness");
+            String source = request.getParameter("source");
+            String type = request.getParameter("type");
+            String email = request.getParameter("email");
+            String intention = request.getParameter("intention");
 
             //可为空
-            String facebook = json.getString("facebook");
-            String whatsapp = json.getString("whatsapp");
-            String linkedin = json.getString("linkedin");
-            String wechat = json.getString("wechat");
-            String qq = json.getString("qq");
-            String contacts = json.getString("contacts");
-            String companyAddress = json.getString("companyAddress");
-            String companyWebsite = json.getString("companyWebsite");
+            String facebook = request.getParameter("facebook");
+            String whatsapp = request.getParameter("whatsapp");
+            String linkedin = request.getParameter("linkedin");
+            String wechat = request.getParameter("wechat");
+            String qq = request.getParameter("qq");
+            String contacts = request.getParameter("contacts");
+            String companyAddress = request.getParameter("companyAddress");
+            String companyWebsite = request.getParameter("companyWebsite");
 
             //收货地址
-            String consignee = json.getString("consignee");
-            String telMobile = json.getString("telMobile");
-            String postalCode = json.getString("postalCode");
-            String receivingAddress = json.getString("receivingAddress");
+            String consignee = request.getParameter("consignee");
+            String telMobile = request.getParameter("telMobile");
+            String postalCode = request.getParameter("postalCode");
+            String receivingAddress = request.getParameter("receivingAddress");
 
             //客户更新参数校验
             if ("admin".equals(userInfo.getRoleName())) {//管理员可编辑

@@ -12,11 +12,13 @@ import com.alipapa.smp.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +38,8 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
 public class FileDownloadController {
     private static Logger logger = LoggerFactory.getLogger(ConsumerController.class);
 
-    private String pathPrefix = "/Users/maibahe/SMP/";
+    @Value("${upload.fail.pathPrefix}")
+    private String pathPrefix;
 
     @Autowired
     private ConsumerService consumerService;
@@ -230,8 +233,8 @@ public class FileDownloadController {
             }
 
             String longString = "上载成功量:" + total + ",上载失败量:" + failedCount;
-
-            ExcelExport.exportExcel(longString, failedList, response);
+            pathPrefix = pathPrefix + File.separator + userInfo.getUserNo();
+            ExcelExport.exportExcel(longString, failedList, response, pathPrefix);
 
             return WebApiResponse.success("success");
 

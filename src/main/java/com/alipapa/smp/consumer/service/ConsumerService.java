@@ -83,7 +83,9 @@ public class ConsumerService {
      * @return
      */
     public Long getLatestConsumerId() {
-        return consumerMapper.selectMaxId();
+        return
+
+                consumerMapper.selectMaxId();
     }
 
 
