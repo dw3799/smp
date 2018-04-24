@@ -85,8 +85,8 @@ public class FileDownloadController {
             int total = 0;
 
             if (!CollectionUtils.isEmpty(list) && list.size() > 1) {
-                for (int i = 1; i < list.size(); i++) {
-                    ArrayList<String> consumerRowList = list.get(0);
+                for (int i = 0; i < list.size(); i++) {
+                    ArrayList<String> consumerRowList = list.get(i);
                     //客户姓名	国籍	电子邮箱	主营业务	客户来源（展会/IFQ/访客营销/阿里询盘/地推/转介绍/公司官网/社交软件/6688）	客户类型（零售商/批发商/贸易商/品牌商）	客户级别（A/B/C/D/E）	客户意向	数量
                     // 公司地址	公司网址	联系方式1	联系方式2	联系方式3	Whatapp	Wechat	Facebook	QQ	Skype	LinkedIn	收货人	联系电话	邮政编码	收货地址	失败原因
 

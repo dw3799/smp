@@ -4,6 +4,10 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -26,18 +30,20 @@ public class ExcelExport {
      */
     public static void exportExcel(String longString, List<ArrayList<String>> failedList, HttpServletResponse response, String pathPrefix) {
 
-        String basePath = Thread.currentThread().getContextClassLoader().getResource("").toString() + File.separator + "template";
+        //String basePath = Thread.currentThread().getContextClassLoader().getResource("").toString() + File.separator + "template";
 
 
+        String basePath = "/Users/maibahe/IdeaProjects/smp_frontier/target/classes/template";
         File newFile = createNewFile(basePath, pathPrefix);
 
         //******************新文件写入数据，并下载************************************
         InputStream is = null;
-        HSSFWorkbook workbook = null;
-        HSSFSheet sheet = null;
+        //HSSFWorkbook workbook = null;
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = null;
         try {
             is = new FileInputStream(newFile);
-            workbook = new HSSFWorkbook(is);
+            workbook = new XSSFWorkbook(is);
             //获取第一个sheet
             sheet = workbook.getSheetAt(0);
         } catch (Exception e1) {
@@ -50,17 +56,17 @@ public class ExcelExport {
                 FileOutputStream fos = new FileOutputStream(newFile);
 
                 //第一行，上传混总
-                HSSFRow row = sheet.getRow(0);
-                HSSFCell cell = row.getCell(1);
+                XSSFRow row = sheet.getRow(0);
+                XSSFCell cell = row.getCell(1);
                 cell.setCellValue(longString);
 
                 if (!CollectionUtils.isEmpty(failedList)) {
                     //第二行是表头,从第三行开始写数据
                     for (int i = 0; i < failedList.size(); i++) {
                         ArrayList<String> consumerRowList = failedList.get(i);
-                        HSSFRow nowRow = sheet.getRow(2 + i);
+                        XSSFRow nowRow = sheet.createRow(2 + i);
                         for (int j = 0; j < consumerRowList.size(); j++) {
-                            HSSFCell nowCell = nowRow.getCell(j);
+                            XSSFCell nowCell = nowRow.createCell(j);
                             nowCell.setCellValue(consumerRowList.get(j));
                         }
                     }
