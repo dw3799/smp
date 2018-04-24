@@ -503,7 +503,7 @@ public class ConsumerController {
             consumer.setType(type);
             consumer.setEmail(email);
             consumer.setIntention(intention);
-            
+
             consumer.setFacebook(facebook);
             consumer.setWhatsapp(whatsapp);
             consumer.setLinkedin(linkedin);
@@ -949,7 +949,7 @@ public class ConsumerController {
         UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumerId, userInfo.getUserId(), FellowUpRulesEnum.Normal.getCode());
 
         if (userConsumerRelation == null) {
-            return WebApiResponse.error("您未跟进该客户，无权限记录！");
+            return WebApiResponse.error("您未跟进该客户，不能抛弃！");
         }
         //更新客户关系表，抛弃状态
         userConsumerRelation.setIsDel(FellowUpRulesEnum.Discard.getCode());
@@ -1115,8 +1115,9 @@ public class ConsumerController {
         //员工ID
         params.put("userId", userInfo.getUserId());
 
-        Date date = DateUtil.getSomeDayDateToTime(new Date(), 1);
-        params.put("nextContactTimeEnd", DateUtil.formatToStr(date));
+        String dateString = DateUtil.formatToStr(new Date());
+        Date date = DateUtil.getSomeDayDateToTime(DateUtil.formatFromString(dateString, "yyyyMMdd"), 1);
+        params.put("nextContactTimeEnd", DateUtil.formatToStrTimeV1(date));
 
 
         if (pageSize == null) {
@@ -1152,9 +1153,9 @@ public class ConsumerController {
 
         //员工ID
         params.put("userId", userInfo.getUserId());
-        Date date = DateUtil.getSomeDayDateToTime(new Date(), 1);
-        params.put("nextContactTimeEnd", DateUtil.formatToStr(date));
-        params.put("dealOrder", null);
+        String dateString = DateUtil.formatToStr(new Date());
+        Date date = DateUtil.getSomeDayDateToTime(DateUtil.formatFromString(dateString, "yyyyMMdd"), 1);
+        params.put("nextContactTimeEnd", DateUtil.formatToStrTimeV1(date));
 
         Long count = consumerService.findSalerConsumerByParamCount(params);
         return WebApiResponse.success(count);

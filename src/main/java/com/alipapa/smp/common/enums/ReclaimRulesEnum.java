@@ -1,5 +1,7 @@
 package com.alipapa.smp.common.enums;
 
+import com.alipapa.smp.utils.StringUtil;
+
 /**
  * 客户回收规则
  */
@@ -13,17 +15,17 @@ public enum ReclaimRulesEnum {
             35	ConsumerReclaimRules	老客户非公多人跟进	60	6	1	1	2018-03-14 20:01:46	2018-03-14 20:02:27*/
 
 
-    NEW_PRIVATE_ONE(1, "NEW_PRIVATE_ONE", "N天未跟进的非公共资源池-单人跟进-新客户回收规则"),
+    NEW_PRIVATE_ONE(1, "NEW_PRIVATE_ONE", "N天未跟进的非公共资源池-单人跟进-未下单客户将被回收"),
 
-    NEW_PROTECTED_MANY(2, "NEW_PROTECTED_MANY", "N天未跟进的非公共资源池-多人跟进-新客户回收规则"),
+    NEW_PROTECTED_MANY(2, "NEW_PROTECTED_MANY", "N天未跟进的非公共资源池-多人跟进-未下单客户将被回收"),
 
-    NEW_PUBLIC_ONE(3, "NEW_PUBLIC_ONE", "N天未跟进的公共资源池-单人跟进-新客户回收规则"),
+    NEW_PUBLIC_ONE(3, "NEW_PUBLIC_ONE", "N天未跟进的公共资源池-单人跟进-未下单客户将被回收"),
 
-    NEW_PUBLIC_MANY(4, "NEW_PUBLIC_MANY", "N天未跟进的公共资源池-多人跟进-新客户回收规则"),
+    NEW_PUBLIC_MANY(4, "NEW_PUBLIC_MANY", "N天未跟进的公共资源池-多人跟进-未下单客户将被回收"),
 
-    DEAL_BOTH_ONE(5, "DEAL_BOTH_ONE", "N天未跟进的-单人跟进-老客户回收规则"),
+    DEAL_BOTH_ONE(5, "DEAL_BOTH_ONE", "N天未跟进的-单人跟进-已下单客户将被回收"),
 
-    DEAL_BOTH_MANY(6, "DEAL_BOTH_MANY", "N天未跟进的-多人跟进-老客户回收规则");
+    DEAL_BOTH_MANY(6, "DEAL_BOTH_MANY", "N天未跟进的-多人跟进-已下单客户将被回收");
 
     ReclaimRulesEnum(int code, String codeName, String dec) {
         this.code = code;
@@ -60,9 +62,13 @@ public enum ReclaimRulesEnum {
     }
 
     public static ReclaimRulesEnum getValueByCodeName(String codeName) {
+        if (StringUtil.isEmptyString(codeName)) {
+            return null;
+        }
+
         ReclaimRulesEnum[] consumerScopeEnums = ReclaimRulesEnum.values();
         for (ReclaimRulesEnum consumerScopeEnum : consumerScopeEnums) {
-            if (consumerScopeEnum.getCodeName() == codeName) {
+            if (codeName.equals(consumerScopeEnum.getCodeName())) {
                 return consumerScopeEnum;
             }
         }

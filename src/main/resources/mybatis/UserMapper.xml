@@ -336,7 +336,7 @@
         <if test="consumerId != null">
             and fr.consumer_id = #{consumerId}
         </if>
-        ORDER BY fr.created_time DESC
+        ORDER BY u.created_time DESC
     </select>
 
 </mapper>

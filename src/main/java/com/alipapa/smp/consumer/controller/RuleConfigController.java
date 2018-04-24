@@ -9,8 +9,11 @@ import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.consumer.vo.RuleVo;
+import com.alipapa.smp.user.controller.GroupController;
 import com.alipapa.smp.utils.StringUtil;
 import com.alipapa.smp.utils.WebApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +35,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/rule")
 public class RuleConfigController {
+    private static Logger logger = LoggerFactory.getLogger(RuleConfigController.class);
 
     @Autowired
     private SysDictService sysDictService;
@@ -116,6 +120,11 @@ public class RuleConfigController {
         if (sysDict == null) {
             return WebApiResponse.error("规则不存在！");
         }
+
+        if (!CategoryCode.reclaim_rules.getCodeName().equals(sysDict.getCategoryCode()) && !CategoryCode.discarding_rules.getCodeName().equals(sysDict.getCategoryCode())) {
+            return WebApiResponse.error("规则不存在！");
+        }
+
 
         if (status != null) {
             if (status == 1) {

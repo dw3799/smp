@@ -1,5 +1,7 @@
 package com.alipapa.smp.common.enums;
 
+import com.alipapa.smp.utils.StringUtil;
+
 /**
  * （抛弃，回收）再跟进规则
  */
@@ -44,9 +46,13 @@ public enum DisCardRulesEnum {
     }
 
     public static DisCardRulesEnum getValueByCodeName(String codeName) {
+        if (StringUtil.isEmptyString(codeName)) {
+            return null;
+        }
+
         DisCardRulesEnum[] consumerScopeEnums = DisCardRulesEnum.values();
         for (DisCardRulesEnum consumerScopeEnum : consumerScopeEnums) {
-            if (consumerScopeEnum.getCodeName() == codeName) {
+            if (codeName.equals(consumerScopeEnum.getCodeName())) {
                 return consumerScopeEnum;
             }
         }
