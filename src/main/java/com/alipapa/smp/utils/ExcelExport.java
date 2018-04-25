@@ -30,10 +30,10 @@ public class ExcelExport {
      */
     public static void exportExcel(String longString, List<ArrayList<String>> failedList, HttpServletResponse response, String pathPrefix) {
 
-        //String basePath = Thread.currentThread().getContextClassLoader().getResource("").toString() + File.separator + "template";
+        String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath() + "template";
 
-
-        String basePath = "/Users/maibahe/IdeaProjects/smp_frontier/target/classes/template";
+        logger.info("basePath:" + basePath);
+        //String basePath = "/Users/maibahe/IdeaProjects/smp_frontier/target/classes/template";
         File newFile = createNewFile(basePath, pathPrefix);
 
         //******************新文件写入数据，并下载************************************
