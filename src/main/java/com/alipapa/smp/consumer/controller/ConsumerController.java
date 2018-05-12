@@ -46,6 +46,7 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
  */
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/consumer")
 public class ConsumerController {
     private static Logger logger = LoggerFactory.getLogger(ConsumerController.class);

@@ -40,6 +40,7 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
  */
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/user")
 public class UserController {
     private static Logger logger = LoggerFactory.getLogger(UserController.class);

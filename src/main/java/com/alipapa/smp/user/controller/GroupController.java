@@ -31,6 +31,7 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
  */
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/group")
 public class GroupController {
     private static Logger logger = LoggerFactory.getLogger(GroupController.class);
