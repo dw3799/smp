@@ -37,9 +37,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         if (request.getRequestURI().indexOf("login") >= 0 || request.getRequestURI().indexOf("listRole") >= 0) {
             return true;
         }
-        String token = request.getHeader("token");
-        String uuid = request.getHeader("uuid");
-        String userRoleId = request.getHeader("userRoleId");
+        String token = request.getParameter("token");
+        String uuid = request.getParameter("uuid");
+        String userRoleId = request.getParameter("userRoleId");
         //1：token为空
         if (token == null) {
             response.setStatus(500);
