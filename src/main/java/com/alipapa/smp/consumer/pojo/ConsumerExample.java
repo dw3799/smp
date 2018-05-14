@@ -1005,6 +1005,76 @@ public class ConsumerExample {
             return (Criteria) this;
         }
 
+        public Criteria andSkypeIsNull() {
+            addCriterion("skype is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeIsNotNull() {
+            addCriterion("skype is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeEqualTo(String value) {
+            addCriterion("skype =", value, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeNotEqualTo(String value) {
+            addCriterion("skype <>", value, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeGreaterThan(String value) {
+            addCriterion("skype >", value, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeGreaterThanOrEqualTo(String value) {
+            addCriterion("skype >=", value, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeLessThan(String value) {
+            addCriterion("skype <", value, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeLessThanOrEqualTo(String value) {
+            addCriterion("skype <=", value, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeLike(String value) {
+            addCriterion("skype like", value, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeNotLike(String value) {
+            addCriterion("skype not like", value, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeIn(List<String> values) {
+            addCriterion("skype in", values, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeNotIn(List<String> values) {
+            addCriterion("skype not in", values, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeBetween(String value1, String value2) {
+            addCriterion("skype between", value1, value2, "skype");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkypeNotBetween(String value1, String value2) {
+            addCriterion("skype not between", value1, value2, "skype");
+            return (Criteria) this;
+        }
+
         public Criteria andQqIsNull() {
             addCriterion("qq is null");
             return (Criteria) this;

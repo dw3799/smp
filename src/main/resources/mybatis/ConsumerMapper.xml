@@ -15,6 +15,7 @@
         <result column="whatsapp" jdbcType="VARCHAR" property="whatsapp"/>
         <result column="linkedin" jdbcType="VARCHAR" property="linkedin"/>
         <result column="wechat" jdbcType="VARCHAR" property="wechat"/>
+        <result column="skype" jdbcType="VARCHAR" property="skype"/>
         <result column="qq" jdbcType="VARCHAR" property="qq"/>
         <result column="contacts" jdbcType="VARCHAR" property="contacts"/>
         <result column="company_address" jdbcType="VARCHAR" property="companyAddress"/>
@@ -33,6 +34,7 @@
         <result column="intention_quantity" jdbcType="BIGINT" property="intentionQuantity"/>
     </resultMap>
 
+
     <resultMap id="ExtResultMap" type="com.alipapa.smp.consumer.pojo.ConsumerExt">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="consumer_no" jdbcType="VARCHAR" property="consumerNo"/>
@@ -47,6 +49,7 @@
         <result column="whatsapp" jdbcType="VARCHAR" property="whatsapp"/>
         <result column="linkedin" jdbcType="VARCHAR" property="linkedin"/>
         <result column="wechat" jdbcType="VARCHAR" property="wechat"/>
+        <result column="skype" jdbcType="VARCHAR" property="skype"/>
         <result column="qq" jdbcType="VARCHAR" property="qq"/>
         <result column="contacts" jdbcType="VARCHAR" property="contacts"/>
         <result column="company_address" jdbcType="VARCHAR" property="companyAddress"/>
@@ -67,7 +70,6 @@
         <result column="intention_quantity" jdbcType="BIGINT" property="intentionQuantity"/>
         <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
     </resultMap>
-
 
     <sql id="Example_Where_Clause">
         <where>
@@ -130,11 +132,11 @@
         </where>
     </sql>
     <sql id="Base_Column_List">
-        id, consumer_no, name, country, main_business, source, type, email, intention, facebook,
-        whatsapp, linkedin, wechat, qq, contacts, company_address, company_website, consignee,
-        tel_mobile, postal_code, receiving_address, level, has_order, create_user, scope,
-        remark, created_time, updated_time, intention_quantity
-    </sql>
+    id, consumer_no, name, country, main_business, source, type, email, intention, facebook, 
+    whatsapp, linkedin, wechat, skype, qq, contacts, company_address, company_website, 
+    consignee, tel_mobile, postal_code, receiving_address, level, has_order, create_user, 
+    scope, remark, created_time, updated_time, intention_quantity
+  </sql>
     <select id="selectByExample" parameterType="com.alipapa.smp.consumer.pojo.ConsumerExample"
             resultMap="BaseResultMap">
         select
@@ -157,9 +159,9 @@
         where id = #{id,jdbcType=BIGINT}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        delete from consumer
-        where id = #{id,jdbcType=BIGINT}
-    </delete>
+    delete from consumer
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
     <delete id="deleteByExample" parameterType="com.alipapa.smp.consumer.pojo.ConsumerExample">
         delete from consumer
         <if test="_parameter != null">
@@ -167,27 +169,29 @@
         </if>
     </delete>
     <insert id="insert" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
-        insert into consumer (id, consumer_no, name,
-        country, main_business, source,
-        type, email, intention,
-        facebook, whatsapp, linkedin,
-        wechat, qq, contacts,
-        company_address, company_website, consignee,
-        tel_mobile, postal_code, receiving_address,
-        level, has_order, create_user,
-        scope, remark, created_time,
-        updated_time, intention_quantity)
-        values (#{id,jdbcType=BIGINT}, #{consumerNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
-        #{country,jdbcType=VARCHAR}, #{mainBusiness,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR},
-        #{type,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{intention,jdbcType=VARCHAR},
-        #{facebook,jdbcType=VARCHAR}, #{whatsapp,jdbcType=VARCHAR}, #{linkedin,jdbcType=VARCHAR},
-        #{wechat,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR}, #{contacts,jdbcType=VARCHAR},
-        #{companyAddress,jdbcType=VARCHAR}, #{companyWebsite,jdbcType=VARCHAR}, #{consignee,jdbcType=VARCHAR},
-        #{telMobile,jdbcType=VARCHAR}, #{postalCode,jdbcType=VARCHAR}, #{receivingAddress,jdbcType=VARCHAR},
-        #{level,jdbcType=VARCHAR}, #{hasOrder,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR},
-        #{scope,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP},
-        #{updatedTime,jdbcType=TIMESTAMP}, #{intentionQuantity,jdbcType=BIGINT})
-    </insert>
+    insert into consumer (id, consumer_no, name, 
+      country, main_business, source, 
+      type, email, intention, 
+      facebook, whatsapp, linkedin, 
+      wechat, skype, qq, 
+      contacts, company_address, company_website, 
+      consignee, tel_mobile, postal_code, 
+      receiving_address, level, has_order, 
+      create_user, scope, remark, 
+      created_time, updated_time, intention_quantity
+      )
+    values (#{id,jdbcType=BIGINT}, #{consumerNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{country,jdbcType=VARCHAR}, #{mainBusiness,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{intention,jdbcType=VARCHAR}, 
+      #{facebook,jdbcType=VARCHAR}, #{whatsapp,jdbcType=VARCHAR}, #{linkedin,jdbcType=VARCHAR}, 
+      #{wechat,jdbcType=VARCHAR}, #{skype,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR}, 
+      #{contacts,jdbcType=VARCHAR}, #{companyAddress,jdbcType=VARCHAR}, #{companyWebsite,jdbcType=VARCHAR}, 
+      #{consignee,jdbcType=VARCHAR}, #{telMobile,jdbcType=VARCHAR}, #{postalCode,jdbcType=VARCHAR}, 
+      #{receivingAddress,jdbcType=VARCHAR}, #{level,jdbcType=VARCHAR}, #{hasOrder,jdbcType=VARCHAR}, 
+      #{createUser,jdbcType=VARCHAR}, #{scope,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, #{intentionQuantity,jdbcType=BIGINT}
+      )
+  </insert>
     <insert id="insertSelective" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
         insert into consumer
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -229,6 +233,9 @@
             </if>
             <if test="wechat != null">
                 wechat,
+            </if>
+            <if test="skype != null">
+                skype,
             </if>
             <if test="qq != null">
                 qq,
@@ -318,6 +325,9 @@
             </if>
             <if test="wechat != null">
                 #{wechat,jdbcType=VARCHAR},
+            </if>
+            <if test="skype != null">
+                #{skype,jdbcType=VARCHAR},
             </if>
             <if test="qq != null">
                 #{qq,jdbcType=VARCHAR},
@@ -418,6 +428,9 @@
             <if test="record.wechat != null">
                 wechat = #{record.wechat,jdbcType=VARCHAR},
             </if>
+            <if test="record.skype != null">
+                skype = #{record.skype,jdbcType=VARCHAR},
+            </if>
             <if test="record.qq != null">
                 qq = #{record.qq,jdbcType=VARCHAR},
             </if>
@@ -460,6 +473,9 @@
             <if test="record.createdTime != null">
                 created_time = #{record.createdTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="record.updatedTime != null">
+                updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+            </if>
             <if test="record.intentionQuantity != null">
                 intention_quantity = #{record.intentionQuantity,jdbcType=BIGINT},
             </if>
@@ -483,6 +499,7 @@
         whatsapp = #{record.whatsapp,jdbcType=VARCHAR},
         linkedin = #{record.linkedin,jdbcType=VARCHAR},
         wechat = #{record.wechat,jdbcType=VARCHAR},
+        skype = #{record.skype,jdbcType=VARCHAR},
         qq = #{record.qq,jdbcType=VARCHAR},
         contacts = #{record.contacts,jdbcType=VARCHAR},
         company_address = #{record.companyAddress,jdbcType=VARCHAR},
@@ -497,6 +514,7 @@
         scope = #{record.scope,jdbcType=VARCHAR},
         remark = #{record.remark,jdbcType=VARCHAR},
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
+        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
         intention_quantity = #{record.intentionQuantity,jdbcType=BIGINT}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -541,6 +559,9 @@
             <if test="wechat != null">
                 wechat = #{wechat,jdbcType=VARCHAR},
             </if>
+            <if test="skype != null">
+                skype = #{skype,jdbcType=VARCHAR},
+            </if>
             <if test="qq != null">
                 qq = #{qq,jdbcType=VARCHAR},
             </if>
@@ -583,6 +604,9 @@
             <if test="createdTime != null">
                 created_time = #{createdTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
             <if test="intentionQuantity != null">
                 intention_quantity = #{intentionQuantity,jdbcType=BIGINT},
             </if>
@@ -590,41 +614,43 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.consumer.pojo.Consumer">
-        update consumer
-        set consumer_no = #{consumerNo,jdbcType=VARCHAR},
-        name = #{name,jdbcType=VARCHAR},
-        country = #{country,jdbcType=VARCHAR},
-        main_business = #{mainBusiness,jdbcType=VARCHAR},
-        source = #{source,jdbcType=VARCHAR},
-        type = #{type,jdbcType=VARCHAR},
-        email = #{email,jdbcType=VARCHAR},
-        intention = #{intention,jdbcType=VARCHAR},
-        facebook = #{facebook,jdbcType=VARCHAR},
-        whatsapp = #{whatsapp,jdbcType=VARCHAR},
-        linkedin = #{linkedin,jdbcType=VARCHAR},
-        wechat = #{wechat,jdbcType=VARCHAR},
-        qq = #{qq,jdbcType=VARCHAR},
-        contacts = #{contacts,jdbcType=VARCHAR},
-        company_address = #{companyAddress,jdbcType=VARCHAR},
-        company_website = #{companyWebsite,jdbcType=VARCHAR},
-        consignee = #{consignee,jdbcType=VARCHAR},
-        tel_mobile = #{telMobile,jdbcType=VARCHAR},
-        postal_code = #{postalCode,jdbcType=VARCHAR},
-        receiving_address = #{receivingAddress,jdbcType=VARCHAR},
-        level = #{level,jdbcType=VARCHAR},
-        has_order = #{hasOrder,jdbcType=VARCHAR},
-        create_user = #{createUser,jdbcType=VARCHAR},
-        scope = #{scope,jdbcType=VARCHAR},
-        remark = #{remark,jdbcType=VARCHAR},
-        created_time = #{createdTime,jdbcType=TIMESTAMP},
-        intention_quantity = #{intentionQuantity,jdbcType=BIGINT}
-        where id = #{id,jdbcType=BIGINT}
-    </update>
+    update consumer
+    set consumer_no = #{consumerNo,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      country = #{country,jdbcType=VARCHAR},
+      main_business = #{mainBusiness,jdbcType=VARCHAR},
+      source = #{source,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      intention = #{intention,jdbcType=VARCHAR},
+      facebook = #{facebook,jdbcType=VARCHAR},
+      whatsapp = #{whatsapp,jdbcType=VARCHAR},
+      linkedin = #{linkedin,jdbcType=VARCHAR},
+      wechat = #{wechat,jdbcType=VARCHAR},
+      skype = #{skype,jdbcType=VARCHAR},
+      qq = #{qq,jdbcType=VARCHAR},
+      contacts = #{contacts,jdbcType=VARCHAR},
+      company_address = #{companyAddress,jdbcType=VARCHAR},
+      company_website = #{companyWebsite,jdbcType=VARCHAR},
+      consignee = #{consignee,jdbcType=VARCHAR},
+      tel_mobile = #{telMobile,jdbcType=VARCHAR},
+      postal_code = #{postalCode,jdbcType=VARCHAR},
+      receiving_address = #{receivingAddress,jdbcType=VARCHAR},
+      level = #{level,jdbcType=VARCHAR},
+      has_order = #{hasOrder,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      scope = #{scope,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      intention_quantity = #{intentionQuantity,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
 
 
     <select id="selectMaxId" resultType="java.lang.Long">
-        select max(id) from consumer
-    </select>
+    select max(id) from consumer
+  </select>
 
 
     <select id="findConsumerByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
@@ -741,4 +767,5 @@
         <include refid="querySalerConsumerSql"/>
         ) T
     </select>
+  
 </mapper>

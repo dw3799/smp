@@ -27,6 +27,8 @@ public class ConsumerVo {
 
     private String wechat;
 
+    private String skype;
+
     private String qq;
 
     private String contacts;
@@ -51,6 +53,13 @@ public class ConsumerVo {
 
     private String updatedTime;//yyyy-mm-dd hh:mm:ss格式字符串
 
+    public String getSkype() {
+        return skype;
+    }
+
+    public void setSkype(String skype) {
+        this.skype = skype;
+    }
 
     public String getIntention() {
         return intention;

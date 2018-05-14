@@ -29,6 +29,8 @@ public class ConsumerExt {
 
     private String wechat;
 
+    private String skype;
+
     private String qq;
 
     private String contacts;
@@ -67,6 +69,14 @@ public class ConsumerExt {
 
     private String userNo;
 
+
+    public String getSkype() {
+        return skype;
+    }
+
+    public void setSkype(String skype) {
+        this.skype = skype;
+    }
 
     public String getUserNo() {
         return userNo;

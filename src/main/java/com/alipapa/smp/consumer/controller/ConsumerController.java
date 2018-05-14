@@ -224,6 +224,8 @@ public class ConsumerController {
             String whatsapp = request.getParameter("whatsapp");
             String linkedin = request.getParameter("linkedin");
             String wechat = request.getParameter("wechat");
+            String skype = request.getParameter("skype");
+
             String qq = request.getParameter("qq");
             String contacts = request.getParameter("contacts");
             String companyAddress = request.getParameter("companyAddress");
@@ -272,6 +274,7 @@ public class ConsumerController {
             consumer.setWhatsapp(whatsapp);
             consumer.setLinkedin(linkedin);
             consumer.setWechat(wechat);
+            consumer.setSkype(skype);
             consumer.setQq(qq);
             consumer.setContacts(contacts);
             consumer.setCompanyAddress(companyAddress);
@@ -352,6 +355,7 @@ public class ConsumerController {
         consumerVo.setType(consumer.getType());
         consumerVo.setUpdatedTime(DateUtil.formatToStrTime(consumer.getUpdatedTime()));
         consumerVo.setWechat(consumer.getWechat());
+        consumerVo.setType(consumer.getSkype());
         consumerVo.setWhatsapp(consumer.getWhatsapp());
         consumerVo.setIntention(consumer.getIntention());
 
@@ -410,6 +414,9 @@ public class ConsumerController {
             String whatsapp = request.getParameter("whatsapp");
             String linkedin = request.getParameter("linkedin");
             String wechat = request.getParameter("wechat");
+            String skype = request.getParameter("skype");
+
+
             String qq = request.getParameter("qq");
             String contacts = request.getParameter("contacts");
             String companyAddress = request.getParameter("companyAddress");
@@ -462,6 +469,10 @@ public class ConsumerController {
 
                 if (StringUtil.isNotEmptyString(wechat) && StringUtil.isNotEmptyString(consumer.getWechat()) && !wechat.equals(consumer.getWechat())) {
                     return error("无权限修改客户信息:" + wechat);
+                }
+
+                if (StringUtil.isNotEmptyString(skype) && StringUtil.isNotEmptyString(consumer.getSkype()) && !skype.equals(consumer.getSkype())) {
+                    return error("无权限修改客户信息:" + skype);
                 }
 
                 if (StringUtil.isNotEmptyString(qq) && StringUtil.isNotEmptyString(consumer.getQq()) && !qq.equals(consumer.getQq())) {

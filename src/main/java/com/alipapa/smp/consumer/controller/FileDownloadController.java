@@ -122,7 +122,7 @@ public class FileDownloadController {
                     String wechat = consumerRowList.get(15);
                     String facebook = consumerRowList.get(16);
                     String qq = consumerRowList.get(17);
-                    String Skype = consumerRowList.get(18);
+                    String skype = consumerRowList.get(18);
                     String linkedin = consumerRowList.get(19);
                     String consignee = consumerRowList.get(20);
                     String telMobile = consumerRowList.get(21);
@@ -205,6 +205,7 @@ public class FileDownloadController {
                     consumer.setWhatsapp(whatsapp);
                     consumer.setLinkedin(linkedin);
                     consumer.setWechat(wechat);
+                    consumer.setSkype(skype);
                     consumer.setQq(qq);
 
                     if (StringUtil.isNotEmptyString(contacts)) {

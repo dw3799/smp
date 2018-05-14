@@ -29,6 +29,8 @@ public class Consumer {
 
     private String wechat;
 
+    private String skype;
+
     private String qq;
 
     private String contacts;
@@ -163,6 +165,14 @@ public class Consumer {
 
     public void setWechat(String wechat) {
         this.wechat = wechat == null ? null : wechat.trim();
+    }
+
+    public String getSkype() {
+        return skype;
+    }
+
+    public void setSkype(String skype) {
+        this.skype = skype == null ? null : skype.trim();
     }
 
     public String getQq() {
