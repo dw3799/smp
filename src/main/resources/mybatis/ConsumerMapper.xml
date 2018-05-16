@@ -682,7 +682,7 @@
             and cu.level = #{level}
         </if>
         <if test="name != null and name != ''">
-            and cu.name LIKE like CONCAT('%',#{name},'%')
+            and cu.name LIKE CONCAT('%',#{name},'%')
         </if>
         <if test="consumerNo != null and consumerNo != ''">
             and cu.consumer_no LIKE CONCAT('%',#{consumerNo},'%')
@@ -730,7 +730,7 @@
             and cu.level = #{level}
         </if>
         <if test="name != null and name != ''">
-            and cu.name LIKE like CONCAT('%',#{name},'%')
+            and cu.name LIKE CONCAT('%',#{name},'%')
         </if>
         <if test="consumerNo != null and consumerNo != ''">
             and cu.consumer_no LIKE CONCAT('%',#{consumerNo},'%')
