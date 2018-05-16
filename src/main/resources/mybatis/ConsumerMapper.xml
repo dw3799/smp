@@ -736,7 +736,7 @@
             and cu.consumer_no LIKE CONCAT('%',#{consumerNo},'%')
         </if>
         <if test="hasOrder != null and hasOrder != ''">
-            and cu.hasOrder = #{hasOrder}
+            and cu.has_order = #{hasOrder}
         </if>
         <if test="userId != null">
             and ur.user_id = #{userId}

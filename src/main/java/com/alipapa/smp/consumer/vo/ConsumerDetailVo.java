@@ -12,6 +12,8 @@ public class ConsumerDetailVo {
 
     private String type;
 
+    private String email;
+
     private String source;
 
     private String level;
@@ -28,6 +30,13 @@ public class ConsumerDetailVo {
 
     private Long totalCount;
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public Long getConsumerId() {
         return consumerId;

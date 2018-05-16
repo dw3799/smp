@@ -10,6 +10,8 @@ public class SalerConsumerDetailVo {
 
     private String country;
 
+    private String email;
+
     private String level;
 
     private String hasOrder;
@@ -39,6 +41,13 @@ public class SalerConsumerDetailVo {
     totalCount:124//总数，分页用*/
 
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public Integer getIsDiscard() {
         return isDiscard;

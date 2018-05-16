@@ -150,6 +150,7 @@ public class ConsumerService {
                     consumerDetailVo.setCountry(consumer.getCountry());
                     consumerDetailVo.setHasOrder(consumer.getHasOrder());
                     consumerDetailVo.setLevel(consumer.getLevel());
+                    consumerDetailVo.setEmail(consumer.getEmail());
 
                     if (userNo.equals(consumer.getUserNo())) {
                         consumerDetailVo.setIsDiscard(1);
@@ -195,7 +196,7 @@ public class ConsumerService {
                     consumerDetailVo.setConsumerId(consumer.getId());
                     consumerDetailVo.setConsumerNo(consumer.getConsumerNo());
                     consumerDetailVo.setName(consumer.getName());
-
+                    consumerDetailVo.setEmail(consumer.getEmail());
                     consumerDetailVo.setCountry(consumer.getCountry());
                     consumerDetailVo.setLevel(consumer.getLevel());
                     consumerDetailVo.setMainBusiness(consumer.getMainBusiness());
