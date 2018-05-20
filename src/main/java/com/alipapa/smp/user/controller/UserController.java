@@ -12,10 +12,7 @@ import com.alipapa.smp.user.service.GroupService;
 import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserRoleService;
 import com.alipapa.smp.user.service.UserService;
-import com.alipapa.smp.user.vo.GroupSelectVo;
-import com.alipapa.smp.user.vo.LoginInfo;
-import com.alipapa.smp.user.vo.RoleSelectVo;
-import com.alipapa.smp.user.vo.UserVo;
+import com.alipapa.smp.user.vo.*;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.MD5;
 import com.alipapa.smp.utils.SecurityUtil;
@@ -106,6 +103,8 @@ public class UserController {
             loginInfo.setUuid(user.getUuid());
             loginInfo.setRoleName(roleName);
             loginInfo.setUserRoleId(userRole.getId());
+            loginInfo.setUserName(user.getName());
+            loginInfo.setDescription(role.getDescription());
             return WebApiResponse.success(loginInfo);
         } catch (Exception e) {
             logger.error("登录异常", e);
@@ -121,7 +120,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/listRole", method = RequestMethod.GET)
-    public WebApiResponse<List<String>> listRole(@RequestParam("userNo") String userNo) {
+    public WebApiResponse<List<RoleVo>> listRole(@RequestParam("userNo") String userNo) {
         if (StringUtils.isBlank(userNo)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
@@ -137,9 +136,16 @@ public class UserController {
             return error("请联系管理员设置角色");
         }
 
-        List<String> roles = new ArrayList<>();
+        List<RoleVo> roles = new ArrayList<>();
         for (UserRole userRole : userRoleList) {
-            roles.add(userRole.getRoleName());
+            Role role = roleService.getRoleById(userRole.getRoleId());
+            if (role != null) {
+                RoleVo roleVo = new RoleVo();
+                roleVo.setId(role.getId());
+                roleVo.setRoleName(role.getRoleName());
+                roleVo.setDescription(role.getDescription());
+                roles.add(roleVo);
+            }
         }
         return WebApiResponse.success(roles);
     }

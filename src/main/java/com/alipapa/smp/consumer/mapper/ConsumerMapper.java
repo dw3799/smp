@@ -41,7 +41,7 @@ public interface ConsumerMapper {
 
     long findConsumerByParamCount(Map<String, Object> params);
 
-    List<Consumer> findSalerManagerConsumerByParam(Map<String, Object> params);
+    List<ConsumerExt> findSalerManagerConsumerByParam(Map<String, Object> params);
 
     long findSalerManagerConsumerByParamCount(Map<String, Object> params);
 

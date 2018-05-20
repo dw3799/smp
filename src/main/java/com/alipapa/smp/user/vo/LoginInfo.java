@@ -7,7 +7,12 @@ public class LoginInfo {
 
     private String roleName;
 
+    private String userName;
+
     private Long userRoleId;
+
+    private String description;
+
 
     public Long getUserRoleId() {
         return userRoleId;
@@ -39,5 +44,21 @@ public class LoginInfo {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

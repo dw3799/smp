@@ -197,7 +197,7 @@ public class ConsumerService {
         if (count != null && count > 0) {
             params.put("start", start);
             params.put("size", size);
-            List<ConsumerExt> consumerList = consumerMapper.findSalerConsumerByParam(params);
+            List<ConsumerExt> consumerList = consumerMapper.findSalerManagerConsumerByParam(params);
 
             if (!CollectionUtils.isEmpty(consumerList)) {
                 logger.info("consumerList:" + consumerList.size());
