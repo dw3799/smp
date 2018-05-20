@@ -185,6 +185,8 @@ public class UserController {
             newUser.setPwd(MD5.digist("666666"));//默认密码
             newUser.setRemark(remark);
             newUser.setIsLeader(0);
+            newUser.setCreatedTime(new Date());
+            newUser.setUpdatedTime(new Date());
             if (StringUtils.isNotBlank(groupId)) {
                 Group group = groupService.getGroupById(Long.valueOf(groupId));
                 if (group == null) {
