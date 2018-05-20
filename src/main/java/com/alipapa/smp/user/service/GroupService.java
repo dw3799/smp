@@ -107,7 +107,6 @@ public class GroupService {
     }
 
 
-
     /**
      * 获取组下拉列表
      *
@@ -146,7 +145,6 @@ public class GroupService {
     }
 
 
-
     /**
      * 获取组下拉列表
      *
@@ -167,14 +165,13 @@ public class GroupService {
                     groupVo.setGroupName(group.getName());
                     groupVo.setGroupNo(group.getGroupNo());
                     groupVo.setLeaderName(group.getLeaderName());
-                    groupVo.setCount(count);
+                    groupVo.setTotalCount(count);
                     groupVoList.add(groupVo);
                 }
             }
         }
         return groupVoList;
     }
-
 
 
     /**

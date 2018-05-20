@@ -10,7 +10,7 @@ public class GroupVo {
 
     private String leaderName;
 
-    private Long count;
+    private Long totalCount;
 
 
     public Long getGroupId() {
@@ -45,11 +45,11 @@ public class GroupVo {
         this.leaderName = leaderName;
     }
 
-    public Long getCount() {
-        return count;
+    public Long getTotalCount() {
+        return totalCount;
     }
 
-    public void setCount(Long count) {
-        this.count = count;
+    public void setTotalCount(Long totalCount) {
+        this.totalCount = totalCount;
     }
 }

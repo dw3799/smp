@@ -731,11 +731,17 @@ public class ConsumerController {
         Integer start = (pageNum - 1) * pageSize;
         Integer size = pageSize;
 
-        List<SalerConsumerDetailVo> consumerDetailVoList = consumerService.listSalerConsumerDetailVoByParams(params, start, size, userInfo.getUserNo());
-        if (CollectionUtils.isEmpty(consumerDetailVoList)) {
-            return WebApiResponse.success(new ArrayList<>());
+        List<SalerConsumerDetailVo> consumerDetailVoList = null;
+        if (ConsumerSearchTypeEnum.MyConsumer.getCode() == searchType) {
+            consumerDetailVoList = consumerService.listSalerManageConsumerDetailVoByParams(params, start, size, userInfo.getUserNo());
+        } else {
+            consumerDetailVoList = consumerService.listSalerConsumerDetailVoByParams(params, start, size, userInfo.getUserNo());
         }
-        return WebApiResponse.success(consumerDetailVoList);
+
+        if (CollectionUtils.isEmpty(consumerDetailVoList)) {
+            return WebApiResponse.success(new ArrayList<>(), 0);
+        }
+        return WebApiResponse.success(consumerDetailVoList, consumerDetailVoList.get(0).getTotalCount());
     }
 
 
@@ -816,9 +822,9 @@ public class ConsumerController {
 
         List<ConsumerDetailVo> consumerDetailVoList = consumerService.listConsumerDetailVoByParams(params, start, size);
         if (CollectionUtils.isEmpty(consumerDetailVoList)) {
-            return WebApiResponse.success(new ArrayList<>());
+            return WebApiResponse.success(new ArrayList<>(), 0);
         }
-        return WebApiResponse.success(consumerDetailVoList);
+        return WebApiResponse.success(consumerDetailVoList, consumerDetailVoList.get(0).getTotalCount());
     }
 
 
@@ -1145,9 +1151,9 @@ public class ConsumerController {
 
         List<SalerConsumerDetailVo> consumerDetailVoList = consumerService.listSalerConsumerDetailVoByParams(params, start, size, userInfo.getUserNo());
         if (CollectionUtils.isEmpty(consumerDetailVoList)) {
-            return WebApiResponse.success(new ArrayList<>());
+            return WebApiResponse.success(new ArrayList<>(), 0);
         }
-        return WebApiResponse.success(consumerDetailVoList);
+        return WebApiResponse.success(consumerDetailVoList, consumerDetailVoList.get(0).getTotalCount());
     }
 
 

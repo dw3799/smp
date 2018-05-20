@@ -57,9 +57,9 @@ public class GroupController {
      */
     @RequestMapping(value = "/userFuzzyQuery", method = RequestMethod.GET)
     public WebApiResponse<List<FuzzyUserVo>> userFuzzyQuery(@RequestParam("searchString") String searchString) {
-        if (StringUtils.isBlank(searchString)) {
+        /* if (StringUtils.isBlank(searchString)) {
             return WebApiResponse.success(new ArrayList<>());
-        }
+        }*/
 
         List<FuzzyUserVo> fuzzyUserVoList = userService.userSearch(searchString);
         return WebApiResponse.success(fuzzyUserVoList);
@@ -232,8 +232,11 @@ public class GroupController {
         Integer size = pageSize;
 
         List<GroupVo> groupVoList = groupService.listGroupByParams(params, start, size);
+        if (CollectionUtils.isEmpty(groupVoList)) {
+            return WebApiResponse.success(new ArrayList<>(), 0);
+        }
 
-        return WebApiResponse.success(groupVoList);
+        return WebApiResponse.success(groupVoList, groupVoList.get(0).getTotalCount());
     }
 
 

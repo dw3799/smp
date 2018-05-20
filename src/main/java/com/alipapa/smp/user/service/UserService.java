@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -136,12 +137,17 @@ public class UserService {
         User savedUser = this.getUserByUserNo(user.getUserNo());
         for (String roleId : roleIdList) {
             Role role = roleMapper.selectByPrimaryKey(Long.valueOf(roleId));
+            if (role == null) {
+                throw new Exception("角色不存在");
+            }
             UserRole userRole = new UserRole();
             userRole.setRoleId(role.getId());
             userRole.setRoleName(role.getRoleName());
             userRole.setUserId(savedUser.getId());
             userRole.setUserNo(savedUser.getUserNo());
             userRole.setUuid(savedUser.getUuid());
+            userRole.setCreatedTime(new Date());
+            userRole.setUpdatedTime(new Date());
             userRoleMapper.insert(userRole);
         }
         return false;

@@ -40,4 +40,10 @@ public interface ConsumerMapper {
     List<Consumer> findConsumerByParam(Map<String, Object> params);
 
     long findConsumerByParamCount(Map<String, Object> params);
+
+    List<Consumer> findSalerManagerConsumerByParam(Map<String, Object> params);
+
+    long findSalerManagerConsumerByParamCount(Map<String, Object> params);
+
+
 }

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static com.alipapa.smp.utils.WebApiResponse.error;
@@ -151,25 +152,14 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
-    public WebApiResponse<String> addUser(@RequestBody String jsonStr) {
+    public WebApiResponse<String> addUser(HttpServletRequest request) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
-        if (jsonStr == null) {
-            logger.error("提交的json格式数据不可以为空!");
-            return error("输入的信息不可以为空");
-        }
         try {
-            logger.info(jsonStr);
-            JSONObject json = JSON.parseObject(jsonStr);
-            if (json == null) {
-                logger.error("客户提交的数据解析失败: " + jsonStr);
-                return error("用户数据解析失败");
-            }
-
-            String name = json.getString("name");
-            String groupId = json.getString("groupId");
-            String roleIds = json.getString("roleIds");
-            String remark = json.getString("remark");
+            String name = request.getParameter("name");
+            String groupId = request.getParameter("groupId");
+            String roleIds = request.getParameter("roleIds");
+            String remark = request.getParameter("remark");
 
             if (name == null || roleIds == null) {
                 return error("请输入必要信息");
@@ -197,6 +187,9 @@ public class UserController {
             newUser.setIsLeader(0);
             if (StringUtils.isNotBlank(groupId)) {
                 Group group = groupService.getGroupById(Long.valueOf(groupId));
+                if (group == null) {
+                    throw new Exception("组不存在");
+                }
                 newUser.setGroupId(group.getId());
                 newUser.setGroupNo(group.getGroupNo());
             }
@@ -207,7 +200,7 @@ public class UserController {
             return WebApiResponse.success("success");
         } catch (Exception ex) {
             logger.error("新建用户失败!", ex);
-            return error("新建用户失败");
+            return error("新建用户失败：" + ex.getMessage());
         }
     }
 
@@ -251,7 +244,12 @@ public class UserController {
         //获取用户角色信息
         List<UserVo> userVoList = userRoleService.findUserByParam(params, start, size);
 
-        return WebApiResponse.success(userVoList);
+
+        if (CollectionUtils.isEmpty(userVoList)) {
+            return WebApiResponse.success(new ArrayList<>(), 0);
+
+        }
+        return WebApiResponse.success(userVoList, userVoList.get(0).getTotalCount());
     }
 
 

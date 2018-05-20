@@ -12,9 +12,20 @@ public class WebApiResponse<T> {
     public static final int ERROR_CODE = 1;
     private int code;
     private String error;
+    private Long totalCount;
+
     private T data;
 
     public WebApiResponse() {
+    }
+
+
+    public Long getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(Long totalCount) {
+        this.totalCount = totalCount;
     }
 
     public static <T> WebApiResponse<T> success(T data) {
@@ -23,6 +34,21 @@ public class WebApiResponse<T> {
         response.setData(data);
         return response;
     }
+
+    /**
+     * 分页使用
+     *
+     * @param data
+     * @param totalCount
+     * @param <T>
+     * @return
+     */
+    public static <T> WebApiResponse<T> success(T data, long totalCount) {
+        WebApiResponse<T> response = WebApiResponse.success(data);
+        response.setTotalCount(totalCount);
+        return response;
+    }
+
 
     public static <T> WebApiResponse<T> error(String errorMessage) {
         return error(errorMessage, 1);
