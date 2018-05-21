@@ -643,15 +643,23 @@ public class ConsumerController {
             //用户ID
             params.put("userId", userInfo.getUserId());
         } else if (ConsumerSearchTypeEnum.MyConsumer.getCode() == searchType) {
+            User user = userService.getUserById(userInfo.getUserId());
             //员工ID
             String userIdString = request.getParameter("userId");
             if (StringUtil.isNotEmptyString(userIdString)) {
                 params.put("userId", Long.valueOf(userIdString));
             }
-            //组ID
-            String groupIdString = request.getParameter("groupId");
-            if (StringUtil.isNotEmptyString(groupIdString)) {
-                params.put("groupId", Long.valueOf(groupIdString));
+
+            if ("admin".equals(userInfo.getRoleName())) {
+                //组ID
+                String groupIdString = request.getParameter("groupId");
+                if (StringUtil.isNotEmptyString(groupIdString)) {
+                    params.put("groupId", Long.valueOf(groupIdString));
+                }
+            } else if (1 == user.getIsLeader()) {
+                params.put("groupId", user.getGroupId());
+            } else {
+                return WebApiResponse.error("没有权限");
             }
         } else {
             return WebApiResponse.error("查询参数异常");
