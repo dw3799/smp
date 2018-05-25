@@ -193,7 +193,7 @@ public class UserController {
             newUser.setIsLeader(0);
             newUser.setCreatedTime(new Date());
             newUser.setUpdatedTime(new Date());
-            if (StringUtils.isNotBlank(groupId)) {
+            if (StringUtils.isNotBlank(groupId) && Long.valueOf(groupId) > 0L) {
                 Group group = groupService.getGroupById(Long.valueOf(groupId));
                 if (group == null) {
                     throw new Exception("组不存在");
