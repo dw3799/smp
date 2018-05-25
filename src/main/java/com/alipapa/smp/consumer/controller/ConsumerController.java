@@ -659,7 +659,7 @@ public class ConsumerController {
             } else if (1 == user.getIsLeader()) {
                 params.put("groupId", user.getGroupId());
             } else {
-                return WebApiResponse.error("没有权限");
+                params.put("userId", userInfo.getUserId());
             }
         } else {
             return WebApiResponse.error("查询参数异常");
@@ -867,6 +867,7 @@ public class ConsumerController {
                 FollowRecordVo followRecordVo = new FollowRecordVo();
                 followRecordVo.setFollowRecordId(consumerFollowRecord.getId());
                 followRecordVo.setConsumerId(consumerFollowRecord.getConsumerId());
+                followRecordVo.setFollowTime(consumerFollowRecord.getFollowTime());
                 followRecordVo.setFollowUser(consumerFollowRecord.getUserNo());
                 followRecordVo.setContent(consumerFollowRecord.getContent());
                 followRecordVoList.add(followRecordVo);
