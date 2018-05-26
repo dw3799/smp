@@ -9,9 +9,15 @@ import java.util.Date;
 public class UserVo {
     private Long userRoleId;
 
+    private Long roleId;
+
+    private Long groupId;
+
     private String userNo;//用户编号
 
     private String roleName;
+
+    private String description;
 
     private String name;
 
@@ -22,6 +28,14 @@ public class UserVo {
     private String createdTimeString;
 
     private Long totalCount;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
+    }
 
     public String getUserNo() {
         return userNo;
@@ -79,6 +93,21 @@ public class UserVo {
         this.totalCount = totalCount;
     }
 
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
 
     public Long getUserRoleId() {
         return userRoleId;

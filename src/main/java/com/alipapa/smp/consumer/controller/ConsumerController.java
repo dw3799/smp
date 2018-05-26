@@ -564,6 +564,17 @@ public class ConsumerController {
             List<GroupSelectVo> groupSelectVoList = new ArrayList<>();
             groupSelectVoList.add(groupSelectVo);
             return WebApiResponse.success(groupSelectVoList);
+        } else {
+            Group group = groupService.getGroupById(user.getGroupId());
+            if (group != null) {
+                GroupSelectVo groupSelectVo = new GroupSelectVo();
+                groupSelectVo.setGroupId(group.getId());
+                groupSelectVo.setGroupNo(group.getGroupNo());
+                groupSelectVo.setGroupName(group.getName());
+                List<GroupSelectVo> groupSelectVoList = new ArrayList<>();
+                groupSelectVoList.add(groupSelectVo);
+                return WebApiResponse.success(groupSelectVoList);
+            }
         }
 
         return WebApiResponse.success(null);

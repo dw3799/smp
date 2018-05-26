@@ -16,8 +16,11 @@
 
     <resultMap id="SearchResultMap" type="com.alipapa.smp.user.vo.UserVo">
         <id column="id" jdbcType="BIGINT" property="userRoleId"/>
+        <id column="role_id" jdbcType="BIGINT" property="roleId"/>
+        <id column="group_id" jdbcType="BIGINT" property="groupId"/>
         <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="description" jdbcType="VARCHAR" property="description" />
         <result column="name" jdbcType="BIGINT" property="name"/>
         <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
         <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
@@ -310,14 +313,18 @@
     <sql id="queryUserRoleSql">
         select DISTINCT
         ur.id,
+        r.id AS  role_id,
+        g.id AS  group_id,
         u.user_no,
         u.`name`,
         ur.role_name,
+        r.description,
         g.`name` as group_name ,
         ur.created_time
         from user_role ur
         LEFT JOIN `user` u on ur.user_id=u.id
         LEFT JOIN `group` g on u.group_id=g.id
+        LEFT JOIN `role` r on r.id=ur.role_id
         where 1=1
         <if test="userNo != null and userNo != ''">
             and u.`user_no` = #{userNo}
