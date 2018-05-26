@@ -167,7 +167,7 @@ public class UserController {
             String roleIds = request.getParameter("roleIds");
             String remark = request.getParameter("remark");
 
-            if (name == null || roleIds == null) {
+            if (StringUtils.isBlank(name) || StringUtils.isBlank(roleIds)) {
                 return error("请输入必要信息");
             }
 

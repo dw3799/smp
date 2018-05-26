@@ -10,6 +10,7 @@ import com.alipapa.smp.consumer.pojo.SysDictExample;
 import com.alipapa.smp.consumer.pojo.UserConsumerRelation;
 import com.alipapa.smp.consumer.pojo.UserConsumerRelationExample;
 import com.alipapa.smp.utils.DateUtil;
+import com.alipapa.smp.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -59,11 +60,14 @@ public class SysDictService {
      * @param categoryCode
      * @return
      */
-    public List<SysDict> listSysDict(String categoryCode) {
+    public List<SysDict> listSysDictLikeText(String categoryCode, String searchString) {
         SysDictExample example = new SysDictExample();
         SysDictExample.Criteria criteria = example.createCriteria();
         criteria.andCategoryCodeEqualTo(categoryCode);
         criteria.andStatusEqualTo(1);//1有效 0无效
+        if (StringUtil.isNotEmptyString(searchString)) {
+            criteria.andDictTextLike('%' + searchString + "%");
+        }
         example.setOrderByClause("sort");
         return sysDictMapper.selectByExample(example);
     }

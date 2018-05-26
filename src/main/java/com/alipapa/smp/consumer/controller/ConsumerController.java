@@ -77,7 +77,7 @@ public class ConsumerController {
      * @return
      */
     @RequestMapping(value = "/consumerSelect", method = RequestMethod.GET)
-    public WebApiResponse<List<SysDictVo>> consumerSelect(@RequestParam("categoryCode") Integer categoryCode) {
+    public WebApiResponse<List<SysDictVo>> consumerSelect(@RequestParam("categoryCode") Integer categoryCode, @RequestParam(name = "searchString", required = false) String searchString) {
         if (categoryCode == null || CategoryCode.valueOf(categoryCode) == null) {
             return WebApiResponse.error("参数有误！");
         }
@@ -101,7 +101,7 @@ public class ConsumerController {
         }
 
 
-        List<SysDict> sysDictList = sysDictService.listSysDict(CategoryCode.valueOf(categoryCode).getCodeName());
+        List<SysDict> sysDictList = sysDictService.listSysDictLikeText(CategoryCode.valueOf(categoryCode).getCodeName(), searchString);
         if (!CollectionUtils.isEmpty(sysDictList)) {
             for (SysDict sysDict : sysDictList) {
                 SysDictVo sysDictVo = new SysDictVo();
@@ -698,24 +698,32 @@ public class ConsumerController {
         //上次联系时间开始
         String preContactTimeStart = request.getParameter("preContactTimeStart");
         if (!StringUtil.isEmptyString(preContactTimeStart)) {
+            logger.info("preContactTimeStart:" + preContactTimeStart);
+
             params.put("preContactTimeStart", preContactTimeStart);
         }
 
         //上次联系时间结束
         String preContactTimeEnd = request.getParameter("preContactTimeEnd");
         if (!StringUtil.isEmptyString(preContactTimeEnd)) {
+            logger.info("preContactTimeEnd:" + preContactTimeEnd);
+
             params.put("preContactTimeEnd", preContactTimeEnd);
         }
 
         //下次联系时间开始
         String nextContactTimeStart = request.getParameter("nextContactTimeStart");
         if (!StringUtil.isEmptyString(nextContactTimeStart)) {
+            logger.info("nextContactTimeStart:" + nextContactTimeStart);
+
             params.put("nextContactTimeStart", nextContactTimeStart);
         }
 
         //下次联系时间结束
         String nextContactTimeEnd = request.getParameter("nextContactTimeEnd");
         if (!StringUtil.isEmptyString(nextContactTimeEnd)) {
+            logger.info("nextContactTimeEnd:" + nextContactTimeEnd);
+
             params.put("nextContactTimeEnd", nextContactTimeEnd);
         }
 

@@ -133,8 +133,7 @@ public class UserService {
      * @return
      */
     public boolean addUser(User user, List<String> roleIdList) throws Exception {
-        userMapper.insert(user);
-        User savedUser = this.getUserByUserNo(user.getUserNo());
+
         for (String roleId : roleIdList) {
             Role role = roleMapper.selectByPrimaryKey(Long.valueOf(roleId));
             if (role == null) {
@@ -143,6 +142,12 @@ public class UserService {
             UserRole userRole = new UserRole();
             userRole.setRoleId(role.getId());
             userRole.setRoleName(role.getRoleName());
+
+            User savedUser = this.getUserByUserNo(user.getUserNo());
+            if (savedUser == null) {
+                userMapper.insert(user);
+                savedUser = this.getUserByUserNo(user.getUserNo());
+            }
             userRole.setUserId(savedUser.getId());
             userRole.setUserNo(savedUser.getUserNo());
             userRole.setUuid(savedUser.getUuid());
