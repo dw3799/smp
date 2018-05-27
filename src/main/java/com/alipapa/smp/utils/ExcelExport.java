@@ -28,9 +28,9 @@ public class ExcelExport {
     /**
      * 生成excel并下载
      */
-    public static void exportExcel(String longString, List<ArrayList<String>> failedList, HttpServletResponse response, String pathPrefix) {
+    public static void exportExcel(String basePath, String longString, List<ArrayList<String>> failedList, HttpServletResponse response, String pathPrefix) {
 
-        String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath() + "template";
+        //String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath() + "template";
 
         logger.info("basePath:" + basePath);
         //String basePath = "/Users/maibahe/IdeaProjects/smp_frontier/target/classes/template";

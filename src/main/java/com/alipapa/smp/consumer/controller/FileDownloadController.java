@@ -56,7 +56,7 @@ public class FileDownloadController {
      * @return
      */
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public WebApiResponse<String> personPopupV2(@RequestParam(value = "file") MultipartFile multipartFile, HttpServletResponse response) {
+    public WebApiResponse<String> upload(@RequestParam(value = "file") MultipartFile multipartFile, HttpServletResponse response) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
         if (!"admin".equals(userInfo.getRoleName())) {

@@ -320,22 +320,25 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/updateUserRole", method = RequestMethod.POST)
-    public WebApiResponse<String> updateUserRole(@RequestParam("userRoleId") Long userRoleId, @RequestParam(name = "groupId", required = false) Long groupId, @RequestParam(name = "roleId", required = false) Long roleId) {
+    public WebApiResponse<String> updateUserRole(@RequestParam("id") Long id, @RequestParam(name = "groupId", required = false) Long groupId, @RequestParam(name = "roleId", required = false) Long roleId) {
         String roleName = UserStatus.getUserInfo().getRoleName();
         if (!"admin".equals(roleName)) {
             return error("没有权限");
         }
 
-        if (userRoleId == null) {
+        if (id == null || id <= 0L) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
         }
 
-        if (roleId == null && groupId == null) {
+        if ((roleId == null || roleId <= 0L) && (groupId == null || groupId <= 0L)) {
             return error("参数不可以为空");
         }
-        UserRole userRole = userRoleService.getUserRoleByUserRoleId(userRoleId);
+        UserRole userRole = userRoleService.getUserRoleByUserRoleId(id);
 
+        if ("admin".equals(userRole.getRoleName())) {
+            return error("admin权限不能被修改");
+        }
         if (roleId != null) {
             Role role = roleService.getRoleById(roleId);
             if (role != null && role.getId() == userRole.getRoleId()) {

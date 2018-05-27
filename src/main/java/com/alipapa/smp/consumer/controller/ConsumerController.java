@@ -337,6 +337,7 @@ public class ConsumerController {
         consumerVo.setCompanyWebsite(consumer.getCompanyWebsite());
         consumerVo.setConsignee(consumer.getConsignee());
         consumerVo.setContacts(consumer.getContacts());
+        consumerVo.setType(consumer.getType());
         consumerVo.setConsumerNo(consumer.getConsumerNo());
         consumerVo.setCountry(consumer.getCountry());
         consumerVo.setCreatedTime(DateUtil.formatToStrTime(consumer.getCreatedTime()));
@@ -355,7 +356,7 @@ public class ConsumerController {
         consumerVo.setType(consumer.getType());
         consumerVo.setUpdatedTime(DateUtil.formatToStrTime(consumer.getUpdatedTime()));
         consumerVo.setWechat(consumer.getWechat());
-        consumerVo.setType(consumer.getSkype());
+        consumerVo.setSkype(consumer.getSkype());
         consumerVo.setWhatsapp(consumer.getWhatsapp());
         consumerVo.setIntention(consumer.getIntention());
 

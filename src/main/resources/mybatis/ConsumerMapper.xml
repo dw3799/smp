@@ -748,13 +748,13 @@
             and u.group_id = #{groupId}
         </if>
         <if test="preContactTimeStart != null and  preContactTimeStart != '' ">
-            <![CDATA[ and ur.follow_time >= to_date(#{preContactTimeStart},'%Y/%m/%d %H:%i:%s')]]>
+            <![CDATA[ and ur.follow_time >= str_to_date(#{preContactTimeStart},'%Y/%m/%d %H:%i:%s')]]>
         </if>
         <if test="preContactTimeEnd != null and  preContactTimeEnd != '' ">
-            <![CDATA[ and ur.follow_time <= to_date(#{preContactTimeEnd},'%Y/%m/%d %H:%i:%s')]]>
+            <![CDATA[ and ur.follow_time <= str_to_date(#{preContactTimeEnd},'%Y/%m/%d %H:%i:%s')]]>
         </if>
         <if test="nextContactTimeStart != null and  nextContactTimeStart != '' ">
-            <![CDATA[ and ur.next_follow_time >= to_date(#{nextContactTimeStart},'%Y/%m/%d %H:%i:%s')]]>
+            <![CDATA[ and ur.next_follow_time >= str_to_date(#{nextContactTimeStart},'%Y/%m/%d %H:%i:%s')]]>
         </if>
         <if test="nextContactTimeEnd != null and  nextContactTimeEnd != '' ">
             <![CDATA[ and ur.next_follow_time <= str_to_date(#{nextContactTimeEnd},'%Y/%m/%d %H:%i:%s')]]>
