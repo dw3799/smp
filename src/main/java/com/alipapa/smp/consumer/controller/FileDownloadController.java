@@ -235,8 +235,8 @@ public class FileDownloadController {
             }
 
             String longString = "上载成功量:" + total + ",上载失败量:" + failedCount;
-            pathPrefix = pathPrefix + File.separator + userInfo.getUserNo();
-            ExcelExport.exportExcel(longString, failedList, response, pathPrefix);
+            String userPathPrefix = pathPrefix + File.separator + userInfo.getUserNo();
+            ExcelExport.exportExcel(pathPrefix, longString, failedList, response, userPathPrefix);
 
             return WebApiResponse.success("success");
 

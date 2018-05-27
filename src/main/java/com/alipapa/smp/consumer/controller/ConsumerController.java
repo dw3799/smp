@@ -1093,8 +1093,17 @@ public class ConsumerController {
                     continue;
                 }
                 relateUserAndConsumer(consumer, member);
+
+                if (userIdArray.length > 1) {
+                    consumer.setScope(ConsumerScopeEnum.Protected.getCodeName());
+                } else {
+                    consumer.setScope(ConsumerScopeEnum.Private.getCodeName());
+                }
+                consumerService.updateConsumer(consumer);
             }
         }
+
+
         return WebApiResponse.success("success");
     }
 
