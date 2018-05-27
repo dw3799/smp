@@ -164,6 +164,9 @@ public class GroupController {
         if (group == null) {
             return WebApiResponse.error("组不存在");
         }
+
+        Long oldLeaderId = group.getLeaderId();
+
         group.setName(groupName);
 
         User leader = userService.getUserById(leaderId);
@@ -190,6 +193,12 @@ public class GroupController {
         }
         userService.updateUser(leader);
         groupService.updateGroup(group);
+
+        if (oldLeaderId != null) {
+            User oldLeader = userService.getUserById(leaderId);
+            oldLeader.setIsLeader(0);
+            userService.updateUser(oldLeader);
+        }
         return WebApiResponse.success("success");
     }
 
