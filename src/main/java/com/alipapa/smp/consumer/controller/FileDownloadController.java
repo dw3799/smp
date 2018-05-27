@@ -175,7 +175,10 @@ public class FileDownloadController {
                     Consumer consumer = new Consumer();
                     //YYYYMMDD+随机四位数
                     Long consumerId = consumerService.getLatestConsumerId();
-                    consumer.setConsumerNo(DateUtil.formatToStr(new Date()) + String.format("%04d", consumerId + 1));
+                    if (consumerId == null) {
+                        consumerId = 0L;
+                    }
+                    consumer.setConsumerNo(DateUtil.formatToStr(new Date()) + String.format("%04d", consumerId + 1L));
 
                     //拓传参数
                     consumer.setName(consumerName);
@@ -236,9 +239,9 @@ public class FileDownloadController {
 
             String longString = "上载成功量:" + total + ",上载失败量:" + failedCount;
             String userPathPrefix = pathPrefix + File.separator + userInfo.getUserNo();
-            ExcelExport.exportExcel(pathPrefix, longString, failedList, response, userPathPrefix);
+            String reponse = ExcelExport.exportExcel(pathPrefix, longString, failedList, userPathPrefix);
 
-            return WebApiResponse.success("success");
+            return WebApiResponse.success(reponse);
 
         } catch (Exception ex) {
             logger.error("管理人员进行客户上载异常", ex);

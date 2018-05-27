@@ -28,7 +28,7 @@ public class ExcelExport {
     /**
      * 生成excel并下载
      */
-    public static void exportExcel(String basePath, String longString, List<ArrayList<String>> failedList, HttpServletResponse response, String pathPrefix) {
+    public static String exportExcel(String basePath, String longString, List<ArrayList<String>> failedList, String pathPrefix) {
 
         //String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath() + "template";
 
@@ -80,15 +80,17 @@ public class ExcelExport {
                 byte[] buffer = new byte[fis.available()];
                 fis.read(buffer);
                 fis.close();
-                response.reset();
+/*                response.reset();
                 response.setContentType("text/html;charset=UTF-8");
                 OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
-                response.setContentType("application/x-msdownload");
+                response.setContentType("application/x-msdownload");*/
                 String newName = URLEncoder.encode("导入结果" + System.currentTimeMillis() + ".xlsx", "UTF-8");
-                response.addHeader("Content-Disposition", "attachment;filename=\"" + newName + "\"");
+/*                response.addHeader("Content-Disposition", "attachment;filename=\"" + newName + "\"");
                 response.addHeader("Content-Length", "" + newFile.length());
                 toClient.write(buffer);
-                toClient.flush();
+                toClient.flush();*/
+
+                return longString + ",导出结果已下载到:" + newFile.getPath();
             } catch (Exception e) {
                 logger.error("生成excel并下载异常", e);
             } finally {
@@ -103,6 +105,7 @@ public class ExcelExport {
         }
         //删除创建的新文件
         //deleteFile(newFile);
+        return null;
     }
 
     /**
