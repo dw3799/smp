@@ -334,14 +334,24 @@ public class UserController {
         if ((roleId == null || roleId <= 0L) && (groupId == null || groupId <= 0L)) {
             return error("参数不可以为空");
         }
+
+
         UserRole userRole = userRoleService.getUserRoleByUserRoleId(id);
 
         if ("admin".equals(userRole.getRoleName())) {
             return error("admin权限不能被修改");
         }
+
+        User user = userService.getUserById(userRole.getUserId());
+        if (user == null) {
+            return error("员工不存在！");
+        }
+
         if (roleId != null) {
             Role role = roleService.getRoleById(roleId);
-            if (role != null && role.getId() == userRole.getRoleId()) {
+            Group group = groupService.getGroupById(groupId);
+
+            if ((role != null && role.getId() == userRole.getRoleId()) && (group != null && group.getId() == user.getGroupId())) {
                 return error("已存在该角色");
             }
 
@@ -352,7 +362,6 @@ public class UserController {
 
 
         if (groupId != null) {
-            User user = userService.getUserById(userRole.getUserId());
             if (user.getGroupId() == null || user.getGroupId() != groupId) {
                 user.setGroupId(groupId);
                 userService.updateUser(user);
