@@ -54,6 +54,20 @@ public class UserService {
         return true;
     }
 
+
+    /**
+     * @param user
+     * @return
+     */
+    public boolean updateByPrimaryKey(User user) {
+        if (user == null || user.getId() == null) {
+            return false;
+        }
+        userMapper.updateByPrimaryKey(user);
+        return true;
+    }
+
+
     /**
      * @param userId
      * @return
@@ -118,6 +132,34 @@ public class UserService {
                 fuzzyUserVo.setName(user.getName());
                 fuzzyUserVo.setUserNo(user.getUserNo());
                 fuzzyUserVoList.add(fuzzyUserVo);
+            }
+            return fuzzyUserVoList;
+        }
+        return null;
+    }
+
+    /**
+     * 无组用户模糊查询
+     *
+     * @param searchString
+     * @return
+     */
+    public List<FuzzyUserVo> membersWithoutGroup(String searchString) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("searchString", searchString);
+
+        List<User> userList = userMapper.fuzzyUserSearch(params);
+
+        if (!CollectionUtils.isEmpty(userList)) {
+            List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+            for (User user : userList) {
+                if (user.getGroupId() == null) {
+                    FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                    fuzzyUserVo.setUserId(user.getId());
+                    fuzzyUserVo.setName(user.getName());
+                    fuzzyUserVo.setUserNo(user.getUserNo());
+                    fuzzyUserVoList.add(fuzzyUserVo);
+                }
             }
             return fuzzyUserVoList;
         }

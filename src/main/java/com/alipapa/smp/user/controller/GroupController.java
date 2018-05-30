@@ -65,6 +65,24 @@ public class GroupController {
         return WebApiResponse.success(fuzzyUserVoList);
     }
 
+
+    /**
+     * 用户模糊查询
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/membersWithoutGroup", method = RequestMethod.GET)
+    public WebApiResponse<List<FuzzyUserVo>> membersWithoutGroup(@RequestParam("searchString") String searchString) {
+        /* if (StringUtils.isBlank(searchString)) {
+            return WebApiResponse.success(new ArrayList<>());
+        }*/
+
+        List<FuzzyUserVo> fuzzyUserVoList = userService.membersWithoutGroup(searchString);
+        return WebApiResponse.success(fuzzyUserVoList);
+    }
+
+
     /**
      * 新建组
      *
@@ -165,25 +183,58 @@ public class GroupController {
             return WebApiResponse.error("组不存在");
         }
 
-        Long oldLeaderId = group.getLeaderId();
-
-        group.setName(groupName);
 
         User leader = userService.getUserById(leaderId);
         if (leader == null) {
             return WebApiResponse.error("组长不存在");
         }
 
+        //历史组员处理
+        Long oldLeaderId = group.getLeaderId();
+
+        //换组长时，原组长数据修改
+        if (oldLeaderId != null && oldLeaderId != leaderId) {
+            User oldLeader = userService.getUserById(leaderId);
+            oldLeader.setGroupId(null);
+            oldLeader.setGroupNo(null);
+            oldLeader.setIsLeader(0);
+            userService.updateByPrimaryKey(oldLeader);
+        }
+
+        List<String> newUserList = new ArrayList<>();
+        HashMap<String, String> hashMap = new HashMap<>();
+
+        if (StringUtils.isNotBlank(members)) {
+            String[] userIds = members.split(";");
+            for (String userId : userIds) {
+                newUserList.add(userId);
+                hashMap.put(userId, userId);
+            }
+        }
+
+        //原组员处理
+        List<User> oldMemberList = userService.listUserByGroupId(groupId);
+        if (!CollectionUtils.isEmpty(oldMemberList)) {
+            for (User user : oldMemberList) {
+                String userId = hashMap.get(String.valueOf(user.getId()));
+                if (StringUtils.isBlank(userId)) {//新名单不存在该组员
+                    user.setGroupId(null);
+                    user.setGroupNo(null);
+                    user.setIsLeader(0);
+                    userService.updateByPrimaryKey(user);
+                }
+            }
+        }
+        group.setName(groupName);
         group.setLeaderId(leaderId);
         group.setLeaderName(leader.getName());
 
         leader.setGroupId(group.getId());
         leader.setGroupNo(group.getGroupNo());
         leader.setIsLeader(1);
-
-        if (StringUtils.isNotBlank(members)) {
-            String[] userIds = members.split(";");
-            for (String userId : userIds) {
+        
+        if (!CollectionUtils.isEmpty(newUserList)) {
+            for (String userId : newUserList) {
                 User member = userService.getUserById(Long.valueOf(userId));
                 member.setGroupId(group.getId());
                 member.setGroupNo(group.getGroupNo());
@@ -191,14 +242,11 @@ public class GroupController {
                 userService.updateUser(member);
             }
         }
-        userService.updateUser(leader);
+
+
+        userService.updateByPrimaryKey(leader);
         groupService.updateGroup(group);
 
-        if (oldLeaderId != null) {
-            User oldLeader = userService.getUserById(leaderId);
-            oldLeader.setIsLeader(0);
-            userService.updateUser(oldLeader);
-        }
         return WebApiResponse.success("success");
     }
 

@@ -704,7 +704,11 @@ public class ConsumerController {
         //是否有订单
         String hasOrder = request.getParameter("hasOrder");
         if (!StringUtil.isEmptyString(hasOrder)) {
-            params.put("hasOrder", hasOrder);
+            if ("无订单".equals(hasOrder)) {
+                params.put("hasOrder", 0);
+            } else if ("有订单".equals(hasOrder)) {
+                params.put("hasOrder", 1);
+            }
         }
 
         //上次联系时间开始
