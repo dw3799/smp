@@ -536,6 +536,7 @@ public class ConsumerController {
                 return WebApiResponse.success("success");
             }
         } catch (Exception ex) {
+            logger.error("更新客户信息异常", ex);
             return error("更新客户信息异常");
         }
         return WebApiResponse.error("更新客户信息失败");
