@@ -381,7 +381,7 @@ public class ConsumerController {
 
         try {
             //不能为空
-            String idString = request.getParameter("consumerId");
+            String idString = request.getParameter("consumerID");
 
 
             String consumerNo = request.getParameter("consumerNo");
