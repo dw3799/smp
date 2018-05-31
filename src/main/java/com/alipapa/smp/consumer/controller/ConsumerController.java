@@ -381,7 +381,7 @@ public class ConsumerController {
 
         try {
             //不能为空
-            String idString = request.getParameter("consumerID");
+            String idString = request.getParameter("consumerI");
 
 
             String consumerNo = request.getParameter("consumerNo");
@@ -893,7 +893,8 @@ public class ConsumerController {
                 followRecordVo.setFollowRecordId(consumerFollowRecord.getId());
                 followRecordVo.setConsumerId(consumerFollowRecord.getConsumerId());
                 followRecordVo.setFollowTime(consumerFollowRecord.getFollowTime());
-                followRecordVo.setFollowUser(consumerFollowRecord.getUserNo());
+                followRecordVo.setFollowUserName(consumerFollowRecord.getUserName());
+                followRecordVo.setFollowUserNo(consumerFollowRecord.getUserNo());
                 followRecordVo.setContent(consumerFollowRecord.getContent());
                 followRecordVoList.add(followRecordVo);
             }
@@ -1099,7 +1100,8 @@ public class ConsumerController {
                 }
                 relateUserAndConsumer(consumer, member);
 
-                if (userIdArray.length > 1) {
+                List<UserConsumerRelation> userConsumerRelationList = userConsumerRelationService.listAllValidRelationByConsumerId(Long.valueOf(consumerId));
+                if (userConsumerRelationList.size() > 1) {
                     consumer.setScope(ConsumerScopeEnum.Protected.getCodeName());
                 } else {
                     consumer.setScope(ConsumerScopeEnum.Private.getCodeName());

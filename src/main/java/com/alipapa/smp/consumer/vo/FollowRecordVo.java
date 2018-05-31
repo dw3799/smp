@@ -8,7 +8,10 @@ public class FollowRecordVo {
 
     private String followTime;
 
-    private String followUser;
+    private String followUserName;
+
+
+    private String followUserNo;
 
 /*    private String name;
 
@@ -41,19 +44,27 @@ public class FollowRecordVo {
         this.followTime = followTime;
     }
 
-    public String getFollowUser() {
-        return followUser;
-    }
-
-    public void setFollowUser(String followUser) {
-        this.followUser = followUser;
-    }
-
     public String getContent() {
         return content;
     }
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getFollowUserName() {
+        return followUserName;
+    }
+
+    public void setFollowUserName(String followUserName) {
+        this.followUserName = followUserName;
+    }
+
+    public String getFollowUserNo() {
+        return followUserNo;
+    }
+
+    public void setFollowUserNo(String followUserNo) {
+        this.followUserNo = followUserNo;
     }
 }
