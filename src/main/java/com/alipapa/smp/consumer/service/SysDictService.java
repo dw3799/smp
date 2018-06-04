@@ -67,8 +67,10 @@ public class SysDictService {
         criteria.andStatusEqualTo(1);//1有效 0无效
         if (StringUtil.isNotEmptyString(searchString)) {
             criteria.andDictTextLike('%' + searchString + "%");
+            example.setOrderByClause("dict_text");
+        } else {
+            example.setOrderByClause("sort");
         }
-        example.setOrderByClause("sort");
         return sysDictMapper.selectByExample(example);
     }
 

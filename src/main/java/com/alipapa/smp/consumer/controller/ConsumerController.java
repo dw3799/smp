@@ -381,7 +381,7 @@ public class ConsumerController {
 
         try {
             //不能为空
-            String idString = request.getParameter("consumerID");
+            String idString = request.getParameter("consumerI");
 
 
             String consumerNo = request.getParameter("consumerNo");
@@ -953,6 +953,10 @@ public class ConsumerController {
         Consumer consumer = consumerService.getConsumerById(consumerId);
         if (user == null || consumer == null) {
             return WebApiResponse.error("参数异常！");
+        }
+
+        if (content.length() < 50) {
+            return WebApiResponse.error("跟进内容不能少于50个字！");
         }
 
         UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumerId, userInfo.getUserId(), FellowUpRulesEnum.Normal.getCode());
