@@ -127,11 +127,13 @@ public class UserService {
         if (!CollectionUtils.isEmpty(userList)) {
             List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
             for (User user : userList) {
-                FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
-                fuzzyUserVo.setUserId(user.getId());
-                fuzzyUserVo.setName(user.getName());
-                fuzzyUserVo.setUserNo(user.getUserNo());
-                fuzzyUserVoList.add(fuzzyUserVo);
+                if (!"admin".equals(user.getName())) {
+                    FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                    fuzzyUserVo.setUserId(user.getId());
+                    fuzzyUserVo.setName(user.getName());
+                    fuzzyUserVo.setUserNo(user.getUserNo());
+                    fuzzyUserVoList.add(fuzzyUserVo);
+                }
             }
             return fuzzyUserVoList;
         }
@@ -153,7 +155,7 @@ public class UserService {
         if (!CollectionUtils.isEmpty(userList)) {
             List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
             for (User user : userList) {
-                if (user.getGroupId() == null) {
+                if (user.getGroupId() == null && !"admin".equals(user.getName())) {
                     FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
                     fuzzyUserVo.setUserId(user.getId());
                     fuzzyUserVo.setName(user.getName());
