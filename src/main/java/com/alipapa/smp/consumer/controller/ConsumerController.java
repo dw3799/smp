@@ -955,8 +955,8 @@ public class ConsumerController {
             return WebApiResponse.error("参数异常！");
         }
 
-        if (content.length() < 50) {
-            return WebApiResponse.error("跟进内容不能少于50个字！");
+        if (content.length() < 15) {
+            return WebApiResponse.error("跟进内容不能少于15个字！");
         }
 
         UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumerId, userInfo.getUserId(), FellowUpRulesEnum.Normal.getCode());

@@ -2,12 +2,17 @@ package com.alipapa.smp.consumer.controller;
 
 import com.alipapa.smp.common.enums.CategoryCode;
 import com.alipapa.smp.common.enums.ConsumerScopeEnum;
+import com.alipapa.smp.common.enums.FellowUpRulesEnum;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
+import com.alipapa.smp.consumer.pojo.UserConsumerRelation;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
+import com.alipapa.smp.consumer.service.UserConsumerRelationService;
+import com.alipapa.smp.user.pojo.User;
+import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +27,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.alipapa.smp.utils.WebApiResponse.error;
 
@@ -48,6 +55,11 @@ public class FileDownloadController {
     @Autowired
     private SysDictService sysDictService;
 
+    @Autowired
+    private UserConsumerRelationService userConsumerRelationService;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * 管理人员可进行客户上载，上载客户可在公共资源池中查看
@@ -128,6 +140,7 @@ public class FileDownloadController {
                     String telMobile = consumerRowList.get(21);
                     String postalCode = consumerRowList.get(22);
                     String receivingAddress = consumerRowList.get(23);
+                    String userNo = consumerRowList.get(24);
 
                     if (StringUtil.isEmptyString(consumerName)) {
                         consumerRowList.add("客户姓名不能为空");
@@ -227,6 +240,26 @@ public class FileDownloadController {
                     consumer.setCreateUser(userInfo.getUserNo());
                     consumer.setScope(ConsumerScopeEnum.Public.getCodeName());
                     consumerService.addConsumer(consumer);
+
+
+                    ExecutorService executor = Executors.newFixedThreadPool(4);
+                    executor.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                if (StringUtil.isNotEmptyString(userNo)) {
+                                    User user = userService.getUserByUserNo(userNo);
+                                    Consumer savedConsumer = consumerService.getConsumerByNameAndEmail(name, email);
+                                    relateUserAndConsumer(savedConsumer, user);
+                                    savedConsumer.setScope(ConsumerScopeEnum.Private.getCodeName());
+                                    consumerService.updateConsumer(savedConsumer);
+                                }
+                            } catch (Exception ex) {
+                                logger.error("T5获取余额发送短信失败", ex);
+                            }
+                        }
+                    });
+
                     total++;
                 }
             }
@@ -271,6 +304,63 @@ public class FileDownloadController {
             sysDict.setSort(consumerId.intValue());
             sysDict.setUpdatedTime(new Date());
             sysDictService.insertSysDict(sysDict);
+        }
+        return true;
+    }
+
+
+    /**
+     * 关联用户及客户
+     *
+     * @param consumer
+     * @param user
+     * @return
+     */
+    private boolean relateUserAndConsumer(Consumer consumer, User user) {
+        if (user == null) {
+            logger.error("relateUserAndConsumer: user is null");
+            return false;
+        }
+
+        if (consumer == null) {
+            logger.error("relateUserAndConsumer: consumer is null");
+            return false;
+        }
+
+        UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumer.getId(), user.getId(), FellowUpRulesEnum.Normal.getCode());
+        if (userConsumerRelation != null) {
+            return false;
+        }
+
+        //过期关联
+        UserConsumerRelation invalidRelation = userConsumerRelationService.getRelationByConsumerIsDel(consumer.getId(), user.getId(), null);
+        if (invalidRelation != null) {
+            invalidRelation.setIsDel(0);
+            invalidRelation.setConsumerId(consumer.getId());
+            invalidRelation.setConsumerNo(consumer.getConsumerNo());
+            invalidRelation.setUserId(user.getId());
+            invalidRelation.setUserNo(user.getUserNo());
+            invalidRelation.setIsDel(0);
+            invalidRelation.setHasOrder(0);
+            invalidRelation.setDealOrder(0);
+            invalidRelation.setFollowTime(new Date());
+            invalidRelation.setNextFollowTime(null);
+            invalidRelation.setUpdatedTime(new Date());
+            userConsumerRelationService.updateUserConsumerRelation(invalidRelation);
+        } else {
+            //创建关联关系
+            UserConsumerRelation newUserConsumerRelation = new UserConsumerRelation();
+            newUserConsumerRelation.setConsumerId(consumer.getId());
+            newUserConsumerRelation.setConsumerNo(consumer.getConsumerNo());
+            newUserConsumerRelation.setUserId(user.getId());
+            newUserConsumerRelation.setUserNo(user.getUserNo());
+            newUserConsumerRelation.setIsDel(0);
+            newUserConsumerRelation.setHasOrder(0);
+            newUserConsumerRelation.setDealOrder(0);
+            newUserConsumerRelation.setFollowTime(new Date());
+            newUserConsumerRelation.setCreatedTime(new Date());
+            newUserConsumerRelation.setUpdatedTime(new Date());
+            userConsumerRelationService.addUserConsumerRelation(newUserConsumerRelation);
         }
         return true;
     }
