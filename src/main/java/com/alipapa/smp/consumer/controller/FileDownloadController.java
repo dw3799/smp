@@ -178,6 +178,13 @@ public class FileDownloadController {
                         continue;
                     }
 
+                    if (StringUtil.isNotEmptyString(intentionQuantity) && !StringUtil.isNumber(intentionQuantity)) {
+                        consumerRowList.add("意向数量字段请输入数字！");
+                        failedList.add(consumerRowList);
+                        continue;
+                    }
+
+
                     Consumer dbConsumer = consumerService.getConsumerByNameAndEmail(consumerName, email);
                     if (dbConsumer != null) {
                         consumerRowList.add("客户已存在");
@@ -198,7 +205,7 @@ public class FileDownloadController {
                     if (checkEnum(CategoryCode.country.getCodeName(), country, consumerId)) {
                         consumer.setCountry(country);
                     }
-                    consumer.setEmail(email);
+                    consumer.setEmail(email.trim());
 
                     consumer.setMainBusiness(mainBusiness);
 
@@ -242,23 +249,26 @@ public class FileDownloadController {
                     consumerService.addConsumer(consumer);
 
 
-                    ExecutorService executor = Executors.newFixedThreadPool(4);
+/*                    ExecutorService executor = Executors.newFixedThreadPool(4);
                     executor.submit(new Runnable() {
                         @Override
-                        public void run() {
-                            try {
-                                if (StringUtil.isNotEmptyString(userNo)) {
-                                    User user = userService.getUserByUserNo(userNo);
-                                    Consumer savedConsumer = consumerService.getConsumerByNameAndEmail(name, email);
-                                    relateUserAndConsumer(savedConsumer, user);
-                                    savedConsumer.setScope(ConsumerScopeEnum.Private.getCodeName());
-                                    consumerService.updateConsumer(savedConsumer);
-                                }
-                            } catch (Exception ex) {
-                                logger.error("T5获取余额发送短信失败", ex);
+                        public void run() {*/
+                    try {
+                        if (StringUtil.isNotEmptyString(userNo)) {
+                            logger.info("userNo:" + userNo);
+                            User user = userService.getUserByUserNo(userNo);
+                            Consumer savedConsumer = consumerService.getConsumerByNameAndEmail(consumerName, email.trim());
+                            if (savedConsumer != null && user != null) {
+                                relateUserAndConsumer(savedConsumer, user);
+                                savedConsumer.setScope(ConsumerScopeEnum.Private.getCodeName());
+                                consumerService.updateConsumer(savedConsumer);
                             }
                         }
-                    });
+                    } catch (Exception ex) {
+                        logger.error("绑定用户失败", ex);
+                    }
+                   /*     }
+                    });*/
 
                     total++;
                 }

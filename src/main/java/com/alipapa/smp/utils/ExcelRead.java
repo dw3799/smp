@@ -26,7 +26,7 @@ public class ExcelRead {
     private static Logger logger = LoggerFactory.getLogger(ExcelRead.class);
 
     public int totalRows; //sheet中总行数
-    public static int totalCells; //每一行总单元格数
+    public static int totalCells = 23; //每一行总单元格数
 
     /**
      * read the Excel .xlsx,.xls
@@ -78,12 +78,12 @@ public class ExcelRead {
                     continue;
                 }
                 totalRows = xssfSheet.getLastRowNum();
+
                 //读取Row,从第二行开始
                 for (int rowNum = 1; rowNum <= totalRows; rowNum++) {
                     XSSFRow xssfRow = xssfSheet.getRow(rowNum);
                     if (xssfRow != null) {
                         rowList = new ArrayList<String>();
-                        totalCells = xssfRow.getLastCellNum();
                         //读取列，从第一列开始
                         for (int c = 0; c <= totalCells + 1; c++) {
                             XSSFCell cell = xssfRow.getCell(c);

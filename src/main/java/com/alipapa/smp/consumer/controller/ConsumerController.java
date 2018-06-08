@@ -259,7 +259,7 @@ public class ConsumerController {
             if (consumerId == null) {
                 consumerId = 0l;
             }
-            consumer.setConsumerNo(DateUtil.formatToStr(new Date()) + String.format("%04d", consumerId + 1));
+            consumer.setConsumerNo(DateUtil.formatToStr(new Date()) + String.format("%05d", consumerId + 1));
 
             //拓传参数
             consumer.setName(name);
@@ -267,7 +267,7 @@ public class ConsumerController {
             consumer.setMainBusiness(mainBusiness);
             consumer.setSource(source);
             consumer.setType(type);
-            consumer.setEmail(email);
+            consumer.setEmail(email.trim());
             consumer.setIntention(intention);
 
             consumer.setFacebook(facebook);
@@ -293,7 +293,16 @@ public class ConsumerController {
 
             if (result) {
                 //创建关联关系
-                Consumer dbConsumer = consumerService.getConsumerByNameAndEmail(name, email);
+                Consumer dbConsumer = consumerService.getConsumerByNameAndEmail(name, email.trim());
+                if (dbConsumer == null) {
+                    Thread.sleep(2000);
+                    dbConsumer = consumerService.getConsumerByNameAndEmail(name, email.trim());
+                }
+
+                if (dbConsumer == null) {
+                    return error("绑定客户关系失败");
+                }
+
                 UserConsumerRelation userConsumerRelation = new UserConsumerRelation();
                 userConsumerRelation.setConsumerId(dbConsumer.getId());
                 userConsumerRelation.setConsumerNo(dbConsumer.getConsumerNo());
