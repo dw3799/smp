@@ -534,7 +534,8 @@ public class ConsumerController {
             consumer.setContacts(contacts);
             consumer.setCompanyAddress(companyAddress);
             consumer.setCompanyWebsite(companyWebsite);
-
+            consumer.setSkype(skype);
+            
             consumer.setConsignee(consignee);
             consumer.setTelMobile(telMobile);
             consumer.setPostalCode(postalCode);
