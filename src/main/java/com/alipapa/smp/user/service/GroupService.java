@@ -108,6 +108,15 @@ public class GroupService {
 
 
     /**
+     * @param group
+     * @return
+     */
+    public boolean delGroup(Group group) {
+        groupMapper.deleteByPrimaryKey(group.getId());
+        return true;
+    }
+
+    /**
      * 获取组下拉列表
      *
      * @return

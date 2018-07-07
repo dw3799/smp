@@ -1,7 +1,9 @@
 package com.alipapa.smp.user.controller;
 
+import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.user.pojo.Group;
 import com.alipapa.smp.user.pojo.User;
+import com.alipapa.smp.user.pojo.UserRole;
 import com.alipapa.smp.user.service.GroupService;
 import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserRoleService;
@@ -232,7 +234,7 @@ public class GroupController {
         leader.setGroupId(group.getId());
         leader.setGroupNo(group.getGroupNo());
         leader.setIsLeader(1);
-        
+
         if (!CollectionUtils.isEmpty(newUserList)) {
             for (String userId : newUserList) {
                 User member = userService.getUserById(Long.valueOf(userId));
@@ -377,6 +379,46 @@ public class GroupController {
     @RequestMapping(value = "/groupSelect", method = RequestMethod.GET)
     public WebApiResponse<List<GroupSelectVo>> groupSelect() {
         return WebApiResponse.success(groupService.listAllGroupSelect());
+    }
+
+
+    /**
+     * 批量删除
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/delGroup", method = RequestMethod.POST)
+    public WebApiResponse<String> batchDelUser(@RequestParam("groupId") String groupId) {
+        String roleName = UserStatus.getUserInfo().getRoleName();
+        if (!"admin".equals(roleName)) {
+            return error("没有权限");
+        }
+
+        if (StringUtils.isBlank(groupId)) {
+            logger.error("参数不能为空!");
+            return error("参数不可以为空");
+        }
+
+
+        Group group = groupService.getGroupById(Long.valueOf(groupId));
+        if (group == null) {
+            logger.error("参数错误！");
+            return error("参数错误！");
+
+        }
+        List<User> userList = userService.listUserByGroupId(Long.valueOf(groupId));
+
+        if (!CollectionUtils.isEmpty(userList)) {
+            for (User user : userList) {
+                user.setIsLeader(0);
+                user.setGroupNo(null);
+                user.setGroupId(null);
+                userService.updateByPrimaryKey(user);
+            }
+        }
+        groupService.delGroup(group);
+        return WebApiResponse.success("delete success!");
     }
 
 
