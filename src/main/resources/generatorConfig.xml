@@ -56,7 +56,7 @@
                       enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                       selectByExampleQueryId="false"/>-->
 
-        <table schema="" tableName="consumer"/>
+        <table schema="" tableName="user"/>
         <!--
                 <table schema="" tableName="activity_answer_info"></table>
         -->

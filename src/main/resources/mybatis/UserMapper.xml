@@ -14,6 +14,10 @@
         <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
         <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
         <result column="is_leader" jdbcType="INTEGER" property="isLeader"/>
+        <result column="en_name" jdbcType="VARCHAR" property="enName"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="first_email" jdbcType="VARCHAR" property="firstEmail"/>
+        <result column="second_email" jdbcType="VARCHAR" property="secondEmail"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -77,7 +81,7 @@
     </sql>
     <sql id="Base_Column_List">
     id, name, user_no, uuid, pwd, group_id, group_no, create_user, remark, created_time, 
-    updated_time, is_leader
+    updated_time, is_leader, en_name, mobile, first_email, second_email
   </sql>
     <select id="selectByExample" parameterType="com.alipapa.smp.user.pojo.UserExample" resultMap="BaseResultMap">
         select
@@ -113,13 +117,15 @@
     insert into user (id, name, user_no, 
       uuid, pwd, group_id, 
       group_no, create_user, remark, 
-      created_time, updated_time, is_leader
-      )
+      created_time, updated_time, is_leader, 
+      en_name, mobile, first_email, 
+      second_email)
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{userNo,jdbcType=VARCHAR}, 
       #{uuid,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, #{groupId,jdbcType=BIGINT}, 
       #{groupNo,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
-      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, #{isLeader,jdbcType=INTEGER}
-      )
+      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, #{isLeader,jdbcType=INTEGER}, 
+      #{enName,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{firstEmail,jdbcType=VARCHAR}, 
+      #{secondEmail,jdbcType=VARCHAR})
   </insert>
     <insert id="insertSelective" parameterType="com.alipapa.smp.user.pojo.User">
         insert into user
@@ -160,6 +166,18 @@
             <if test="isLeader != null">
                 is_leader,
             </if>
+            <if test="enName != null">
+                en_name,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="firstEmail != null">
+                first_email,
+            </if>
+            <if test="secondEmail != null">
+                second_email,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -192,13 +210,27 @@
             <if test="createdTime != null">
                 #{createdTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="updatedTime != null">
+                #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
             <if test="isLeader != null">
                 #{isLeader,jdbcType=INTEGER},
             </if>
+            <if test="enName != null">
+                #{enName,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="firstEmail != null">
+                #{firstEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="secondEmail != null">
+                #{secondEmail,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.alipapa.smp.user.pojo.UserExample"
-            resultType="java.lang.Long">
+    <select id="countByExample" parameterType="com.alipapa.smp.user.pojo.UserExample" resultType="java.lang.Long">
         select count(*) from user
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -237,8 +269,23 @@
             <if test="record.createdTime != null">
                 created_time = #{record.createdTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="record.updatedTime != null">
+                updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+            </if>
             <if test="record.isLeader != null">
                 is_leader = #{record.isLeader,jdbcType=INTEGER},
+            </if>
+            <if test="record.enName != null">
+                en_name = #{record.enName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.mobile != null">
+                mobile = #{record.mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="record.firstEmail != null">
+                first_email = #{record.firstEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="record.secondEmail != null">
+                second_email = #{record.secondEmail,jdbcType=VARCHAR},
             </if>
         </set>
         <if test="_parameter != null">
@@ -257,7 +304,12 @@
         create_user = #{record.createUser,jdbcType=VARCHAR},
         remark = #{record.remark,jdbcType=VARCHAR},
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-        is_leader = #{record.isLeader,jdbcType=INTEGER}
+        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+        is_leader = #{record.isLeader,jdbcType=INTEGER},
+        en_name = #{record.enName,jdbcType=VARCHAR},
+        mobile = #{record.mobile,jdbcType=VARCHAR},
+        first_email = #{record.firstEmail,jdbcType=VARCHAR},
+        second_email = #{record.secondEmail,jdbcType=VARCHAR}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
@@ -292,8 +344,23 @@
             <if test="createdTime != null">
                 created_time = #{createdTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
             <if test="isLeader != null">
                 is_leader = #{isLeader,jdbcType=INTEGER},
+            </if>
+            <if test="enName != null">
+                en_name = #{enName,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="firstEmail != null">
+                first_email = #{firstEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="secondEmail != null">
+                second_email = #{secondEmail,jdbcType=VARCHAR},
             </if>
         </set>
         where id = #{id,jdbcType=BIGINT}
@@ -309,9 +376,15 @@
       create_user = #{createUser,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      is_leader = #{isLeader,jdbcType=INTEGER}
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      is_leader = #{isLeader,jdbcType=INTEGER},
+      en_name = #{enName,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      first_email = #{firstEmail,jdbcType=VARCHAR},
+      second_email = #{secondEmail,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
 
     <select id="fuzzyUserSearch" resultMap="BaseResultMap" parameterType="java.util.HashMap">
         select DISTINCT * from `user` u
@@ -338,5 +411,4 @@
         </if>
         ORDER BY u.created_time DESC
     </select>
-
 </mapper>

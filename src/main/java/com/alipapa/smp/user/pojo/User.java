@@ -1,5 +1,7 @@
 package com.alipapa.smp.user.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 
 public class User {
@@ -11,6 +13,7 @@ public class User {
 
     private String uuid;
 
+    @JsonIgnore
     private String pwd;
 
     private Long groupId;
@@ -24,8 +27,17 @@ public class User {
     private Date createdTime;
 
     private Date updatedTime;
-
+    
+    @JsonIgnore
     private Integer isLeader;
+
+    private String enName;
+
+    private String mobile;
+
+    private String firstEmail;
+
+    private String secondEmail;
 
     public Long getId() {
         return id;
@@ -121,5 +133,37 @@ public class User {
 
     public void setIsLeader(Integer isLeader) {
         this.isLeader = isLeader;
+    }
+
+    public String getEnName() {
+        return enName;
+    }
+
+    public void setEnName(String enName) {
+        this.enName = enName == null ? null : enName.trim();
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile == null ? null : mobile.trim();
+    }
+
+    public String getFirstEmail() {
+        return firstEmail;
+    }
+
+    public void setFirstEmail(String firstEmail) {
+        this.firstEmail = firstEmail == null ? null : firstEmail.trim();
+    }
+
+    public String getSecondEmail() {
+        return secondEmail;
+    }
+
+    public void setSecondEmail(String secondEmail) {
+        this.secondEmail = secondEmail == null ? null : secondEmail.trim();
     }
 }

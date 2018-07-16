@@ -308,8 +308,64 @@ public class UserController {
         }
 
         user.setPwd(MD5.digist(pwd));
-        userService.updateUser(user);
+        userService.updateByPrimaryKey(user);
         return WebApiResponse.success("success");
+    }
+
+
+    /**
+     * 更新用户信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
+    public WebApiResponse<String> resetUserPwd(@RequestParam("userNo") String userNo,
+                                               @RequestParam(name = "enName", required = false) String enName,
+                                               @RequestParam(name = "mobile", required = false) String mobile,
+                                               @RequestParam(name = "email1", required = false) String email1,
+                                               @RequestParam(name = "email2", required = false) String email2) {
+        if (StringUtils.isBlank(userNo)) {
+            logger.error("参数userNo不能为空!");
+            return error("参数userNo不可以为空");
+        }
+
+        if (!userNo.equals(UserStatus.getUserInfo().getUserNo())) {
+            return WebApiResponse.error("没有权限");
+        }
+        User user = userService.getUserByUserNo(userNo);
+
+        if (user == null) {
+            return WebApiResponse.error("用户名不存在");
+        }
+
+        user.setEnName(enName);
+        user.setMobile(mobile);
+        user.setFirstEmail(email1);
+        user.setSecondEmail(email2);
+        userService.updateByPrimaryKey(user);
+        return WebApiResponse.success("success");
+    }
+
+
+    /**
+     * 更新用户信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/getUserInfo", method = RequestMethod.GET)
+    public WebApiResponse<User> getUserInfo(@RequestParam("userNo") String userNo) {
+        if (StringUtils.isBlank(userNo)) {
+            logger.error("参数userNo不能为空!");
+            return error("参数userNo不可以为空");
+        }
+
+/*        if (!userNo.equals(UserStatus.getUserInfo().getUserNo())) {
+            return WebApiResponse.error("没有权限");
+        }*/
+        User user = userService.getUserByUserNo(userNo);
+        return WebApiResponse.success(user);
     }
 
 
