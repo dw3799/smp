@@ -292,7 +292,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/updatePwd", method = RequestMethod.POST)
-    public WebApiResponse<String> resetUserPwd(@RequestParam("userNo") String userNo, @RequestParam("pwd") String pwd) {
+    public WebApiResponse<String> updatePwd(@RequestParam("userNo") String userNo, @RequestParam("pwd") String pwd) {
         if (StringUtils.isBlank(userNo) || StringUtils.isBlank(pwd)) {
             logger.error("参数不能为空!");
             return error("参数不可以为空");
@@ -320,11 +320,11 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
-    public WebApiResponse<String> resetUserPwd(@RequestParam("userNo") String userNo,
-                                               @RequestParam(name = "enName", required = false) String enName,
-                                               @RequestParam(name = "mobile", required = false) String mobile,
-                                               @RequestParam(name = "email1", required = false) String email1,
-                                               @RequestParam(name = "email2", required = false) String email2) {
+    public WebApiResponse<String> updateUserInfo(@RequestParam("userNo") String userNo,
+                                                 @RequestParam(name = "enName", required = false) String enName,
+                                                 @RequestParam(name = "mobile", required = false) String mobile,
+                                                 @RequestParam(name = "firstEmail", required = false) String email1,
+                                                 @RequestParam(name = "secondEmail", required = false) String email2) {
         if (StringUtils.isBlank(userNo)) {
             logger.error("参数userNo不能为空!");
             return error("参数userNo不可以为空");
@@ -361,9 +361,9 @@ public class UserController {
             return error("参数userNo不可以为空");
         }
 
-/*        if (!userNo.equals(UserStatus.getUserInfo().getUserNo())) {
+        if (!userNo.equals(UserStatus.getUserInfo().getUserNo())) {
             return WebApiResponse.error("没有权限");
-        }*/
+        }
         User user = userService.getUserByUserNo(userNo);
         return WebApiResponse.success(user);
     }
