@@ -2,9 +2,8 @@ package com.alipapa.smp.user.mapper;
 
 import com.alipapa.smp.user.pojo.Role;
 import com.alipapa.smp.user.pojo.RoleExample;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface RoleMapper {
     long countByExample(RoleExample example);

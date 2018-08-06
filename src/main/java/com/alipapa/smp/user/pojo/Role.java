@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Role {
 
-    //业务员	业务主管	财务人员	出纳人员	采购人员	仓储人员	单证	管理员
+    //业务员	业务主管	财务人员	出纳人员	自营采购人员	仓储人员	单证	管理员 代理采购人员  采购主管
 
     private Long id;
 
@@ -17,6 +17,8 @@ public class Role {
     private Date createdTime;
 
     private Date updatedTime;
+
+    private String roleLevel;
 
     public Long getId() {
         return id;
@@ -64,5 +66,13 @@ public class Role {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public String getRoleLevel() {
+        return roleLevel;
+    }
+
+    public void setRoleLevel(String roleLevel) {
+        this.roleLevel = roleLevel == null ? null : roleLevel.trim();
     }
 }
