@@ -12,13 +12,17 @@ public enum RoleEnum {
 
     cashier(4, "cashier", "出纳人员"),
 
-    buyer(5, "buyer", "采购人员"),
+    selfBuyer(5, "superBuyer", "自营采购人员"),
 
     storage(6, "storage", "仓储人员"),
 
     documentation(7, "documentation", "单证"),
 
-    admin(8, "admin", "管理员");
+    admin(8, "admin", "管理员"),
+
+    agentBuyer(9, "agentBuyer", "代理采购员"),
+
+    superBuyer(10, "superBuyer", "采购主管");
 
     RoleEnum(int code, String codeName, String dec) {
         this.code = code;
