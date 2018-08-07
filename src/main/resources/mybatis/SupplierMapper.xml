@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alipapa.smp.product.mapper.SupplierMapper">
+  <resultMap id="BaseResultMap" type="com.alipapa.smp.product.pojo.Supplier">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="charge" jdbcType="VARCHAR" property="charge" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="bank_name" jdbcType="VARCHAR" property="bankName" />
+    <result column="bank_branch" jdbcType="VARCHAR" property="bankBranch" />
+    <result column="bank_no" jdbcType="VARCHAR" property="bankNo" />
+    <result column="bank_account" jdbcType="VARCHAR" property="bankAccount" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="mobile1" jdbcType="VARCHAR" property="mobile1" />
+    <result column="mobile2" jdbcType="VARCHAR" property="mobile2" />
+    <result column="mobile3" jdbcType="VARCHAR" property="mobile3" />
+    <result column="op_user_no" jdbcType="VARCHAR" property="opUserNo" />
+    <result column="op_user_name" jdbcType="VARCHAR" property="opUserName" />
+    <result column="op_user_role" jdbcType="VARCHAR" property="opUserRole" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, charge, city, bank_name, bank_branch, bank_no, bank_account, address, mobile1, 
+    mobile2, mobile3, op_user_no, op_user_name, op_user_role, created_time, updated_time
+  </sql>
+  <select id="selectByExample" parameterType="com.alipapa.smp.product.pojo.SupplierExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from supplier
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from supplier
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from supplier
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.alipapa.smp.product.pojo.SupplierExample">
+    delete from supplier
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.alipapa.smp.product.pojo.Supplier">
+    insert into supplier (id, name, charge, 
+      city, bank_name, bank_branch, 
+      bank_no, bank_account, address, 
+      mobile1, mobile2, mobile3, 
+      op_user_no, op_user_name, op_user_role, 
+      created_time, updated_time)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{charge,jdbcType=VARCHAR}, 
+      #{city,jdbcType=VARCHAR}, #{bankName,jdbcType=VARCHAR}, #{bankBranch,jdbcType=VARCHAR}, 
+      #{bankNo,jdbcType=VARCHAR}, #{bankAccount,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{mobile1,jdbcType=VARCHAR}, #{mobile2,jdbcType=VARCHAR}, #{mobile3,jdbcType=VARCHAR}, 
+      #{opUserNo,jdbcType=VARCHAR}, #{opUserName,jdbcType=VARCHAR}, #{opUserRole,jdbcType=VARCHAR}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.alipapa.smp.product.pojo.Supplier">
+    insert into supplier
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="charge != null">
+        charge,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="bankName != null">
+        bank_name,
+      </if>
+      <if test="bankBranch != null">
+        bank_branch,
+      </if>
+      <if test="bankNo != null">
+        bank_no,
+      </if>
+      <if test="bankAccount != null">
+        bank_account,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="mobile1 != null">
+        mobile1,
+      </if>
+      <if test="mobile2 != null">
+        mobile2,
+      </if>
+      <if test="mobile3 != null">
+        mobile3,
+      </if>
+      <if test="opUserNo != null">
+        op_user_no,
+      </if>
+      <if test="opUserName != null">
+        op_user_name,
+      </if>
+      <if test="opUserRole != null">
+        op_user_role,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="updatedTime != null">
+        updated_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="charge != null">
+        #{charge,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null">
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankBranch != null">
+        #{bankBranch,jdbcType=VARCHAR},
+      </if>
+      <if test="bankNo != null">
+        #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bankAccount != null">
+        #{bankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile1 != null">
+        #{mobile1,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile2 != null">
+        #{mobile2,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile3 != null">
+        #{mobile3,jdbcType=VARCHAR},
+      </if>
+      <if test="opUserNo != null">
+        #{opUserNo,jdbcType=VARCHAR},
+      </if>
+      <if test="opUserName != null">
+        #{opUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="opUserRole != null">
+        #{opUserRole,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null">
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.alipapa.smp.product.pojo.SupplierExample" resultType="java.lang.Long">
+    select count(*) from supplier
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update supplier
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.charge != null">
+        charge = #{record.charge,jdbcType=VARCHAR},
+      </if>
+      <if test="record.city != null">
+        city = #{record.city,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bankName != null">
+        bank_name = #{record.bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bankBranch != null">
+        bank_branch = #{record.bankBranch,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bankNo != null">
+        bank_no = #{record.bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bankAccount != null">
+        bank_account = #{record.bankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mobile1 != null">
+        mobile1 = #{record.mobile1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mobile2 != null">
+        mobile2 = #{record.mobile2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mobile3 != null">
+        mobile3 = #{record.mobile3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.opUserNo != null">
+        op_user_no = #{record.opUserNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.opUserName != null">
+        op_user_name = #{record.opUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.opUserRole != null">
+        op_user_role = #{record.opUserRole,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createdTime != null">
+        created_time = #{record.createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatedTime != null">
+        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update supplier
+    set id = #{record.id,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      charge = #{record.charge,jdbcType=VARCHAR},
+      city = #{record.city,jdbcType=VARCHAR},
+      bank_name = #{record.bankName,jdbcType=VARCHAR},
+      bank_branch = #{record.bankBranch,jdbcType=VARCHAR},
+      bank_no = #{record.bankNo,jdbcType=VARCHAR},
+      bank_account = #{record.bankAccount,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      mobile1 = #{record.mobile1,jdbcType=VARCHAR},
+      mobile2 = #{record.mobile2,jdbcType=VARCHAR},
+      mobile3 = #{record.mobile3,jdbcType=VARCHAR},
+      op_user_no = #{record.opUserNo,jdbcType=VARCHAR},
+      op_user_name = #{record.opUserName,jdbcType=VARCHAR},
+      op_user_role = #{record.opUserRole,jdbcType=VARCHAR},
+      created_time = #{record.createdTime,jdbcType=TIMESTAMP},
+      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.product.pojo.Supplier">
+    update supplier
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="charge != null">
+        charge = #{charge,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null">
+        bank_name = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankBranch != null">
+        bank_branch = #{bankBranch,jdbcType=VARCHAR},
+      </if>
+      <if test="bankNo != null">
+        bank_no = #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bankAccount != null">
+        bank_account = #{bankAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile1 != null">
+        mobile1 = #{mobile1,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile2 != null">
+        mobile2 = #{mobile2,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile3 != null">
+        mobile3 = #{mobile3,jdbcType=VARCHAR},
+      </if>
+      <if test="opUserNo != null">
+        op_user_no = #{opUserNo,jdbcType=VARCHAR},
+      </if>
+      <if test="opUserName != null">
+        op_user_name = #{opUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="opUserRole != null">
+        op_user_role = #{opUserRole,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null">
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.product.pojo.Supplier">
+    update supplier
+    set name = #{name,jdbcType=VARCHAR},
+      charge = #{charge,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      bank_name = #{bankName,jdbcType=VARCHAR},
+      bank_branch = #{bankBranch,jdbcType=VARCHAR},
+      bank_no = #{bankNo,jdbcType=VARCHAR},
+      bank_account = #{bankAccount,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      mobile1 = #{mobile1,jdbcType=VARCHAR},
+      mobile2 = #{mobile2,jdbcType=VARCHAR},
+      mobile3 = #{mobile3,jdbcType=VARCHAR},
+      op_user_no = #{opUserNo,jdbcType=VARCHAR},
+      op_user_name = #{opUserName,jdbcType=VARCHAR},
+      op_user_role = #{opUserRole,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
