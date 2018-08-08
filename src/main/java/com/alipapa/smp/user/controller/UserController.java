@@ -2,6 +2,7 @@ package com.alipapa.smp.user.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alipapa.smp.common.enums.RoleEnum;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.user.pojo.Group;
@@ -487,6 +488,31 @@ public class UserController {
     public WebApiResponse<List<GroupSelectVo>> groupSelect() {
         return WebApiResponse.success(groupService.listAllGroupSelect());
     }
+
+
+    /**
+     * 采购员列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listBuyers", method = RequestMethod.GET)
+    public WebApiResponse<List<FuzzyUserVo>> listBuyers() {
+        List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+        List<UserRole> userRoleList = userRoleService.listRoleByRoleName(RoleEnum.selfBuyer.getCodeName());
+        if (!CollectionUtils.isEmpty(userRoleList)) {
+            for (UserRole useRole : userRoleList) {
+                User user = userService.getUserByUserNo(useRole.getUserNo());
+                FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                fuzzyUserVo.setUserId(user.getId());
+                fuzzyUserVo.setName(user.getName());
+                fuzzyUserVo.setUserNo(user.getName());
+                fuzzyUserVoList.add(fuzzyUserVo);
+            }
+        }
+        return WebApiResponse.success(fuzzyUserVoList);
+    }
+
 
     /*  public static void main(String[] args) {
 

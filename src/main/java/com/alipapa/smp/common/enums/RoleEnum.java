@@ -12,7 +12,7 @@ public enum RoleEnum {
 
     cashier(4, "cashier", "出纳人员"),
 
-    selfBuyer(5, "superBuyer", "自营采购人员"),
+    selfBuyer(5, "selfBuyer", "自营采购人员"),
 
     storage(6, "storage", "仓储人员"),
 

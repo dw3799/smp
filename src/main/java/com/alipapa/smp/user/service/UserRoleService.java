@@ -5,6 +5,7 @@ import com.alipapa.smp.user.pojo.UserRole;
 import com.alipapa.smp.user.pojo.UserRoleExample;
 import com.alipapa.smp.user.vo.UserVo;
 import com.alipapa.smp.utils.DateUtil;
+import com.alipapa.smp.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,23 @@ public class UserRoleService {
         criteria.andUserIdEqualTo(userId);
         return userRoleMapper.selectByExample(example);
     }
+
+
+    /**
+     * @param roleName
+     * @return
+     */
+    public List<UserRole> listRoleByRoleName(String roleName) {
+        if (StringUtil.isEmptyString(roleName)) {
+            return null;
+        }
+
+        UserRoleExample example = new UserRoleExample();
+        UserRoleExample.Criteria criteria = example.createCriteria();
+        criteria.andRoleNameEqualTo(roleName);
+        return userRoleMapper.selectByExample(example);
+    }
+
 
     /**
      * @param userId
