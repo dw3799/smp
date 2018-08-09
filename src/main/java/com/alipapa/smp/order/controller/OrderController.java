@@ -1,12 +1,28 @@
 package com.alipapa.smp.order.controller;
 
 
-import com.alipapa.smp.common.enums.CategoryCode;
-import com.alipapa.smp.common.enums.OrderCategoryCode;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alipapa.smp.common.enums.*;
+import com.alipapa.smp.common.request.UserInfo;
+import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.controller.ConsumerController;
+import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
+import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.consumer.vo.SysDictVo;
+import com.alipapa.smp.order.pojo.Order;
+import com.alipapa.smp.order.pojo.SubOrder;
+import com.alipapa.smp.order.service.OrderServiceProxy;
+import com.alipapa.smp.product.service.ProductCategoryService;
+import com.alipapa.smp.product.service.ProductPictureService;
+import com.alipapa.smp.product.service.ProductService;
+import com.alipapa.smp.user.pojo.User;
+import com.alipapa.smp.user.service.UserService;
+import com.alipapa.smp.utils.OrderNumberGenerator;
+import com.alipapa.smp.utils.PriceUtil;
+import com.alipapa.smp.utils.StringUtil;
 import com.alipapa.smp.utils.WebApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static com.alipapa.smp.utils.WebApiResponse.error;
 
 /**
  * 订单管理接口
@@ -33,6 +53,27 @@ public class OrderController {
 
     @Autowired
     private SysDictService sysDictService;
+
+
+    @Autowired
+    private UserService userService;
+
+
+    @Autowired
+    private ConsumerService consumerService;
+
+    @Autowired
+    private OrderServiceProxy orderServiceProxy;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductCategoryService productCategoryService;
+
+    @Autowired
+    private ProductPictureService productPictureService;
+
 
     /**
      * 订单相关下拉列表
@@ -59,6 +100,143 @@ public class OrderController {
             }
         }
         return WebApiResponse.success(sysDictVoList);
+    }
+
+
+    /**
+     * 创建订单
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
+    public WebApiResponse<String> createOrder(HttpServletRequest request) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        try {
+            //不能为空
+            String orderType = request.getParameter("orderType");
+            String consumerNo = request.getParameter("consumerNo");
+            String buyerUserNo = request.getParameter("buyerUserNo");
+            String productionCycle = request.getParameter("productionCycle");
+            String currency = request.getParameter("currency");
+            String productAmount = request.getParameter("productAmount");
+            String expectPurchaseAmount = request.getParameter("expectPurchaseAmount");
+            String products = request.getParameter("products");
+
+            //可为空
+            String orderVolume = request.getParameter("orderVolume");
+            String orderWeight = request.getParameter("orderWeight");
+            String remark = request.getParameter("remark");
+
+            if (StringUtil.isEmptyString(orderType) || StringUtil.isEmptyString(consumerNo) || StringUtil.isEmptyString(currency) || StringUtil.isEmptyString(productAmount)
+                    || StringUtil.isEmptyString(expectPurchaseAmount) || StringUtil.isEmptyString(products)) {
+                return error("缺少必填参数");
+            }
+
+            OrderTypeEnum orderTypeEnum = OrderTypeEnum.valueOf(orderType);
+            if (orderTypeEnum == null) {
+                return error("订单类型有误");
+            }
+
+            Order order = new Order();
+            order.setActualPurchaseAmount(null);
+            if (OrderTypeEnum.AGENT_ORDER == orderTypeEnum) {
+                buyerUserNo = userInfo.getUserNo();
+            }
+
+            User buyer = userService.getUserByUserNo(buyerUserNo);
+            if (buyer == null) {
+                return error("采购员不存在");
+            }
+            order.setBuyerUserNo(buyer.getUserNo());
+            order.setBuyerUserName(buyer.getName());
+            order.setCnReceiptAmount(0L);
+
+            Consumer consumer = consumerService.getConsumerByConsumerNo(consumerNo);
+            if (consumer == null) {
+                return error("客户不存在");
+            }
+            order.setConsumerCountry(consumer.getCountry());
+            order.setConsumerName(consumer.getName());
+            order.setConsumerNo(consumerNo);
+
+            order.setCreatedTime(new Date());
+            order.setCurrency(currency);
+            order.setExpectPurchaseAmount(PriceUtil.convertToFen(expectPurchaseAmount));
+            order.setOrderAmount(PriceUtil.convertToFen(productAmount)); //创建订单时订单金额暂等于产品总金额
+            order.setOrderStatus(OrderStatusEnum.UN_SUBMIT.getCode());
+            order.setOrderNo(OrderNumberGenerator.get());
+            order.setOrderType(orderTypeEnum.getCode());
+            order.setOrderVolume(orderVolume);
+            order.setOrderWeight(orderWeight);
+            order.setPayStatus(OrderPayStatusEnum.UN_PAY.getCode());
+            order.setProductAmount(PriceUtil.convertToFen(productAmount));
+            order.setProductionCycle(productionCycle);
+            order.setReceiptAmount(0L);
+            order.setRemark(remark);
+
+            User saler = userService.getUserByUserNo(userInfo.getUserNo());
+            if (saler == null) {
+                return error("业务员不存在");
+            }
+            order.setSalerUserNo(userInfo.getUserNo());
+            order.setSalerUserName(saler.getName());
+            //order.setSubmitTime();
+            order.setUpdatedTime(new Date());
+
+            List<SubOrder> subOrderList = new ArrayList<>();
+
+            JSONArray productsArray = JSONArray.parseArray(products);
+            for (int i = 0; i < productsArray.size(); i++) {
+                JSONObject jsonObject = productsArray.getJSONObject(i);
+                Long productCategoryId = jsonObject.getLong("productCategoryId");
+                Long productId = jsonObject.getLong("productId");
+                Double subProductAmount = jsonObject.getDouble("productAmount");
+                Double subExpectPurchaseAmount = jsonObject.getDouble("expectPurchaseAmount");
+                String productRemark = jsonObject.getString("productRemark");
+
+                if (productCategoryId == null || productId == null) {
+                    return error("产品缺少必填参数");
+                }
+
+                SubOrder subOrder = new SubOrder();
+                subOrder.setActualPurchaseAmount(null);
+
+                if (OrderTypeEnum.SELF_ORDER == orderTypeEnum) {
+                    String weight = jsonObject.getString("weight");
+                    String material = jsonObject.getString("material");
+                    String size = jsonObject.getString("size");
+                    String color = jsonObject.getString("color");
+                    String suturing = jsonObject.getString("suturing");
+                    String printing = jsonObject.getString("printing");
+                    Integer quantity = jsonObject.getInteger("quantity");
+                    Double saleAmount = jsonObject.getDouble("saleAmount");
+                    Double factoryAmount = jsonObject.getDouble("factoryAmount");
+                } else {
+                    Double saleAmount = jsonObject.getDouble("saleAmount");
+                    Double factoryAmount = jsonObject.getDouble("factoryAmount");
+                    String unit = jsonObject.getString("unit");
+                    Integer singlePackageCount = jsonObject.getInteger("singlePackageCount");
+                    Integer packageNumber = jsonObject.getInteger("packageNumber");
+                    String singleVolume = jsonObject.getString("singleVolume");
+                    String totalVolume = jsonObject.getString("totalVolume");
+                    String singleWeight = jsonObject.getString("singleWeight");
+                    String totalWeight = jsonObject.getString("totalWeight");
+                }
+            }
+
+            boolean flag = orderServiceProxy.CreateOrder(order, subOrderList);
+
+            if (flag) {
+                //TODO 更新客户跟进时间及是否下单
+                return WebApiResponse.success("success");
+            }
+        } catch (Exception ex) {
+            logger.error("", ex);
+            return error("创建订单异常");
+        }
+        return WebApiResponse.error("创建订单异常");
     }
 
 

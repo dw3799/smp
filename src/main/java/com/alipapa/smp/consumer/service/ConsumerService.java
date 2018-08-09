@@ -68,6 +68,26 @@ public class ConsumerService {
 
 
     /**
+     * @param consumerNo
+     * @return
+     */
+    public Consumer getConsumerByConsumerNo(String consumerNo) {
+        if (StringUtil.isEmptyString(consumerNo)) {
+            return null;
+        }
+        ConsumerExample example = new ConsumerExample();
+        ConsumerExample.Criteria criteria = example.createCriteria();
+        criteria.andConsumerNoEqualTo(consumerNo);
+        List<Consumer> consumerList = consumerMapper.selectByExample(example);
+
+        if (CollectionUtils.isEmpty(consumerList)) {
+            return null;
+        }
+        return consumerList.get(0);
+    }
+
+
+    /**
      * @param name,email
      * @return
      */
