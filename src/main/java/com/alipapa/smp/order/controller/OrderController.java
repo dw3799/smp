@@ -9,12 +9,19 @@ import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.controller.ConsumerController;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
+import com.alipapa.smp.consumer.pojo.UserConsumerRelation;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
+import com.alipapa.smp.consumer.service.UserConsumerRelationService;
 import com.alipapa.smp.consumer.vo.SysDictVo;
+import com.alipapa.smp.order.pojo.AgentOrderDetail;
 import com.alipapa.smp.order.pojo.Order;
+import com.alipapa.smp.order.pojo.SelfOrderDetail;
 import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.service.OrderServiceProxy;
+import com.alipapa.smp.product.pojo.Product;
+import com.alipapa.smp.product.pojo.ProductCategory;
+import com.alipapa.smp.product.pojo.ProductPicture;
 import com.alipapa.smp.product.service.ProductCategoryService;
 import com.alipapa.smp.product.service.ProductPictureService;
 import com.alipapa.smp.product.service.ProductService;
@@ -61,6 +68,9 @@ public class OrderController {
 
     @Autowired
     private ConsumerService consumerService;
+
+    @Autowired
+    private UserConsumerRelationService userConsumerRelationService;
 
     @Autowired
     private OrderServiceProxy orderServiceProxy;
@@ -166,7 +176,9 @@ public class OrderController {
             order.setExpectPurchaseAmount(PriceUtil.convertToFen(expectPurchaseAmount));
             order.setOrderAmount(PriceUtil.convertToFen(productAmount)); //创建订单时订单金额暂等于产品总金额
             order.setOrderStatus(OrderStatusEnum.UN_SUBMIT.getCode());
-            order.setOrderNo(OrderNumberGenerator.get());
+
+            String orderNo = "M" + OrderNumberGenerator.get();
+            order.setOrderNo(orderNo);
             order.setOrderType(orderTypeEnum.getCode());
             order.setOrderVolume(orderVolume);
             order.setOrderWeight(orderWeight);
@@ -192,16 +204,52 @@ public class OrderController {
                 JSONObject jsonObject = productsArray.getJSONObject(i);
                 Long productCategoryId = jsonObject.getLong("productCategoryId");
                 Long productId = jsonObject.getLong("productId");
-                Double subProductAmount = jsonObject.getDouble("productAmount");
-                Double subExpectPurchaseAmount = jsonObject.getDouble("expectPurchaseAmount");
+                String subProductAmount = jsonObject.getString("productAmount");
+                String subExpectPurchaseAmount = jsonObject.getString("expectPurchaseAmount");
                 String productRemark = jsonObject.getString("productRemark");
 
                 if (productCategoryId == null || productId == null) {
                     return error("产品缺少必填参数");
                 }
 
+                Product product = productService.getProductById(productId);
+                ProductCategory productCategory = productCategoryService.getProductCategoryById(productCategoryId);
+
+                List<ProductPicture> productPictureList = productPictureService.listProductPictureByProductId(productId);
+
+                if (product == null || productCategory == null) {
+                    return error("产品参数异常");
+                }
+
                 SubOrder subOrder = new SubOrder();
                 subOrder.setActualPurchaseAmount(null);
+                subOrder.setCreatedTime(new Date());
+                subOrder.setExpectPurchaseAmount(PriceUtil.convertToFen(subExpectPurchaseAmount));
+                subOrder.setPayedAmount(0L);
+                subOrder.setOrderNo(orderNo);
+
+
+                if (!CollectionUtils.isEmpty(productPictureList)) {
+                    ProductPicture productPicture = productPictureList.get(0);
+                    subOrder.setMiniPic(productPicture.getPicName());
+                    subOrder.setPic(productPicture.getPicName());
+                }
+
+                subOrder.setProductAmount(PriceUtil.convertToFen(subProductAmount));
+                subOrder.setProductCategoryId(productCategoryId);
+                subOrder.setProductCategory(productCategory.getCategoryName());
+                subOrder.setPayedAmount(0L);
+                subOrder.setProductFrontAmount(null);
+                subOrder.setProductId(productId);
+                subOrder.setProductName(product.getProductName());
+                subOrder.setProductRemark(productRemark);
+                subOrder.setRemark(null);
+
+                String subOrderNo = "S" + OrderNumberGenerator.get();
+                subOrder.setSubOrderNo(subOrderNo);
+                subOrder.setSubOrderStatus(0);
+                subOrder.setSubPayStatus(0);
+                subOrder.setUpdatedTime(new Date());
 
                 if (OrderTypeEnum.SELF_ORDER == orderTypeEnum) {
                     String weight = jsonObject.getString("weight");
@@ -211,11 +259,27 @@ public class OrderController {
                     String suturing = jsonObject.getString("suturing");
                     String printing = jsonObject.getString("printing");
                     Integer quantity = jsonObject.getInteger("quantity");
-                    Double saleAmount = jsonObject.getDouble("saleAmount");
-                    Double factoryAmount = jsonObject.getDouble("factoryAmount");
+                    String saleAmount = jsonObject.getString("saleAmount");
+                    String factoryAmount = jsonObject.getString("factoryAmount");
+
+                    SelfOrderDetail selfOrderDetail = new SelfOrderDetail();
+                    selfOrderDetail.setColor(color);
+                    selfOrderDetail.setCreatedTime(new Date());
+                    selfOrderDetail.setFactoryAmount(PriceUtil.convertToFen(factoryAmount));
+                    selfOrderDetail.setMaterial(material);
+                    selfOrderDetail.setPrinting(printing);
+                    selfOrderDetail.setQuantity(quantity);
+                    selfOrderDetail.setSaleAmount(PriceUtil.convertToFen(saleAmount));
+                    selfOrderDetail.setRemark(null);
+                    selfOrderDetail.setSubOrderNo(subOrderNo); //创建时补充
+                    selfOrderDetail.setSize(size);
+                    selfOrderDetail.setSuturing(suturing);
+                    selfOrderDetail.setUpdatedTime(new Date());
+                    selfOrderDetail.setWeight(weight);
+                    subOrder.setSelfOrderDetail(selfOrderDetail);
                 } else {
-                    Double saleAmount = jsonObject.getDouble("saleAmount");
-                    Double factoryAmount = jsonObject.getDouble("factoryAmount");
+                    String saleAmount = jsonObject.getString("saleAmount");
+                    String factoryAmount = jsonObject.getString("factoryAmount");
                     String unit = jsonObject.getString("unit");
                     Integer singlePackageCount = jsonObject.getInteger("singlePackageCount");
                     Integer packageNumber = jsonObject.getInteger("packageNumber");
@@ -223,13 +287,34 @@ public class OrderController {
                     String totalVolume = jsonObject.getString("totalVolume");
                     String singleWeight = jsonObject.getString("singleWeight");
                     String totalWeight = jsonObject.getString("totalWeight");
+
+                    AgentOrderDetail agentOrderDetail = new AgentOrderDetail();
+                    agentOrderDetail.setCreatedTime(new Date());
+                    agentOrderDetail.setFactoryAmount(PriceUtil.convertToFen(factoryAmount));
+                    agentOrderDetail.setPackageNumber(packageNumber);
+                    agentOrderDetail.setSaleAmount(PriceUtil.convertToFen(saleAmount));
+                    agentOrderDetail.setSaleNo("SN" + product.getId() + consumer.getConsumerNo());
+                    agentOrderDetail.setSinglePackageCount(singlePackageCount);
+                    agentOrderDetail.setSingleVolume(singleVolume);
+                    agentOrderDetail.setSingleWeight(singleWeight);
+                    agentOrderDetail.setSubOrderNo(subOrderNo);
+                    agentOrderDetail.setTotalVolume(totalVolume);
+                    agentOrderDetail.setTotalWeight(totalWeight);
+                    agentOrderDetail.setUnit(unit);
+                    agentOrderDetail.setUpdatedTime(new Date());
+                    subOrder.setAgentOrderDetail(agentOrderDetail);
                 }
+
+                subOrderList.add(subOrder);
             }
 
             boolean flag = orderServiceProxy.CreateOrder(order, subOrderList);
-
             if (flag) {
                 //TODO 更新客户跟进时间及是否下单
+                UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(saler.getId(), consumer.getId(), null);
+                userConsumerRelation.setFollowTime(new Date());
+                userConsumerRelation.setHasOrder(1);
+                userConsumerRelationService.updateUserConsumerRelation(userConsumerRelation);
                 return WebApiResponse.success("success");
             }
         } catch (Exception ex) {

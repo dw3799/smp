@@ -39,9 +39,31 @@ public class SubOrder {
 
     private String remark;
 
+    // 自营订单明细
+    private SelfOrderDetail selfOrderDetail;
+
+    // 代理订单明细
+    private AgentOrderDetail agentOrderDetail;
+
     private Date createdTime;
 
     private Date updatedTime;
+
+    public SelfOrderDetail getSelfOrderDetail() {
+        return selfOrderDetail;
+    }
+
+    public void setSelfOrderDetail(SelfOrderDetail selfOrderDetail) {
+        this.selfOrderDetail = selfOrderDetail;
+    }
+
+    public AgentOrderDetail getAgentOrderDetail() {
+        return agentOrderDetail;
+    }
+
+    public void setAgentOrderDetail(AgentOrderDetail agentOrderDetail) {
+        this.agentOrderDetail = agentOrderDetail;
+    }
 
     public Long getId() {
         return id;
