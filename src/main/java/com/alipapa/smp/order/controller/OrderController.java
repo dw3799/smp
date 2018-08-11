@@ -57,6 +57,10 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
 @RequestMapping("/api/order")
 public class OrderController {
     private static Logger logger = LoggerFactory.getLogger(ConsumerController.class);
+    private static final String MAIN_ORDER_PREFIX = "M";
+    private static final String SUB_ORDER_PREFIX = "P";
+    private static final String SALE_NO_PREFIX = "SN";
+
 
     @Autowired
     private SysDictService sysDictService;
@@ -188,9 +192,10 @@ public class OrderController {
                 order.setOrderStatus(OrderStatusEnum.UN_SUBMIT.getCode());
             } else {
                 order.setOrderStatus(OrderStatusEnum.SPR_APV.getCode());
+                order.setSubmitTime(new Date());
             }
 
-            String orderNo = "M" + OrderNumberGenerator.get();
+            String orderNo = MAIN_ORDER_PREFIX + OrderNumberGenerator.get();
             order.setOrderNo(orderNo);
             order.setOrderType(orderTypeEnum.getCode());
             order.setOrderVolume(orderVolume);
@@ -207,7 +212,6 @@ public class OrderController {
             }
             order.setSalerUserNo(userInfo.getUserNo());
             order.setSalerUserName(saler.getName());
-            //order.setSubmitTime();
             order.setUpdatedTime(new Date());
 
             List<SubOrder> subOrderList = new ArrayList<>();
@@ -258,7 +262,7 @@ public class OrderController {
                 subOrder.setProductRemark(productRemark);
                 subOrder.setRemark(null);
 
-                String subOrderNo = "S" + OrderNumberGenerator.get();
+                String subOrderNo = SUB_ORDER_PREFIX + OrderNumberGenerator.get();
                 subOrder.setSubOrderNo(subOrderNo);
                 subOrder.setSubOrderStatus(SubOrderStatusEnum.CREATE.getCode());
                 subOrder.setSubPayStatus(SubOrderPayStatusEnum.UN_PAY.getCode());
@@ -306,7 +310,7 @@ public class OrderController {
                     agentOrderDetail.setFactoryAmount(PriceUtil.convertToFen(factoryAmount));
                     agentOrderDetail.setPackageNumber(packageNumber);
                     agentOrderDetail.setSaleAmount(PriceUtil.convertToFen(saleAmount));
-                    agentOrderDetail.setSaleNo("SN" + product.getId() + consumer.getConsumerNo());
+                    agentOrderDetail.setSaleNo(SALE_NO_PREFIX + product.getId() + consumer.getConsumerNo());
                     agentOrderDetail.setSinglePackageCount(singlePackageCount);
                     agentOrderDetail.setSingleVolume(singleVolume);
                     agentOrderDetail.setSingleWeight(singleWeight);
