@@ -329,7 +329,6 @@ public class OrderController {
 
             boolean flag = orderServiceProxy.createOrder(order, subOrderList);
             if (flag) {
-                //TODO 更新客户跟进时间及是否下单
                 UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(saler.getId(), consumer.getId(), null);
                 userConsumerRelation.setFollowTime(new Date());
                 userConsumerRelation.setHasOrder(1);
@@ -350,12 +349,28 @@ public class OrderController {
      * @return
      */
     @RequestMapping(value = "/listConsumerOrder", method = RequestMethod.GET)
-    public WebApiResponse<List<ConsumerOrderVo>> listConsumerOrder(@RequestParam("consumerNo") String consumerNo) {
-        List<ConsumerOrderVo> consumerOrderVoList = orderServiceProxy.listConsumerOrder(consumerNo);
-        WebApiResponse response = WebApiResponse.success(consumerOrderVoList);
-        Integer size = consumerOrderVoList.size();
-        response.setTotalCount(Long.valueOf(size));
-        return WebApiResponse.success(consumerOrderVoList);
+    public WebApiResponse<List<ConsumerOrderVo>> listConsumerOrder(@RequestParam("consumerNo") String consumerNo,
+                                                                   @RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                                   @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+
+        if (pageSize == null) {
+            pageSize = 30;
+        }
+
+        if (pageNum == null) {
+            pageNum = 1;
+        }
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        List<ConsumerOrderVo> consumerOrderVoList = orderServiceProxy.listConsumerOrder(consumerNo, start, size);
+        if (CollectionUtils.isEmpty(consumerOrderVoList)) {
+            WebApiResponse response = WebApiResponse.success(consumerOrderVoList);
+            response.setTotalCount(consumerOrderVoList.get(0).getTotalCount());
+            return response;
+        }
+        return WebApiResponse.success(null);
     }
 
 
@@ -370,5 +385,5 @@ public class OrderController {
         ConsumerOrderCount consumerOrderCount = orderServiceProxy.getConsumerOrderCount(consumerNo);
         return WebApiResponse.success(consumerOrderCount);
     }
-    
+
 }

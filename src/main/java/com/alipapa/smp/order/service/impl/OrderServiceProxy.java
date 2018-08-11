@@ -13,6 +13,7 @@ import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.order.vo.ConsumerOrderCount;
 import com.alipapa.smp.order.vo.ConsumerOrderVo;
+import com.alipapa.smp.user.vo.UserVo;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
 import com.alipapa.smp.utils.StringUtil;
@@ -21,9 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class OrderServiceProxy {
@@ -71,10 +70,15 @@ public class OrderServiceProxy {
      * @param consumerNo
      * @return
      */
-    public List<ConsumerOrderVo> listConsumerOrder(String consumerNo) {
+    public List<ConsumerOrderVo> listConsumerOrder(String consumerNo, Integer start, Integer size) {
         List<ConsumerOrderVo> consumerOrderVoList = new ArrayList<>();
 
-        List<Order> orderList = orderService.getOrderList(consumerNo);
+        Map<String, Object> params = new HashMap<>();
+        params.put("consumerNo", consumerNo);
+        params.put("start", start);
+        params.put("size", size);
+
+        List<Order> orderList = orderService.getOrderListByParams(params);
         if (!CollectionUtils.isEmpty(orderList)) {
             for (Order order : orderList) {
                 ConsumerOrderVo consumerOrderVo = new ConsumerOrderVo();
