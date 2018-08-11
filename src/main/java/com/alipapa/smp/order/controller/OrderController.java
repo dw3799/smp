@@ -18,7 +18,7 @@ import com.alipapa.smp.order.pojo.AgentOrderDetail;
 import com.alipapa.smp.order.pojo.Order;
 import com.alipapa.smp.order.pojo.SelfOrderDetail;
 import com.alipapa.smp.order.pojo.SubOrder;
-import com.alipapa.smp.order.service.OrderServiceProxy;
+import com.alipapa.smp.order.service.impl.OrderServiceProxy;
 import com.alipapa.smp.product.pojo.Product;
 import com.alipapa.smp.product.pojo.ProductCategory;
 import com.alipapa.smp.product.pojo.ProductPicture;
@@ -308,7 +308,7 @@ public class OrderController {
                 subOrderList.add(subOrder);
             }
 
-            boolean flag = orderServiceProxy.CreateOrder(order, subOrderList);
+            boolean flag = orderServiceProxy.createOrder(order, subOrderList);
             if (flag) {
                 //TODO 更新客户跟进时间及是否下单
                 UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(saler.getId(), consumer.getId(), null);
