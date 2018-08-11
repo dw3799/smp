@@ -288,7 +288,7 @@ public class OrderController {
                     selfOrderDetail.setQuantity(quantity);
                     selfOrderDetail.setSaleAmount(PriceUtil.convertToFen(saleAmount));
                     selfOrderDetail.setRemark(null);
-                    selfOrderDetail.setSubOrderNo(subOrderNo); //创建时补充
+                    selfOrderDetail.setSubOrderNo(subOrderNo);
                     selfOrderDetail.setSize(size);
                     selfOrderDetail.setSuturing(suturing);
                     selfOrderDetail.setUpdatedTime(new Date());
