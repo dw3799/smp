@@ -133,13 +133,15 @@ public class OrderController {
             String productAmount = request.getParameter("productAmount");
             String expectPurchaseAmount = request.getParameter("expectPurchaseAmount");
             String products = request.getParameter("products");
+            String opType = request.getParameter("opType");
+
 
             //可为空
             String orderVolume = request.getParameter("orderVolume");
             String orderWeight = request.getParameter("orderWeight");
             String remark = request.getParameter("remark");
 
-            if (StringUtil.isEmptyString(orderType) || StringUtil.isEmptyString(consumerNo) || StringUtil.isEmptyString(currency) || StringUtil.isEmptyString(productAmount)
+            if (StringUtil.isEmptyString(opType) || StringUtil.isEmptyString(orderType) || StringUtil.isEmptyString(consumerNo) || StringUtil.isEmptyString(currency) || StringUtil.isEmptyString(productAmount)
                     || StringUtil.isEmptyString(expectPurchaseAmount) || StringUtil.isEmptyString(products)) {
                 return error("缺少必填参数");
             }
@@ -147,6 +149,12 @@ public class OrderController {
             OrderTypeEnum orderTypeEnum = OrderTypeEnum.valueOf(orderType);
             if (orderTypeEnum == null) {
                 return error("订单类型有误");
+            }
+
+
+            OrderOPerateTypeEnum orderOPerateTypeEnum = OrderOPerateTypeEnum.valueOf(opType);
+            if (orderOPerateTypeEnum == null) {
+                return error("操作类型有误");
             }
 
             Order order = new Order();
@@ -175,7 +183,12 @@ public class OrderController {
             order.setCurrency(currency);
             order.setExpectPurchaseAmount(PriceUtil.convertToFen(expectPurchaseAmount));
             order.setOrderAmount(PriceUtil.convertToFen(productAmount)); //创建订单时订单金额暂等于产品总金额
-            order.setOrderStatus(OrderStatusEnum.UN_SUBMIT.getCode());
+
+            if (OrderOPerateTypeEnum.SAVE == orderOPerateTypeEnum) {
+                order.setOrderStatus(OrderStatusEnum.UN_SUBMIT.getCode());
+            } else {
+                order.setOrderStatus(OrderStatusEnum.SPR_APV.getCode());
+            }
 
             String orderNo = "M" + OrderNumberGenerator.get();
             order.setOrderNo(orderNo);
