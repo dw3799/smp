@@ -247,8 +247,8 @@ public class OrderController {
 
                 String subOrderNo = "S" + OrderNumberGenerator.get();
                 subOrder.setSubOrderNo(subOrderNo);
-                subOrder.setSubOrderStatus(0);
-                subOrder.setSubPayStatus(0);
+                subOrder.setSubOrderStatus(SubOrderStatusEnum.CREATE.getCode());
+                subOrder.setSubPayStatus(SubOrderPayStatusEnum.UN_PAY.getCode());
                 subOrder.setUpdatedTime(new Date());
 
                 if (OrderTypeEnum.SELF_ORDER == orderTypeEnum) {
