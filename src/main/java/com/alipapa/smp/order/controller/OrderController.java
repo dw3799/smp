@@ -19,6 +19,8 @@ import com.alipapa.smp.order.pojo.Order;
 import com.alipapa.smp.order.pojo.SelfOrderDetail;
 import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.service.impl.OrderServiceProxy;
+import com.alipapa.smp.order.vo.ConsumerOrderCount;
+import com.alipapa.smp.order.vo.ConsumerOrderVo;
 import com.alipapa.smp.product.pojo.Product;
 import com.alipapa.smp.product.pojo.ProductCategory;
 import com.alipapa.smp.product.pojo.ProductPicture;
@@ -341,5 +343,32 @@ public class OrderController {
         return WebApiResponse.error("创建订单异常");
     }
 
+    /**
+     * 订单相关下拉列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listConsumerOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<ConsumerOrderVo>> listConsumerOrder(@RequestParam("consumerNo") String consumerNo) {
+        List<ConsumerOrderVo> consumerOrderVoList = orderServiceProxy.listConsumerOrder(consumerNo);
+        WebApiResponse response = WebApiResponse.success(consumerOrderVoList);
+        Integer size = consumerOrderVoList.size();
+        response.setTotalCount(Long.valueOf(size));
+        return WebApiResponse.success(consumerOrderVoList);
+    }
 
+
+    /**
+     * 获取客户订单汇总
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/getConsumerOrderCount", method = RequestMethod.GET)
+    public WebApiResponse<ConsumerOrderCount> getConsumerOrderCount(@RequestParam("consumerNo") String consumerNo) {
+        ConsumerOrderCount consumerOrderCount = orderServiceProxy.getConsumerOrderCount(consumerNo);
+        return WebApiResponse.success(consumerOrderCount);
+    }
+    
 }
