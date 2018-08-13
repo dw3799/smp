@@ -545,15 +545,15 @@
   </update>
 
 
-    <select id="findConsumerOrderByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+    <select id="listOrderByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
         select count(*) from (
-        <include refid="queryConsumerOrderSql"/>
+        <include refid="queryOrderSql"/>
         ) T
     </select>
 
 
-    <select id="findConsumerOrderByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
-        <include refid="queryConsumerOrderSql"/>
+    <select id="listOrderByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        <include refid="queryOrderSql"/>
         <trim prefix="limit" prefixOverrides=",">
             <if test="start != null and start != ''">
                 #{start}
@@ -564,13 +564,21 @@
         </trim>
     </select>
 
-    <sql id="queryConsumerOrderSql">
+    <sql id="queryOrderSql">
         select o.*
         from order o
         where 1=1
         <if test="consumerNo != null and consumerNo != ''">
             and o.consumer_no = #{consumerNo}
         </if>
+        <if test="orderStatus != null">
+            and o.order_status = #{orderStatus}
+        </if>
+
+        <if test="salerUserNo != null and salerUserNo != ''">
+            and o.saler_user_no = #{salerUserNo}
+        </if>
+
         ORDER BY o.submit_time DESC
     </sql>
 

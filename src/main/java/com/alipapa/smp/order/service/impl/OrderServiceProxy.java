@@ -13,6 +13,7 @@ import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.order.vo.ConsumerOrderCount;
 import com.alipapa.smp.order.vo.ConsumerOrderVo;
+import com.alipapa.smp.order.vo.OrderVo;
 import com.alipapa.smp.user.vo.UserVo;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
@@ -76,7 +77,7 @@ public class OrderServiceProxy {
         Map<String, Object> params = new HashMap<>();
         params.put("consumerNo", consumerNo);
 
-        Long totalCount = orderService.findConsumerOrderByParamCount(params);
+        Long totalCount = orderService.listOrderByParamCount(params);
 
         if (totalCount <= 0) {
             return null;
@@ -92,7 +93,7 @@ public class OrderServiceProxy {
                 consumerOrderVo.setConsumerNo(order.getConsumerNo());
                 consumerOrderVo.setOrderNo(order.getOrderNo());
                 consumerOrderVo.setTotalCount(totalCount);
-                
+
                 Date submitTime = order.getSubmitTime();
                 if (submitTime != null) {
                     consumerOrderVo.setSubmitDate(DateUtil.formatToStr(submitTime));
@@ -147,4 +148,81 @@ public class OrderServiceProxy {
         }
         return null;
     }
+
+
+    /**
+     * 获取待提交订单列表
+     *
+     * @param salerUserNo
+     * @return
+     */
+    public List<OrderVo> listUnSubmitOrder(String salerUserNo, Integer start, Integer size) {
+        List<OrderVo> orderVoList = new ArrayList<>();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("salerUserNo", salerUserNo);
+        params.put("orderStatus", OrderStatusEnum.UN_SUBMIT.getCode());
+
+        Long totalCount = orderService.listOrderByParamCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<Order> orderList = orderService.getOrderListByParams(params);
+        if (!CollectionUtils.isEmpty(orderList)) {
+            for (Order order : orderList) {
+                OrderVo orderVo = new OrderVo();
+                orderVo.setConsumerName(order.getConsumerName());
+                orderVo.setConsumerNo(order.getConsumerNo());
+                orderVo.setOrderNo(order.getOrderNo());
+                orderVo.setTotalCount(totalCount);
+                orderVo.setOrderType(OrderTypeEnum.valueOf(order.getOrderType()).getCodeName());
+
+                Date submitTime = order.getSubmitTime();
+                if (submitTime != null) {
+                    orderVo.setSubmitDateTime(DateUtil.formatToStrTimeV1(submitTime));
+                }
+                orderVo.setCreateDateTime(DateUtil.formatToStrTimeV1(order.getCreatedTime()));
+
+                orderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getCodeName());
+
+                List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
+
+                if (CollectionUtils.isEmpty(sysDictList)) {
+                    SysDict currencySysDict = sysDictList.get(0);
+                    orderVo.setAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencySysDict.getDictValue());
+                }
+
+
+                orderVo.setBuyerUserName(order.getBuyerUserName());
+                orderVo.setBuyerUserNo(order.getBuyerUserNo());
+                orderVo.setSalerUserNo(order.getSalerUserNo());
+                orderVo.setSalerUserName(order.getSalerUserName());
+            }
+        }
+
+        return orderVoList;
+    }
+
+
+    /**
+     * @param orderNo
+     * @return
+     */
+    public boolean closeOrder(String orderNo, String salerUserNo) throws Exception {
+        Order order = orderService.selectOrderByOrderNo(orderNo);
+        if (order == null) {
+            return false;
+        }
+        if (salerUserNo.equals(order.getSalerUserNo())) {
+            throw new Exception("没有权限！");
+        }
+        order.setOrderStatus(OrderStatusEnum.CLOSE.getCode());
+        return orderService.updateOrder(order);
+    }
+
+
 }

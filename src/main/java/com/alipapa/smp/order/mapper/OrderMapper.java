@@ -32,7 +32,7 @@ public interface OrderMapper {
 
     int updateByPrimaryKey(Order record);
 
-    List<Order> findConsumerOrderByParam(Map<String, Object> params);
+    List<Order> listOrderByParam(Map<String, Object> params);
 
-    long findConsumerOrderByParamCount(Map<String, Object> params);
+    long listOrderByParamCount(Map<String, Object> params);
 }

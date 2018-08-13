@@ -21,6 +21,7 @@ import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.service.impl.OrderServiceProxy;
 import com.alipapa.smp.order.vo.ConsumerOrderCount;
 import com.alipapa.smp.order.vo.ConsumerOrderVo;
+import com.alipapa.smp.order.vo.OrderVo;
 import com.alipapa.smp.product.pojo.Product;
 import com.alipapa.smp.product.pojo.ProductCategory;
 import com.alipapa.smp.product.pojo.ProductPicture;
@@ -384,6 +385,65 @@ public class OrderController {
     public WebApiResponse<ConsumerOrderCount> getConsumerOrderCount(@RequestParam("consumerNo") String consumerNo) {
         ConsumerOrderCount consumerOrderCount = orderServiceProxy.getConsumerOrderCount(consumerNo);
         return WebApiResponse.success(consumerOrderCount);
+    }
+
+
+    /**
+     * 订单相关下拉列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listUnSubmitOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<OrderVo>> listUnSubmitOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                           @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        if (pageSize == null) {
+            pageSize = 30;
+        }
+
+        if (pageNum == null) {
+            pageNum = 1;
+        }
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        List<OrderVo> orderVoList = orderServiceProxy.listUnSubmitOrder(userInfo.getUserNo(), start, size);
+        if (CollectionUtils.isEmpty(orderVoList)) {
+            WebApiResponse response = WebApiResponse.success(orderVoList);
+            response.setTotalCount(orderVoList.get(0).getTotalCount());
+            return response;
+        }
+        return WebApiResponse.success(null);
+    }
+
+
+    /**
+     * 关闭订单
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/close-order", method = RequestMethod.POST)
+    public WebApiResponse<String> closeOrder(@RequestParam(name = "orderNos") String orderNos) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(orderNos)) {
+                return error("缺少必传参数");
+            }
+
+            String[] orderNoArray = orderNos.split(";");
+
+            for (String orderNo : orderNoArray) {
+                orderServiceProxy.closeOrder(orderNo, userInfo.getUserNo());
+            }
+        } catch (Exception ex) {
+            logger.error("", ex);
+            return error("关闭订单异常");
+        }
+        return WebApiResponse.success("success");
     }
 
 }

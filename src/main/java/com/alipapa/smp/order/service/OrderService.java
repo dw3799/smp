@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,6 +34,18 @@ public class OrderService {
 
 
     /**
+     * 更新订单
+     *
+     * @param record
+     * @return
+     */
+    public boolean updateOrder(Order record) {
+        orderMapper.updateByPrimaryKey(record);
+        return true;
+    }
+
+
+    /**
      * @return
      */
     public List<Order> getOrderList(String consumerNo) {
@@ -41,6 +54,24 @@ public class OrderService {
         criteria.andConsumerNoEqualTo(consumerNo);
         example.setOrderByClause("submitTime desc");
         return orderMapper.selectByExample(example);
+    }
+
+
+    /**
+     * @param orderNo
+     * @return
+     */
+    public Order selectOrderByOrderNo(String orderNo) {
+        OrderExample example = new OrderExample();
+        OrderExample.Criteria criteria = example.createCriteria();
+        criteria.andOrderNoEqualTo(orderNo);
+
+
+        List<Order> orders = orderMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(orders)) {
+            return orders.get(0);
+        }
+        return null;
     }
 
 
@@ -58,7 +89,7 @@ public class OrderService {
             logger.info("key= " + entry.getKey() + " and value= " + entry.getValue());
         }
 
-        List<Order> orderList = orderMapper.findConsumerOrderByParam(params);
+        List<Order> orderList = orderMapper.listOrderByParam(params);
 
         return orderList;
     }
@@ -68,8 +99,8 @@ public class OrderService {
      * @param params
      * @return
      */
-    public Long findConsumerOrderByParamCount(Map<String, Object> params) {
-        return orderMapper.findConsumerOrderByParamCount(params);
+    public Long listOrderByParamCount(Map<String, Object> params) {
+        return orderMapper.listOrderByParamCount(params);
     }
 
 
