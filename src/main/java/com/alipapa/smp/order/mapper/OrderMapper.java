@@ -1,8 +1,12 @@
 package com.alipapa.smp.order.mapper;
 
+import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.order.pojo.Order;
 import com.alipapa.smp.order.pojo.OrderExample;
+
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface OrderMapper {
@@ -27,4 +31,8 @@ public interface OrderMapper {
     int updateByPrimaryKeySelective(Order record);
 
     int updateByPrimaryKey(Order record);
+
+    List<Order> findConsumerOrderByParam(Map<String, Object> params);
+
+    long findConsumerOrderByParamCount(Map<String, Object> params);
 }

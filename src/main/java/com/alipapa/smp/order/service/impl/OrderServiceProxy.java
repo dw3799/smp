@@ -75,6 +75,12 @@ public class OrderServiceProxy {
 
         Map<String, Object> params = new HashMap<>();
         params.put("consumerNo", consumerNo);
+
+        Long totalCount = orderService.findConsumerOrderByParamCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
         params.put("start", start);
         params.put("size", size);
 
@@ -85,7 +91,8 @@ public class OrderServiceProxy {
                 consumerOrderVo.setConsumerName(order.getConsumerName());
                 consumerOrderVo.setConsumerNo(order.getConsumerNo());
                 consumerOrderVo.setOrderNo(order.getOrderNo());
-
+                consumerOrderVo.setTotalCount(totalCount);
+                
                 Date submitTime = order.getSubmitTime();
                 if (submitTime != null) {
                     consumerOrderVo.setSubmitDate(DateUtil.formatToStr(submitTime));
