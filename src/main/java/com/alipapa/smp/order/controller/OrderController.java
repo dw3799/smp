@@ -28,7 +28,9 @@ import com.alipapa.smp.product.pojo.ProductPicture;
 import com.alipapa.smp.product.service.ProductCategoryService;
 import com.alipapa.smp.product.service.ProductPictureService;
 import com.alipapa.smp.product.service.ProductService;
+import com.alipapa.smp.user.pojo.Role;
 import com.alipapa.smp.user.pojo.User;
+import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.OrderNumberGenerator;
 import com.alipapa.smp.utils.PriceUtil;
@@ -71,6 +73,10 @@ public class OrderController {
 
     @Autowired
     private UserService userService;
+
+
+    @Autowired
+    private RoleService roleService;
 
 
     @Autowired
@@ -389,7 +395,7 @@ public class OrderController {
 
 
     /**
-     * 订单相关下拉列表
+     * 待提交订单列表
      *
      * @param
      * @return
@@ -410,7 +416,7 @@ public class OrderController {
         Integer start = (pageNum - 1) * pageSize;
         Integer size = pageSize;
 
-        List<OrderVo> orderVoList = orderServiceProxy.listUnSubmitOrder(userInfo.getUserNo(), start, size);
+        List<OrderVo> orderVoList = orderServiceProxy.listOrderBySalerUserNo(userInfo.getUserNo(), OrderStatusEnum.UN_SUBMIT.getCode(), start, size);
         if (CollectionUtils.isEmpty(orderVoList)) {
             WebApiResponse response = WebApiResponse.success(orderVoList);
             response.setTotalCount(orderVoList.get(0).getTotalCount());
@@ -444,6 +450,78 @@ public class OrderController {
             return error("关闭订单异常");
         }
         return WebApiResponse.success("success");
+    }
+
+
+    /**
+     * 订单相关下拉列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listApproveOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<OrderVo>> listApproveOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                          @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        if (pageSize == null) {
+            pageSize = 30;
+        }
+
+        if (pageNum == null) {
+            pageNum = 1;
+        }
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+
+        User user = userService.getUserById(userInfo.getUserId());
+        Role role = roleService.getRoleById(userInfo.getRoleId());
+
+        if (1 != user.getIsLeader() && !"1".equals(role.getRoleLevel())) { //组长且为主管有权限
+            return error("没有权限");
+        }
+
+        List<OrderVo> orderVoList = orderServiceProxy.listApproveOrder(user.getGroupId(), start, size);
+        if (CollectionUtils.isEmpty(orderVoList)) {
+            WebApiResponse response = WebApiResponse.success(orderVoList);
+            response.setTotalCount(orderVoList.get(0).getTotalCount());
+            return response;
+        }
+        return WebApiResponse.success(null);
+    }
+
+
+    /**
+     * 待缴纳定金订单列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listUnFrontPayOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<OrderVo>> listUnFrontPayOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                             @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        if (pageSize == null) {
+            pageSize = 30;
+        }
+
+        if (pageNum == null) {
+            pageNum = 1;
+        }
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        List<OrderVo> orderVoList = orderServiceProxy.listOrderBySalerUserNo(userInfo.getUserNo(), OrderStatusEnum.UN_FRONT_PAY.getCode(), start, size);
+        if (CollectionUtils.isEmpty(orderVoList)) {
+            WebApiResponse response = WebApiResponse.success(orderVoList);
+            response.setTotalCount(orderVoList.get(0).getTotalCount());
+            return response;
+        }
+        return WebApiResponse.success(null);
     }
 
 }

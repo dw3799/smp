@@ -156,12 +156,10 @@ public class OrderServiceProxy {
      * @param salerUserNo
      * @return
      */
-    public List<OrderVo> listUnSubmitOrder(String salerUserNo, Integer start, Integer size) {
-        List<OrderVo> orderVoList = new ArrayList<>();
-
+    public List<OrderVo> listOrderBySalerUserNo(String salerUserNo, Integer orderStatus, Integer start, Integer size) {
         Map<String, Object> params = new HashMap<>();
         params.put("salerUserNo", salerUserNo);
-        params.put("orderStatus", OrderStatusEnum.UN_SUBMIT.getCode());
+        params.put("orderStatus", orderStatus);
 
         Long totalCount = orderService.listOrderByParamCount(params);
 
@@ -172,37 +170,8 @@ public class OrderServiceProxy {
         params.put("size", size);
 
         List<Order> orderList = orderService.getOrderListByParams(params);
-        if (!CollectionUtils.isEmpty(orderList)) {
-            for (Order order : orderList) {
-                OrderVo orderVo = new OrderVo();
-                orderVo.setConsumerName(order.getConsumerName());
-                orderVo.setConsumerNo(order.getConsumerNo());
-                orderVo.setOrderNo(order.getOrderNo());
-                orderVo.setTotalCount(totalCount);
-                orderVo.setOrderType(OrderTypeEnum.valueOf(order.getOrderType()).getCodeName());
 
-                Date submitTime = order.getSubmitTime();
-                if (submitTime != null) {
-                    orderVo.setSubmitDateTime(DateUtil.formatToStrTimeV1(submitTime));
-                }
-                orderVo.setCreateDateTime(DateUtil.formatToStrTimeV1(order.getCreatedTime()));
-
-                orderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getCodeName());
-
-                List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
-
-                if (CollectionUtils.isEmpty(sysDictList)) {
-                    SysDict currencySysDict = sysDictList.get(0);
-                    orderVo.setAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencySysDict.getDictValue());
-                }
-
-
-                orderVo.setBuyerUserName(order.getBuyerUserName());
-                orderVo.setBuyerUserNo(order.getBuyerUserNo());
-                orderVo.setSalerUserNo(order.getSalerUserNo());
-                orderVo.setSalerUserName(order.getSalerUserName());
-            }
-        }
+        List<OrderVo> orderVoList = this.convertOrderVo(orderList, totalCount);
 
         return orderVoList;
     }
@@ -224,5 +193,74 @@ public class OrderServiceProxy {
         return orderService.updateOrder(order);
     }
 
+
+    /**
+     * 获取组内待审核订单列表
+     *
+     * @param groupId
+     * @return
+     */
+    public List<OrderVo> listApproveOrder(Long groupId, Integer start, Integer size) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("groupId", groupId);
+        params.put("orderStatus", OrderStatusEnum.SPR_APV.getCode());
+
+        Long totalCount = orderService.listApproveOrderByParamCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<Order> orderList = orderService.listApproveOrderByParam(params);
+
+        List<OrderVo> orderVoList = this.convertOrderVo(orderList, totalCount);
+
+        return orderVoList;
+    }
+
+    /**
+     * VO转换
+     *
+     * @return
+     */
+    private List<OrderVo> convertOrderVo(List<Order> orderList, Long totalCount) {
+        List<OrderVo> orderVoList = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(orderList)) {
+            for (Order order : orderList) {
+                OrderVo orderVo = new OrderVo();
+                orderVo.setConsumerName(order.getConsumerName());
+                orderVo.setConsumerNo(order.getConsumerNo());
+                orderVo.setConsumerCountry(order.getConsumerCountry());
+                orderVo.setOrderNo(order.getOrderNo());
+                orderVo.setTotalCount(totalCount);
+                orderVo.setOrderType(OrderTypeEnum.valueOf(order.getOrderType()).getCodeName());
+
+                Date submitTime = order.getSubmitTime();
+                if (submitTime != null) {
+                    orderVo.setSubmitDateTime(DateUtil.formatToStrTimeV1(submitTime));
+                }
+                orderVo.setCreateDateTime(DateUtil.formatToStrTimeV1(order.getCreatedTime()));
+
+                orderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getCodeName());
+
+                List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
+
+                if (CollectionUtils.isEmpty(sysDictList)) {
+                    SysDict currencySysDict = sysDictList.get(0);
+                    orderVo.setAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencySysDict.getDictValue());
+                }
+
+                orderVo.setBuyerUserName(order.getBuyerUserName());
+                orderVo.setBuyerUserNo(order.getBuyerUserNo());
+                orderVo.setSalerUserNo(order.getSalerUserNo());
+                orderVo.setSalerUserName(order.getSalerUserName());
+            }
+        }
+        return orderVoList;
+    }
 
 }

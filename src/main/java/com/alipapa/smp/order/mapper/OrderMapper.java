@@ -35,4 +35,8 @@ public interface OrderMapper {
     List<Order> listOrderByParam(Map<String, Object> params);
 
     long listOrderByParamCount(Map<String, Object> params);
+
+    List<Order> listApproveOrderByParam(Map<String, Object> params);
+
+    long listApproveOrderByParamCount(Map<String, Object> params);
 }

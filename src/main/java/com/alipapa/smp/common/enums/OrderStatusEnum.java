@@ -11,15 +11,17 @@ public enum OrderStatusEnum {
 
     SPR_APV(2, "SPR_APV", "业务主管审批中"),
 
-    CASH_FRONT_APV(3, "CASH_FRONT_APV", "出纳审核定金中"),
+    UN_FRONT_PAY(3, "UN_FRONT_PAY", "待客户缴纳定金"),
 
-    FIN_FRONT_APV(4, "FIN_FRONT_APV", "财务审核定金中"),
+    CASH_FRONT_APV(4, "CASH_FRONT_APV", "出纳审核定金中"),
 
-    DELIVERY(5, "DELIVERY", "订单交付中"),
+    FIN_FRONT_APV(5, "FIN_FRONT_APV", "财务审核定金中"),
 
-    COMPLETE(6, "COMPLETE", "订单完成"),
+    DELIVERY(6, "DELIVERY", "订单交付中"),
 
-    CLOSE(7, "CLOSE", "订单关闭");
+    COMPLETE(7, "COMPLETE", "订单完成"),
+
+    CLOSE(8, "CLOSE", "订单关闭");
 
     /*
     待提交订单申请

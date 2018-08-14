@@ -11,6 +11,8 @@ public class OrderVo {
 
     private String consumerName;
 
+    private String consumerCountry;
+
     private String orderType;
 
     private String orderStatus;
@@ -30,6 +32,14 @@ public class OrderVo {
     private String salerUserNo;
 
     private String salerUserName;
+
+    public String getConsumerCountry() {
+        return consumerCountry;
+    }
+
+    public void setConsumerCountry(String consumerCountry) {
+        this.consumerCountry = consumerCountry;
+    }
 
     public String getSalerUserNo() {
         return salerUserNo;

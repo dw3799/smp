@@ -76,6 +76,8 @@ public class OrderService {
 
 
     /**
+     * 单订单表分页查询
+     *
      * @return
      */
     public List<Order> getOrderListByParams(Map<String, Object> params) {
@@ -96,11 +98,46 @@ public class OrderService {
 
 
     /**
+     * 单订单表分页查询
+     *
      * @param params
      * @return
      */
     public Long listOrderByParamCount(Map<String, Object> params) {
         return orderMapper.listOrderByParamCount(params);
+    }
+
+
+    /**
+     * 业务主管获取组内待审核订单
+     *
+     * @return
+     */
+    public List<Order> listApproveOrderByParam(Map<String, Object> params) {
+        if (params == null) {
+            params = new HashMap<>();
+        }
+
+        Iterator<Map.Entry<String, Object>> it = params.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Object> entry = it.next();
+            logger.info("key= " + entry.getKey() + " and value= " + entry.getValue());
+        }
+
+        List<Order> orderList = orderMapper.listApproveOrderByParam(params);
+
+        return orderList;
+    }
+
+
+    /**
+     * 业务主管获取组内待审核订单
+     *
+     * @param params
+     * @return
+     */
+    public Long listApproveOrderByParamCount(Map<String, Object> params) {
+        return orderMapper.listApproveOrderByParamCount(params);
     }
 
 

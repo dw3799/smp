@@ -90,12 +90,12 @@
         </where>
     </sql>
     <sql id="Base_Column_List">
-    id, order_no, order_type, order_status, pay_status, consumer_no, consumer_name, consumer_country, 
-    saler_user_no, saler_user_name, buyer_user_no, buyer_user_name, production_cycle, 
-    currency, product_amount, order_amount, expect_purchase_amount, actual_purchase_amount, 
-    receipt_amount, cn_receipt_amount, order_volume, order_weight, submit_time, remark, 
-    created_time, updated_time
-  </sql>
+        id, order_no, order_type, order_status, pay_status, consumer_no, consumer_name, consumer_country,
+        saler_user_no, saler_user_name, buyer_user_no, buyer_user_name, production_cycle,
+        currency, product_amount, order_amount, expect_purchase_amount, actual_purchase_amount,
+        receipt_amount, cn_receipt_amount, order_volume, order_weight, submit_time, remark,
+        created_time, updated_time
+    </sql>
     <select id="selectByExample" parameterType="com.alipapa.smp.order.pojo.OrderExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
@@ -127,25 +127,26 @@
         </if>
     </delete>
     <insert id="insert" parameterType="com.alipapa.smp.order.pojo.Order">
-    insert into order (id, order_no, order_type, 
-      order_status, pay_status, consumer_no, 
-      consumer_name, consumer_country, saler_user_no, 
-      saler_user_name, buyer_user_no, buyer_user_name, 
-      production_cycle, currency, product_amount, 
-      order_amount, expect_purchase_amount, actual_purchase_amount, 
-      receipt_amount, cn_receipt_amount, order_volume, 
-      order_weight, submit_time, remark, 
-      created_time, updated_time)
-    values (#{id,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{orderType,jdbcType=INTEGER}, 
-      #{orderStatus,jdbcType=INTEGER}, #{payStatus,jdbcType=INTEGER}, #{consumerNo,jdbcType=VARCHAR}, 
-      #{consumerName,jdbcType=VARCHAR}, #{consumerCountry,jdbcType=VARCHAR}, #{salerUserNo,jdbcType=VARCHAR}, 
-      #{salerUserName,jdbcType=VARCHAR}, #{buyerUserNo,jdbcType=VARCHAR}, #{buyerUserName,jdbcType=VARCHAR}, 
-      #{productionCycle,jdbcType=VARCHAR}, #{currency,jdbcType=VARCHAR}, #{productAmount,jdbcType=BIGINT}, 
-      #{orderAmount,jdbcType=BIGINT}, #{expectPurchaseAmount,jdbcType=BIGINT}, #{actualPurchaseAmount,jdbcType=BIGINT}, 
-      #{receiptAmount,jdbcType=BIGINT}, #{cnReceiptAmount,jdbcType=BIGINT}, #{orderVolume,jdbcType=VARCHAR}, 
-      #{orderWeight,jdbcType=VARCHAR}, #{submitTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
-      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
-  </insert>
+        insert into order (id, order_no, order_type,
+        order_status, pay_status, consumer_no,
+        consumer_name, consumer_country, saler_user_no,
+        saler_user_name, buyer_user_no, buyer_user_name,
+        production_cycle, currency, product_amount,
+        order_amount, expect_purchase_amount, actual_purchase_amount,
+        receipt_amount, cn_receipt_amount, order_volume,
+        order_weight, submit_time, remark,
+        created_time, updated_time)
+        values (#{id,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{orderType,jdbcType=INTEGER},
+        #{orderStatus,jdbcType=INTEGER}, #{payStatus,jdbcType=INTEGER}, #{consumerNo,jdbcType=VARCHAR},
+        #{consumerName,jdbcType=VARCHAR}, #{consumerCountry,jdbcType=VARCHAR}, #{salerUserNo,jdbcType=VARCHAR},
+        #{salerUserName,jdbcType=VARCHAR}, #{buyerUserNo,jdbcType=VARCHAR}, #{buyerUserName,jdbcType=VARCHAR},
+        #{productionCycle,jdbcType=VARCHAR}, #{currency,jdbcType=VARCHAR}, #{productAmount,jdbcType=BIGINT},
+        #{orderAmount,jdbcType=BIGINT}, #{expectPurchaseAmount,jdbcType=BIGINT},
+        #{actualPurchaseAmount,jdbcType=BIGINT},
+        #{receiptAmount,jdbcType=BIGINT}, #{cnReceiptAmount,jdbcType=BIGINT}, #{orderVolume,jdbcType=VARCHAR},
+        #{orderWeight,jdbcType=VARCHAR}, #{submitTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR},
+        #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+    </insert>
     <insert id="insertSelective" parameterType="com.alipapa.smp.order.pojo.Order">
         insert into order
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -515,34 +516,34 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.order.pojo.Order">
-    update order
-    set order_no = #{orderNo,jdbcType=VARCHAR},
-      order_type = #{orderType,jdbcType=INTEGER},
-      order_status = #{orderStatus,jdbcType=INTEGER},
-      pay_status = #{payStatus,jdbcType=INTEGER},
-      consumer_no = #{consumerNo,jdbcType=VARCHAR},
-      consumer_name = #{consumerName,jdbcType=VARCHAR},
-      consumer_country = #{consumerCountry,jdbcType=VARCHAR},
-      saler_user_no = #{salerUserNo,jdbcType=VARCHAR},
-      saler_user_name = #{salerUserName,jdbcType=VARCHAR},
-      buyer_user_no = #{buyerUserNo,jdbcType=VARCHAR},
-      buyer_user_name = #{buyerUserName,jdbcType=VARCHAR},
-      production_cycle = #{productionCycle,jdbcType=VARCHAR},
-      currency = #{currency,jdbcType=VARCHAR},
-      product_amount = #{productAmount,jdbcType=BIGINT},
-      order_amount = #{orderAmount,jdbcType=BIGINT},
-      expect_purchase_amount = #{expectPurchaseAmount,jdbcType=BIGINT},
-      actual_purchase_amount = #{actualPurchaseAmount,jdbcType=BIGINT},
-      receipt_amount = #{receiptAmount,jdbcType=BIGINT},
-      cn_receipt_amount = #{cnReceiptAmount,jdbcType=BIGINT},
-      order_volume = #{orderVolume,jdbcType=VARCHAR},
-      order_weight = #{orderWeight,jdbcType=VARCHAR},
-      submit_time = #{submitTime,jdbcType=TIMESTAMP},
-      remark = #{remark,jdbcType=VARCHAR},
-      created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+        update order
+        set order_no = #{orderNo,jdbcType=VARCHAR},
+        order_type = #{orderType,jdbcType=INTEGER},
+        order_status = #{orderStatus,jdbcType=INTEGER},
+        pay_status = #{payStatus,jdbcType=INTEGER},
+        consumer_no = #{consumerNo,jdbcType=VARCHAR},
+        consumer_name = #{consumerName,jdbcType=VARCHAR},
+        consumer_country = #{consumerCountry,jdbcType=VARCHAR},
+        saler_user_no = #{salerUserNo,jdbcType=VARCHAR},
+        saler_user_name = #{salerUserName,jdbcType=VARCHAR},
+        buyer_user_no = #{buyerUserNo,jdbcType=VARCHAR},
+        buyer_user_name = #{buyerUserName,jdbcType=VARCHAR},
+        production_cycle = #{productionCycle,jdbcType=VARCHAR},
+        currency = #{currency,jdbcType=VARCHAR},
+        product_amount = #{productAmount,jdbcType=BIGINT},
+        order_amount = #{orderAmount,jdbcType=BIGINT},
+        expect_purchase_amount = #{expectPurchaseAmount,jdbcType=BIGINT},
+        actual_purchase_amount = #{actualPurchaseAmount,jdbcType=BIGINT},
+        receipt_amount = #{receiptAmount,jdbcType=BIGINT},
+        cn_receipt_amount = #{cnReceiptAmount,jdbcType=BIGINT},
+        order_volume = #{orderVolume,jdbcType=VARCHAR},
+        order_weight = #{orderWeight,jdbcType=VARCHAR},
+        submit_time = #{submitTime,jdbcType=TIMESTAMP},
+        remark = #{remark,jdbcType=VARCHAR},
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 
 
     <select id="listOrderByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
@@ -581,5 +582,44 @@
 
         ORDER BY o.submit_time DESC
     </sql>
+
+
+    <select id="listApproveOrderByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        <include refid="listApproveOrderByParamSql"/>
+        <trim prefix="limit" prefixOverrides=",">
+            <if test="start != null and start != ''">
+                #{start}
+            </if>
+            <if test="size != null and size != ''">
+                , #{size}
+            </if>
+        </trim>
+    </select>
+
+    <sql id="listApproveOrderByParamSql">
+        select o.*
+        from order o LEFT JOIN `user` u on
+        o.saler_user_no = u.user_no
+        where 1=1
+        <if test="consumerNo != null and consumerNo != ''">
+            and o.consumer_no = #{consumerNo}
+        </if>
+        <if test="orderStatus != null">
+            and o.order_status = #{orderStatus}
+        </if>
+        <if test="salerUserNo != null and salerUserNo != ''">
+            and o.saler_user_no = #{salerUserNo}
+        </if>
+        <if test="groupId != null">
+            and u.group_id = #{groupId}
+        </if>
+        ORDER BY o.submit_time DESC
+    </sql>
+
+    <select id="listApproveOrderByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+        select count(*) from (
+        <include refid="listApproveOrderByParamSql"/>
+        ) T
+    </select>
 
 </mapper>
