@@ -8,7 +8,9 @@ import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.order.pojo.Order;
+import com.alipapa.smp.order.pojo.OrderFollowRecord;
 import com.alipapa.smp.order.pojo.SubOrder;
+import com.alipapa.smp.order.service.OrderFollowRecordService;
 import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.order.vo.ConsumerOrderCount;
@@ -40,6 +42,9 @@ public class OrderServiceProxy {
     @Autowired
     private ConsumerService consumerService;
 
+    @Autowired
+    private OrderFollowRecordService orderFollowRecordService;
+
 
     /**
      * 创建主订单及产品订单及产品明细
@@ -60,6 +65,24 @@ public class OrderServiceProxy {
             for (SubOrder subOrder : subOrderList) {
                 subOrderService.saveSubOrder(subOrder, orderTypeEnum);
             }
+            //保存订单流转记录
+            OrderFollowRecord orderFollowRecord = new OrderFollowRecord();
+            orderFollowRecord.setCreatedTime(new Date());
+            orderFollowRecord.setOpUserNo(order.getSalerUserNo());
+            orderFollowRecord.setOpUserName(order.getSalerUserName());
+            orderFollowRecord.setMaterielOrderNo(null);
+            orderFollowRecord.setOrderNo(order.getOrderNo());
+            orderFollowRecord.setSort(1);
+            orderFollowRecord.setRemark(null);
+            orderFollowRecord.setSubOrderNo(null);
+
+            if (order.getOrderStatus() == OrderStatusEnum.UN_SUBMIT.getCode()) {
+                orderFollowRecord.setTitle("创建订单");
+            } else if (order.getOrderStatus() == OrderStatusEnum.SPR_APV.getCode()) {
+                orderFollowRecord.setTitle("创建并提交订单");
+            }
+            orderFollowRecord.setUpdatedTime(new Date());
+            orderFollowRecordService.save(orderFollowRecord);
         }
         return true;
     }
