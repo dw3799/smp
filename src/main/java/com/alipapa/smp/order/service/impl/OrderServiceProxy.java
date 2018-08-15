@@ -3,15 +3,18 @@ package com.alipapa.smp.order.service.impl;
 import com.alipapa.smp.common.enums.OrderCategoryCode;
 import com.alipapa.smp.common.enums.OrderStatusEnum;
 import com.alipapa.smp.common.enums.OrderTypeEnum;
+import com.alipapa.smp.common.enums.RoleEnum;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.order.pojo.Order;
 import com.alipapa.smp.order.pojo.OrderFollowRecord;
+import com.alipapa.smp.order.pojo.OrderWorkFlow;
 import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.service.OrderFollowRecordService;
 import com.alipapa.smp.order.service.OrderService;
+import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.order.vo.ConsumerOrderCount;
 import com.alipapa.smp.order.vo.ConsumerOrderVo;
@@ -45,6 +48,9 @@ public class OrderServiceProxy {
     @Autowired
     private OrderFollowRecordService orderFollowRecordService;
 
+    @Autowired
+    private OrderWorkFlowService orderWorkFlowService;
+
 
     /**
      * 创建主订单及产品订单及产品明细
@@ -66,23 +72,24 @@ public class OrderServiceProxy {
                 subOrderService.saveSubOrder(subOrder, orderTypeEnum);
             }
             //保存订单流转记录
-            OrderFollowRecord orderFollowRecord = new OrderFollowRecord();
-            orderFollowRecord.setCreatedTime(new Date());
-            orderFollowRecord.setOpUserNo(order.getSalerUserNo());
-            orderFollowRecord.setOpUserName(order.getSalerUserName());
-            orderFollowRecord.setMaterielOrderNo(null);
-            orderFollowRecord.setOrderNo(order.getOrderNo());
-            orderFollowRecord.setSort(1);
-            orderFollowRecord.setRemark(null);
-            orderFollowRecord.setSubOrderNo(null);
-
+            OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+            orderWorkFlow.setCreatedTime(new Date());
+            orderWorkFlow.setNewOrderStatus(OrderStatusEnum.UN_SUBMIT.getCode());
+            orderWorkFlow.setOldOrderStatus(OrderStatusEnum.CREATE.getCode());
+            orderWorkFlow.setOpUserName(order.getSalerUserName());
+            orderWorkFlow.setOpUserNo(order.getSalerUserNo());
+            orderWorkFlow.setOpUserRole(RoleEnum.saler.getDec());
+            orderWorkFlow.setOrderNo(order.getOrderNo());
+            orderWorkFlow.setType("M_ORDER");
             if (order.getOrderStatus() == OrderStatusEnum.UN_SUBMIT.getCode()) {
-                orderFollowRecord.setTitle("创建订单");
+                orderWorkFlow.setRemark("创建订单");
             } else if (order.getOrderStatus() == OrderStatusEnum.SPR_APV.getCode()) {
-                orderFollowRecord.setTitle("创建并提交订单");
+                orderWorkFlow.setRemark("创建并提交订单");
             }
-            orderFollowRecord.setUpdatedTime(new Date());
-            orderFollowRecordService.save(orderFollowRecord);
+            orderWorkFlow.setResult("成功");
+            orderWorkFlow.setUpdatedTime(new Date());
+            
+            orderWorkFlowService.save(orderWorkFlow);
         }
         return true;
     }

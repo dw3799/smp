@@ -5,7 +5,7 @@ package com.alipapa.smp.common.enums;
  */
 public enum OrderStatusEnum {
 
-    CREATE(0, "CREATE", "已创建"),
+    CREATE(0, "CREATE", "创建"),
 
     UN_SUBMIT(1, "UN_SUBMIT", "待提交订单申请"),
 
