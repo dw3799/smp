@@ -21,7 +21,9 @@ public class OrderVo {
 
     private String createDateTime;
 
-    private String amount;
+    private String amount; //订单总金额，外币
+
+    private String receiptAmount; //定金，外币
 
     private String buyerUserNo;
 
@@ -32,6 +34,14 @@ public class OrderVo {
     private String salerUserNo;
 
     private String salerUserName;
+
+    public String getReceiptAmount() {
+        return receiptAmount;
+    }
+
+    public void setReceiptAmount(String receiptAmount) {
+        this.receiptAmount = receiptAmount;
+    }
 
     public String getConsumerCountry() {
         return consumerCountry;

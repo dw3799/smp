@@ -244,6 +244,33 @@ public class OrderServiceProxy {
         return orderVoList;
     }
 
+
+    /**
+     * 按订单状态查询
+     *
+     * @param orderStatus
+     * @return
+     */
+    public List<OrderVo> listOrderByStatus(Integer orderStatus, Integer start, Integer size) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderStatus", orderStatus);
+
+        Long totalCount = orderService.listOrderByParamCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<Order> orderList = orderService.getOrderListByParams(params);
+
+        List<OrderVo> orderVoList = this.convertOrderVo(orderList, totalCount);
+
+        return orderVoList;
+    }
+
+
     /**
      * VO转换
      *
@@ -275,6 +302,7 @@ public class OrderServiceProxy {
                 if (CollectionUtils.isEmpty(sysDictList)) {
                     SysDict currencySysDict = sysDictList.get(0);
                     orderVo.setAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencySysDict.getDictValue());
+                    orderVo.setReceiptAmount(PriceUtil.convertToYuanStr(order.getReceiptAmount()) + currencySysDict.getDictValue());
                 }
 
                 orderVo.setBuyerUserName(order.getBuyerUserName());
@@ -285,5 +313,4 @@ public class OrderServiceProxy {
         }
         return orderVoList;
     }
-
 }

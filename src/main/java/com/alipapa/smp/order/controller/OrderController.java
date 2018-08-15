@@ -524,4 +524,75 @@ public class OrderController {
         return WebApiResponse.success(null);
     }
 
+
+    /**
+     * 待出纳确认定金订单列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listCasherFrontApvOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<OrderVo>> listCasherFrontApvOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                                 @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        if (userInfo.getRoleName().equals(RoleEnum.cashier.getCodeName())) {
+            return error("没有权限");
+        }
+
+        if (pageSize == null) {
+            pageSize = 30;
+        }
+
+        if (pageNum == null) {
+            pageNum = 1;
+        }
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        List<OrderVo> orderVoList = orderServiceProxy.listOrderByStatus(OrderStatusEnum.CASH_FRONT_APV.getCode(), start, size);
+        if (CollectionUtils.isEmpty(orderVoList)) {
+            WebApiResponse response = WebApiResponse.success(orderVoList);
+            response.setTotalCount(orderVoList.get(0).getTotalCount());
+            return response;
+        }
+        return WebApiResponse.success(null);
+    }
+
+
+    /**
+     * 待财务审核定金订单列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listFinFrontApvOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<OrderVo>> listFinFrontApvOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                              @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        if (userInfo.getRoleName().equals(RoleEnum.financial.getCodeName())) {
+            return error("没有权限");
+        }
+
+        if (pageSize == null) {
+            pageSize = 30;
+        }
+
+        if (pageNum == null) {
+            pageNum = 1;
+        }
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        List<OrderVo> orderVoList = orderServiceProxy.listOrderByStatus(OrderStatusEnum.FIN_FRONT_APV.getCode(), start, size);
+        if (CollectionUtils.isEmpty(orderVoList)) {
+            WebApiResponse response = WebApiResponse.success(orderVoList);
+            response.setTotalCount(orderVoList.get(0).getTotalCount());
+            return response;
+        }
+        return WebApiResponse.success(null);
+    }
+
+
 }
