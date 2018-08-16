@@ -88,7 +88,7 @@ public class OrderServiceProxy {
             }
             orderWorkFlow.setResult("成功");
             orderWorkFlow.setUpdatedTime(new Date());
-            
+
             orderWorkFlowService.save(orderWorkFlow);
         }
         return true;
@@ -294,7 +294,7 @@ public class OrderServiceProxy {
                 orderVo.setConsumerCountry(order.getConsumerCountry());
                 orderVo.setOrderNo(order.getOrderNo());
                 orderVo.setTotalCount(totalCount);
-                orderVo.setOrderType(OrderTypeEnum.valueOf(order.getOrderType()).getCodeName());
+                orderVo.setOrderType(OrderTypeEnum.valueOf(order.getOrderType()).getDec());
 
                 Date submitTime = order.getSubmitTime();
                 if (submitTime != null) {
@@ -302,7 +302,7 @@ public class OrderServiceProxy {
                 }
                 orderVo.setCreateDateTime(DateUtil.formatToStrTimeV1(order.getCreatedTime()));
 
-                orderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getCodeName());
+                orderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getDec());
 
                 List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
 

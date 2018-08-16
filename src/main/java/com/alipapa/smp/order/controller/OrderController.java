@@ -56,7 +56,6 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
  * @version 2.0
  * 2018-08-08
  */
-
 @RestController
 @CrossOrigin
 @RequestMapping("/api/order")
