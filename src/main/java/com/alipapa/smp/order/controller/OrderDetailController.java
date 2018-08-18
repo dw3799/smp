@@ -9,11 +9,11 @@ import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
-import com.alipapa.smp.consumer.pojo.UserConsumerRelation;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.consumer.service.UserConsumerRelationService;
 import com.alipapa.smp.order.pojo.*;
+import com.alipapa.smp.order.service.OrderFollowRecordService;
 import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.SubOrderService;
@@ -27,6 +27,7 @@ import com.alipapa.smp.product.pojo.ProductPicture;
 import com.alipapa.smp.product.service.ProductCategoryService;
 import com.alipapa.smp.product.service.ProductPictureService;
 import com.alipapa.smp.product.service.ProductService;
+import com.alipapa.smp.user.pojo.Role;
 import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserService;
@@ -91,6 +92,9 @@ public class OrderDetailController {
 
     @Autowired
     private ProductPictureService productPictureService;
+
+    @Autowired
+    private RoleService roleService;
 
 
     /**
@@ -513,6 +517,89 @@ public class OrderDetailController {
             return error("更新订单异常");
         }
         return WebApiResponse.error("更新订单异常");
+    }
+
+
+    /**
+     * 主管审核业务订单
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/approve-order", method = RequestMethod.POST)
+    public WebApiResponse<String> approveOrder(@RequestParam(name = "orderNo") String orderNo,
+                                               @RequestParam(name = "consumerLevel", required = false) String consumerLevel,
+                                               @RequestParam(name = "result") String result,
+                                               @RequestParam(name = "remark", required = false) String remark) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(orderNo) || StringUtil.isEmptyString(result)) {
+                return error("缺少必传参数");
+            }
+
+            Order order = orderService.selectOrderByOrderNo(orderNo);
+            if (order == null) {
+                return WebApiResponse.error("订单不存在");
+            }
+
+            if (RoleEnum.supervisor.getCodeName() != userInfo.getRoleName()) {
+                return error("没有权限");
+            }
+
+            User user = userService.getUserByUserNo(userInfo.getUserNo());
+
+            if ("N".equals(result)) {
+                order.setOrderStatus(OrderStatusEnum.UN_SUBMIT.getCode());
+                orderService.updateOrder(order);
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
+                orderWorkFlow.setOldOrderStatus(OrderStatusEnum.SPR_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.supervisor.getDec());
+                orderWorkFlow.setOrderNo(order.getOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("审核不通过");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else if ("Y".equals(result)) {
+                order.setOrderStatus(OrderStatusEnum.UN_FRONT_PAY.getCode());
+                orderService.updateOrder(order);
+
+                String thisRemark = "";
+                if (StringUtil.isNotEmptyString(consumerLevel)) {
+                    Consumer consumer = consumerService.getConsumerByConsumerNo(order.getConsumerNo());
+                    consumer.setLevel(consumerLevel);
+                    consumerService.updateConsumer(consumer);
+                    thisRemark = "客户" + order.getConsumerNo() + "的客户等级更新为" + consumerLevel + ".";
+                }
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
+                orderWorkFlow.setOldOrderStatus(OrderStatusEnum.SPR_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.supervisor.getDec());
+                orderWorkFlow.setOrderNo(order.getOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
+                orderWorkFlow.setRemark(thisRemark + remark);
+                orderWorkFlow.setResult("审核通过");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else {
+                return error("参数有误");
+            }
+        } catch (Exception ex) {
+            logger.error("主管审核业务订单异常", ex);
+            return error("主管审核业务订单异常");
+        }
+        return WebApiResponse.success("success");
     }
 
 

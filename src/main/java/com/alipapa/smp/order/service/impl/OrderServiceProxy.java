@@ -43,9 +43,6 @@ public class OrderServiceProxy {
     private ConsumerService consumerService;
 
     @Autowired
-    private OrderFollowRecordService orderFollowRecordService;
-
-    @Autowired
     private OrderWorkFlowService orderWorkFlowService;
 
 
@@ -158,7 +155,6 @@ public class OrderServiceProxy {
             }
             orderWorkFlow.setResult("成功");
             orderWorkFlow.setUpdatedTime(new Date());
-
             orderWorkFlowService.save(orderWorkFlow);
         }
         return true;
