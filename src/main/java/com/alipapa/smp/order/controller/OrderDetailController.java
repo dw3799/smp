@@ -287,6 +287,13 @@ public class OrderDetailController {
                 return WebApiResponse.error("订单不存在");
             }
 
+            if (!order.getSalerUserNo().equals(userInfo.getUserNo())) {
+                return error("没有权限");
+            }
+
+            if (order.getOrderStatus() != OrderStatusEnum.UN_SUBMIT.getCode() && order.getOrderStatus() != OrderStatusEnum.CREATE.getCode()) {
+                return error("已提交不能修改！");
+            }
 
             String orderType = request.getParameter("orderType");
             String consumerNo = request.getParameter("consumerNo");
@@ -297,7 +304,7 @@ public class OrderDetailController {
             String expectPurchaseAmount = request.getParameter("expectPurchaseAmount");
             String products = request.getParameter("products");
             String opType = request.getParameter("opType");
-            
+
             //可为空
             String orderVolume = request.getParameter("orderVolume");
             String orderWeight = request.getParameter("orderWeight");
@@ -496,19 +503,16 @@ public class OrderDetailController {
                 subOrderList.add(subOrder);
             }
 
-            boolean flag = orderServiceProxy.createOrder(order, subOrderList);
+            boolean flag = orderServiceProxy.updateOrder(order, subOrderList);
             if (flag) {
-                UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(saler.getId(), consumer.getId(), null);
-                userConsumerRelation.setFollowTime(new Date());
-                userConsumerRelation.setHasOrder(1);
-                userConsumerRelationService.updateUserConsumerRelation(userConsumerRelation);
+                userConsumerRelationService.updateHasOrder(consumer.getId(), saler.getId());
                 return WebApiResponse.success("success");
             }
         } catch (Exception ex) {
             logger.error("", ex);
-            return error("创建订单异常");
+            return error("更新订单异常");
         }
-        return WebApiResponse.error("创建订单异常");
+        return WebApiResponse.error("更新订单异常");
     }
 
 

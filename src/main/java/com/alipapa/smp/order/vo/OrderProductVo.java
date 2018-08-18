@@ -2,6 +2,10 @@ package com.alipapa.smp.order.vo;
 
 public class OrderProductVo {
 
+    private String subOrderNo;
+
+    private String orderNo;
+
     private Long productCategoryId;
 
     private String productCategory;
@@ -38,6 +42,21 @@ public class OrderProductVo {
     private String totalVolume;
     private String totalWeight;
 
+    public String getSubOrderNo() {
+        return subOrderNo;
+    }
+
+    public void setSubOrderNo(String subOrderNo) {
+        this.subOrderNo = subOrderNo;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
 
     public String getProductCategory() {
         return productCategory;

@@ -3,6 +3,7 @@ package com.alipapa.smp.order.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alipapa.smp.common.Constant;
 import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
@@ -200,7 +201,7 @@ public class OrderController {
                 order.setSubmitTime(new Date());
             }
 
-            String orderNo = MAIN_ORDER_PREFIX + OrderNumberGenerator.get();
+            String orderNo = Constant.MAIN_ORDER_PREFIX + OrderNumberGenerator.get();
             order.setOrderNo(orderNo);
             order.setOrderType(orderTypeEnum.getCode());
             order.setOrderVolume(orderVolume);
@@ -267,7 +268,7 @@ public class OrderController {
                 subOrder.setProductRemark(productRemark);
                 subOrder.setRemark(null);
 
-                String subOrderNo = SUB_ORDER_PREFIX + OrderNumberGenerator.get();
+                String subOrderNo = Constant.SUB_ORDER_PREFIX + OrderNumberGenerator.get();
                 subOrder.setSubOrderNo(subOrderNo);
                 subOrder.setSubOrderStatus(SubOrderStatusEnum.CREATE.getCode());
                 subOrder.setSubPayStatus(SubOrderPayStatusEnum.UN_PAY.getCode());
@@ -315,7 +316,7 @@ public class OrderController {
                     agentOrderDetail.setFactoryAmount(PriceUtil.convertToFen(factoryAmount));
                     agentOrderDetail.setPackageNumber(packageNumber);
                     agentOrderDetail.setSaleAmount(PriceUtil.convertToFen(saleAmount));
-                    agentOrderDetail.setSaleNo(SALE_NO_PREFIX + product.getId() + consumer.getConsumerNo());
+                    agentOrderDetail.setSaleNo(Constant.SALE_NO_PREFIX + product.getId() + consumer.getConsumerNo());
                     agentOrderDetail.setSinglePackageCount(singlePackageCount);
                     agentOrderDetail.setSingleVolume(singleVolume);
                     agentOrderDetail.setSingleWeight(singleWeight);
@@ -332,10 +333,7 @@ public class OrderController {
 
             boolean flag = orderServiceProxy.createOrder(order, subOrderList);
             if (flag) {
-                UserConsumerRelation userConsumerRelation = userConsumerRelationService.getRelationByConsumerIsDel(saler.getId(), consumer.getId(), null);
-                userConsumerRelation.setFollowTime(new Date());
-                userConsumerRelation.setHasOrder(1);
-                userConsumerRelationService.updateUserConsumerRelation(userConsumerRelation);
+                userConsumerRelationService.updateHasOrder(consumer.getId(), saler.getId());
                 return WebApiResponse.success("success");
             }
         } catch (Exception ex) {

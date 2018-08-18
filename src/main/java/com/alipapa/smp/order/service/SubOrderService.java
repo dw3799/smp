@@ -47,6 +47,44 @@ public class SubOrderService {
 
 
     /**
+     * 修改产品订单
+     *
+     * @param record
+     * @return
+     */
+    public boolean updateSubOrder(SubOrder record, OrderTypeEnum orderTypeEnum) {
+        if (orderTypeEnum == OrderTypeEnum.SELF_ORDER) {
+            SelfOrderDetail selfOrderDetail = record.getSelfOrderDetail();
+            selfOrderDetailMapper.updateByPrimaryKey(selfOrderDetail);
+        } else if (orderTypeEnum == OrderTypeEnum.AGENT_ORDER) {
+            AgentOrderDetail agentOrderDetail = record.getAgentOrderDetail();
+            agentOrderDetailMapper.updateByPrimaryKey(agentOrderDetail);
+        }
+        subOrderMapper.updateByPrimaryKey(record);
+        return true;
+    }
+
+
+    /**
+     * 修改产品订单
+     *
+     * @param record
+     * @return
+     */
+    public boolean delSubOrder(SubOrder record, OrderTypeEnum orderTypeEnum) {
+        if (orderTypeEnum == OrderTypeEnum.SELF_ORDER) {
+            SelfOrderDetail selfOrderDetail = record.getSelfOrderDetail();
+            selfOrderDetailMapper.deleteByPrimaryKey(selfOrderDetail.getId());
+        } else if (orderTypeEnum == OrderTypeEnum.AGENT_ORDER) {
+            AgentOrderDetail agentOrderDetail = record.getAgentOrderDetail();
+            agentOrderDetailMapper.deleteByPrimaryKey(agentOrderDetail.getId());
+        }
+        subOrderMapper.deleteByPrimaryKey(record.getId());
+        return true;
+    }
+
+
+    /**
      * 获取产品订单
      *
      * @param orderNo

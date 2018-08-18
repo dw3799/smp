@@ -71,7 +71,7 @@ public class OrderServiceProxy {
             //保存订单流转记录
             OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
             orderWorkFlow.setCreatedTime(new Date());
-            orderWorkFlow.setNewOrderStatus(OrderStatusEnum.UN_SUBMIT.getCode());
+            orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
             orderWorkFlow.setOldOrderStatus(OrderStatusEnum.CREATE.getCode());
             orderWorkFlow.setOpUserName(order.getSalerUserName());
             orderWorkFlow.setOpUserNo(order.getSalerUserNo());
@@ -91,6 +91,78 @@ public class OrderServiceProxy {
         return true;
     }
 
+
+    /**
+     * 更新主订单及产品订单及产品明细
+     *
+     * @param order
+     * @param subOrderList
+     * @return
+     */
+    @Transactional
+    public Boolean updateOrder(Order order, List<SubOrder> subOrderList) throws Exception {
+        if (CollectionUtils.isEmpty(subOrderList)) {
+            throw new Exception("订单数据异常");
+        }
+
+
+        boolean flag = orderService.updateOrder(order);
+
+        if (flag) {
+            OrderTypeEnum orderTypeEnum = OrderTypeEnum.valueOf(order.getOrderType());
+            List<SubOrder> oldSubOrderList = subOrderService.listSubOrderByOrderNo(order.getOrderNo(), orderTypeEnum);
+            HashMap<String, SubOrder> oldSubOrderMap = new HashMap<>();
+
+            List<String> oldSubOrderNoList = new ArrayList<>();
+
+            if (!CollectionUtils.isEmpty(oldSubOrderList)) {
+                for (SubOrder oldSubOrder : oldSubOrderList) {
+                    oldSubOrderMap.put(oldSubOrder.getSubOrderNo(), oldSubOrder);
+                    oldSubOrderNoList.add(oldSubOrder.getSubOrderNo());
+                }
+            }
+
+
+            for (SubOrder newSubOrder : subOrderList) {
+                if (newSubOrder.getId() == null) { //新增产品订单
+                    subOrderService.saveSubOrder(newSubOrder, orderTypeEnum);
+                } else if (oldSubOrderMap.get(newSubOrder.getSubOrderNo()) != null) {
+                    subOrderService.updateSubOrder(newSubOrder, orderTypeEnum);
+                    oldSubOrderNoList.remove(newSubOrder.getSubOrderNo());
+                }
+            }
+
+
+            //删除产品订单
+            if (!CollectionUtils.isEmpty(oldSubOrderNoList)) {
+                for (String delSubOrderNo : oldSubOrderNoList) {
+                    SubOrder subOrder = oldSubOrderMap.get(delSubOrderNo);
+                    subOrderService.delSubOrder(subOrder, orderTypeEnum);
+                }
+            }
+
+            //保存订单流转记录
+            OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+            orderWorkFlow.setCreatedTime(new Date());
+            orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
+            orderWorkFlow.setOldOrderStatus(OrderStatusEnum.UN_SUBMIT.getCode());
+            orderWorkFlow.setOpUserName(order.getSalerUserName());
+            orderWorkFlow.setOpUserNo(order.getSalerUserNo());
+            orderWorkFlow.setOpUserRole(RoleEnum.saler.getDec());
+            orderWorkFlow.setOrderNo(order.getOrderNo());
+            orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
+            if (order.getOrderStatus() == OrderStatusEnum.UN_SUBMIT.getCode()) {
+                orderWorkFlow.setRemark("修改订单");
+            } else if (order.getOrderStatus() == OrderStatusEnum.SPR_APV.getCode()) {
+                orderWorkFlow.setRemark("修改并提交订单");
+            }
+            orderWorkFlow.setResult("成功");
+            orderWorkFlow.setUpdatedTime(new Date());
+
+            orderWorkFlowService.save(orderWorkFlow);
+        }
+        return true;
+    }
 
     /**
      * 获取客户历史订单列表
