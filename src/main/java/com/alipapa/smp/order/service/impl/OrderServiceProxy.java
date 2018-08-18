@@ -1,9 +1,6 @@
 package com.alipapa.smp.order.service.impl;
 
-import com.alipapa.smp.common.enums.OrderCategoryCode;
-import com.alipapa.smp.common.enums.OrderStatusEnum;
-import com.alipapa.smp.common.enums.OrderTypeEnum;
-import com.alipapa.smp.common.enums.RoleEnum;
+import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.service.ConsumerService;
@@ -80,7 +77,7 @@ public class OrderServiceProxy {
             orderWorkFlow.setOpUserNo(order.getSalerUserNo());
             orderWorkFlow.setOpUserRole(RoleEnum.saler.getDec());
             orderWorkFlow.setOrderNo(order.getOrderNo());
-            orderWorkFlow.setType("M_ORDER");
+            orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
             if (order.getOrderStatus() == OrderStatusEnum.UN_SUBMIT.getCode()) {
                 orderWorkFlow.setRemark("创建订单");
             } else if (order.getOrderStatus() == OrderStatusEnum.SPR_APV.getCode()) {

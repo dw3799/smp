@@ -3,6 +3,7 @@ package com.alipapa.smp.order.service;
 import com.alipapa.smp.order.mapper.OrderMapper;
 import com.alipapa.smp.order.pojo.Order;
 import com.alipapa.smp.order.pojo.OrderExample;
+import com.alipapa.smp.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,9 @@ public class OrderService {
      * @return
      */
     public Order selectOrderByOrderNo(String orderNo) {
+        if (StringUtil.isEmptyString(orderNo)) {
+            return null;
+        }
         OrderExample example = new OrderExample();
         OrderExample.Criteria criteria = example.createCriteria();
         criteria.andOrderNoEqualTo(orderNo);

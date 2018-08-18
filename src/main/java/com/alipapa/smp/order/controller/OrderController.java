@@ -61,9 +61,6 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
 @RequestMapping("/api/order")
 public class OrderController {
     private static Logger logger = LoggerFactory.getLogger(ConsumerController.class);
-    private static final String MAIN_ORDER_PREFIX = "M";
-    private static final String SUB_ORDER_PREFIX = "P";
-    private static final String SALE_NO_PREFIX = "SN";
 
 
     @Autowired

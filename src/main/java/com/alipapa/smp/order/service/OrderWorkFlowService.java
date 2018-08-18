@@ -2,8 +2,11 @@ package com.alipapa.smp.order.service;
 
 import com.alipapa.smp.order.mapper.OrderWorkFlowMapper;
 import com.alipapa.smp.order.pojo.OrderWorkFlow;
+import com.alipapa.smp.order.pojo.OrderWorkFlowExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class OrderWorkFlowService {
@@ -21,4 +24,24 @@ public class OrderWorkFlowService {
         orderWorkFlowMapper.insert(record);
         return true;
     }
+
+
+    /**
+     * 流转记录查询
+     *
+     * @param orderNo,type
+     * @return
+     */
+    public List<OrderWorkFlow> listOrderWorkFlowByParams(String orderNo, String type) {
+        OrderWorkFlowExample example = new OrderWorkFlowExample();
+        OrderWorkFlowExample.Criteria criteria = example.createCriteria();
+        criteria.andOrderNoEqualTo(orderNo);
+        criteria.andTypeEqualTo(type);
+        example.setOrderByClause("createdTime desc");
+        return orderWorkFlowMapper.selectByExample(example);
+
+
+    }
+
+
 }
