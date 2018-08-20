@@ -20,9 +20,30 @@ public class BasicOrderInfo {
 
     private String buyerUserName;
 
+    private String productAmount;
+
+    private String orderAmount;
+
     private String submitDateTime;
 
     private String createDateTime;
+
+
+    public String getProductAmount() {
+        return productAmount;
+    }
+
+    public void setProductAmount(String productAmount) {
+        this.productAmount = productAmount;
+    }
+
+    public String getOrderAmount() {
+        return orderAmount;
+    }
+
+    public void setOrderAmount(String orderAmount) {
+        this.orderAmount = orderAmount;
+    }
 
     public String getBuyerUserNo() {
         return buyerUserNo;

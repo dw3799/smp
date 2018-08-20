@@ -13,7 +13,7 @@ import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.consumer.service.UserConsumerRelationService;
 import com.alipapa.smp.order.pojo.*;
-import com.alipapa.smp.order.service.OrderFollowRecordService;
+import com.alipapa.smp.order.service.ConsumerFrontPayService;
 import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.SubOrderService;
@@ -27,7 +27,6 @@ import com.alipapa.smp.product.pojo.ProductPicture;
 import com.alipapa.smp.product.service.ProductCategoryService;
 import com.alipapa.smp.product.service.ProductPictureService;
 import com.alipapa.smp.product.service.ProductService;
-import com.alipapa.smp.user.pojo.Role;
 import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserService;
@@ -94,8 +93,7 @@ public class OrderDetailController {
     private ProductPictureService productPictureService;
 
     @Autowired
-    private RoleService roleService;
-
+    private ConsumerFrontPayService consumerFrontPayService;
 
     /**
      * 订单基本信息
@@ -136,6 +134,16 @@ public class OrderDetailController {
             basicOrderInfo.setSubmitDateTime(DateUtil.formatToStrTimeV1(order.getSubmitTime()));
             basicOrderInfo.setBuyerUserNo(order.getBuyerUserNo());
             basicOrderInfo.setBuyerUserName(order.getBuyerUserName());
+
+            List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
+            String currencyDec = "UNKNOWN";
+            if (CollectionUtils.isEmpty(sysDictList)) {
+                SysDict currencySysDict = sysDictList.get(0);
+                currencyDec = currencySysDict.getDictValue();
+            }
+
+            basicOrderInfo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
+            basicOrderInfo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
 
             return WebApiResponse.success(basicOrderInfo);
         } catch (Exception ex) {
@@ -598,6 +606,131 @@ public class OrderDetailController {
         } catch (Exception ex) {
             logger.error("主管审核业务订单异常", ex);
             return error("主管审核业务订单异常");
+        }
+        return WebApiResponse.success("success");
+    }
+
+
+    /**
+     * 业务员提交定金
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/commitOrderFrontPay", method = RequestMethod.POST)
+    public WebApiResponse<String> commitOrderFrontPay(HttpServletRequest request) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        try {
+            //不能为空
+            String orderNo = request.getParameter("orderNo");
+
+            Order order = orderService.selectOrderByOrderNo(orderNo);
+            if (order == null) {
+                return WebApiResponse.error("订单不存在");
+            }
+
+            if (!order.getSalerUserNo().equals(userInfo.getUserNo())) {
+                return error("没有权限");
+            }
+
+            if (order.getOrderStatus() != OrderStatusEnum.UN_FRONT_PAY.getCode()) {
+                return error("当前状态不能提交定金！");
+            }
+
+            String frontAmount = request.getParameter("frontAmount"); //应收定金
+            String receiptChannel = request.getParameter("receiptChannel");
+            String receiptNo = request.getParameter("receiptNo");
+            String payChannel = request.getParameter("payChannel");
+            String payNo = request.getParameter("payNo");
+            String opType = request.getParameter("opType");
+
+            if (StringUtil.isEmptyString(orderNo) || StringUtil.isEmptyString(opType) || StringUtil.isEmptyString(frontAmount) || StringUtil.isEmptyString(receiptChannel) || StringUtil.isEmptyString(receiptNo) || StringUtil.isEmptyString(payChannel)
+                    || StringUtil.isEmptyString(payNo)) {
+                return error("缺少必填参数");
+            }
+
+
+            OrderOPerateTypeEnum orderOPerateTypeEnum = OrderOPerateTypeEnum.valueOf(opType);
+            if (orderOPerateTypeEnum == null) {
+                return error("操作类型有误");
+            }
+            
+            String royaltyAmount = request.getParameter("royaltyAmount"); //打版费
+            String freightAmount = request.getParameter("freightAmount"); //运输费
+            String bankFee = request.getParameter("bankFee"); //银行手续费
+            String othersFee = request.getParameter("othersFee"); //其他费用
+
+
+            ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(orderNo);
+            if (consumerFrontPay == null) {
+                consumerFrontPay = new ConsumerFrontPay();
+            }
+
+            consumerFrontPay.setActualAmount(null);//出纳补充
+            if (StringUtil.isNotEmptyString(bankFee)) {
+                consumerFrontPay.setBankFee(PriceUtil.convertToFen(bankFee));
+            } else {
+                consumerFrontPay.setBankFee(0L);
+            }
+
+
+            if (StringUtil.isNotEmptyString(othersFee)) {
+                consumerFrontPay.setOthersFee(PriceUtil.convertToFen(othersFee));
+            } else {
+                consumerFrontPay.setOthersFee(0L);
+            }
+
+            if (StringUtil.isNotEmptyString(freightAmount)) {
+                consumerFrontPay.setFreightAmount(PriceUtil.convertToFen(freightAmount));
+            } else {
+                consumerFrontPay.setFreightAmount(0L);
+            }
+
+            if (StringUtil.isNotEmptyString(freightAmount)) {
+                consumerFrontPay.setFreightAmount(PriceUtil.convertToFen(freightAmount));
+            } else {
+                consumerFrontPay.setFreightAmount(0L);
+            }
+
+            if (StringUtil.isNotEmptyString(royaltyAmount)) {
+                consumerFrontPay.setRoyaltyAmount(PriceUtil.convertToFen(royaltyAmount));
+            } else {
+                consumerFrontPay.setRoyaltyAmount(0L);
+            }
+
+
+            consumerFrontPay.setCnActualAmount(null); //财务审核时补充
+            consumerFrontPay.setConsumerCountry(order.getConsumerCountry());
+            consumerFrontPay.setConsumerName(order.getConsumerName());
+            consumerFrontPay.setConsumerNo(order.getConsumerNo());
+
+            if (consumerFrontPay.getCreatedTime() == null) {
+                consumerFrontPay.setCreatedTime(new Date());
+            }
+
+            consumerFrontPay.setExchangeRate(null);//汇率，财务审核时补充
+            consumerFrontPay.setOrderNo(orderNo);
+            consumerFrontPay.setPayChannel(payChannel);
+            consumerFrontPay.setPayNo(payNo);
+            consumerFrontPay.setPayTime(new Date());
+            consumerFrontPay.setReceiptChannel(receiptChannel);
+            consumerFrontPay.setReceiptNo(receiptNo);
+            consumerFrontPay.setRemark(null);
+            consumerFrontPay.setUpdatedTime(new Date());
+
+            if (OrderOPerateTypeEnum.SUBMIT == orderOPerateTypeEnum) {
+                order.setOrderStatus(OrderStatusEnum.CASH_FRONT_APV.getCode());
+            }
+
+            //更新订单总金额
+            order.setOrderAmount(order.getOrderAmount() + consumerFrontPay.getBankFee() + consumerFrontPay.getFreightAmount() + consumerFrontPay.getOthersFee() + consumerFrontPay.getRoyaltyAmount());
+
+            consumerFrontPayService.saveOrCreateConsumerFrontPay(order, consumerFrontPay);
+            orderService.updateOrder(order);
+        } catch (Exception ex) {
+            logger.error("业务员提交定金异常", ex);
+            return error("业务员提交定金异常");
         }
         return WebApiResponse.success("success");
     }

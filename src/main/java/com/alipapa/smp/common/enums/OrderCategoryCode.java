@@ -6,9 +6,11 @@ package com.alipapa.smp.common.enums;
 public enum OrderCategoryCode {
     Currency(1, "Currency", "币种"),
 
-    OrderType(2, "OrderType", "订单类型");
+    OrderType(2, "OrderType", "订单类型"),
 
-    
+    PayChannel(3, "PayChannel", "支付渠道");
+
+
     OrderCategoryCode(int code, String codeName, String dec) {
         this.code = code;
         this.codeName = codeName;
