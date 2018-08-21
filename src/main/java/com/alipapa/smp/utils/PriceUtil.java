@@ -15,8 +15,8 @@ public class PriceUtil {
      * @param price
      * @return
      */
-    public static long convertToFen(float price) {
-        return PriceUtil.convertToFen(Float.toString(price));
+    public static long convertToFen(Double price) {
+        return PriceUtil.convertToFen(Double.toString(price));
     }
 
     /**

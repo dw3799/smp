@@ -5,14 +5,8 @@ import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
-import com.alipapa.smp.order.pojo.Order;
-import com.alipapa.smp.order.pojo.OrderFollowRecord;
-import com.alipapa.smp.order.pojo.OrderWorkFlow;
-import com.alipapa.smp.order.pojo.SubOrder;
-import com.alipapa.smp.order.service.OrderFollowRecordService;
-import com.alipapa.smp.order.service.OrderService;
-import com.alipapa.smp.order.service.OrderWorkFlowService;
-import com.alipapa.smp.order.service.SubOrderService;
+import com.alipapa.smp.order.pojo.*;
+import com.alipapa.smp.order.service.*;
 import com.alipapa.smp.order.vo.ConsumerOrderCount;
 import com.alipapa.smp.order.vo.ConsumerOrderVo;
 import com.alipapa.smp.order.vo.OrderVo;
@@ -45,6 +39,8 @@ public class OrderServiceProxy {
     @Autowired
     private OrderWorkFlowService orderWorkFlowService;
 
+    @Autowired
+    private ConsumerFrontPayService consumerFrontPayService;
 
     /**
      * 创建主订单及产品订单及产品明细
@@ -373,9 +369,16 @@ public class OrderServiceProxy {
 
                 if (CollectionUtils.isEmpty(sysDictList)) {
                     SysDict currencySysDict = sysDictList.get(0);
-                    orderVo.setAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencySysDict.getDictValue());
-                    orderVo.setReceiptAmount(PriceUtil.convertToYuanStr(order.getReceiptAmount()) + currencySysDict.getDictValue());
                 }
+
+                String currencyDec = orderService.getCurrencyDec(order);
+                orderVo.setAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
+
+                ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(order.getOrderNo());
+                if (consumerFrontPay != null) {
+                    orderVo.setReceiptAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
+                }
+
 
                 orderVo.setBuyerUserName(order.getBuyerUserName());
                 orderVo.setBuyerUserNo(order.getBuyerUserNo());

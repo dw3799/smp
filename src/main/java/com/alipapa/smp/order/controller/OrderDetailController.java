@@ -8,9 +8,7 @@ import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.Consumer;
-import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.service.ConsumerService;
-import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.consumer.service.UserConsumerRelationService;
 import com.alipapa.smp.order.pojo.*;
 import com.alipapa.smp.order.service.ConsumerFrontPayService;
@@ -19,6 +17,7 @@ import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.order.service.impl.OrderServiceProxy;
 import com.alipapa.smp.order.vo.BasicOrderInfo;
+import com.alipapa.smp.order.vo.ConsumerFrontPayVo;
 import com.alipapa.smp.order.vo.OrderProductVo;
 import com.alipapa.smp.order.vo.OrderWorkFlowVo;
 import com.alipapa.smp.product.pojo.Product;
@@ -28,7 +27,6 @@ import com.alipapa.smp.product.service.ProductCategoryService;
 import com.alipapa.smp.product.service.ProductPictureService;
 import com.alipapa.smp.product.service.ProductService;
 import com.alipapa.smp.user.pojo.User;
-import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.*;
 import org.slf4j.Logger;
@@ -64,9 +62,6 @@ public class OrderDetailController {
 
     @Autowired
     private SubOrderService subOrderService;
-
-    @Autowired
-    private SysDictService sysDictService;
 
     @Autowired
     private OrderWorkFlowService orderWorkFlowService;
@@ -126,6 +121,8 @@ public class OrderDetailController {
                 basicOrderInfo.setConsumerNo(order.getOrderNo());
             }
 
+            String currencyDec = orderService.getCurrencyDec(order);
+
             basicOrderInfo.setCreateDateTime(DateUtil.formatToStrTimeV1(order.getCreatedTime()));
             basicOrderInfo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getDec());
             basicOrderInfo.setOrderType(OrderTypeEnum.valueOf(order.getOrderType()).getDec());
@@ -134,13 +131,6 @@ public class OrderDetailController {
             basicOrderInfo.setSubmitDateTime(DateUtil.formatToStrTimeV1(order.getSubmitTime()));
             basicOrderInfo.setBuyerUserNo(order.getBuyerUserNo());
             basicOrderInfo.setBuyerUserName(order.getBuyerUserName());
-
-            List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
-            String currencyDec = "UNKNOWN";
-            if (CollectionUtils.isEmpty(sysDictList)) {
-                SysDict currencySysDict = sysDictList.get(0);
-                currencyDec = currencySysDict.getDictValue();
-            }
 
             basicOrderInfo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
             basicOrderInfo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
@@ -170,13 +160,7 @@ public class OrderDetailController {
             return WebApiResponse.error("订单不存在");
         }
 
-        List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
-        String currencyDec = "UNKNOWN";
-        if (CollectionUtils.isEmpty(sysDictList)) {
-            SysDict currencySysDict = sysDictList.get(0);
-            currencyDec = currencySysDict.getDictValue();
-        }
-
+        String currencyDec = orderService.getCurrencyDec(order);
 
         OrderTypeEnum orderTypeEnum = OrderTypeEnum.valueOf(order.getOrderType());
         if (orderTypeEnum == null) {
@@ -554,6 +538,11 @@ public class OrderDetailController {
                 return error("没有权限");
             }
 
+            if (order.getOrderStatus() != OrderStatusEnum.SPR_APV.getCode()) {
+                return error("当前状态不能审核！");
+            }
+
+
             User user = userService.getUserByUserNo(userInfo.getUserNo());
 
             if ("N".equals(result)) {
@@ -655,7 +644,7 @@ public class OrderDetailController {
             if (orderOPerateTypeEnum == null) {
                 return error("操作类型有误");
             }
-            
+
             String royaltyAmount = request.getParameter("royaltyAmount"); //打版费
             String freightAmount = request.getParameter("freightAmount"); //运输费
             String bankFee = request.getParameter("bankFee"); //银行手续费
@@ -721,6 +710,7 @@ public class OrderDetailController {
 
             if (OrderOPerateTypeEnum.SUBMIT == orderOPerateTypeEnum) {
                 order.setOrderStatus(OrderStatusEnum.CASH_FRONT_APV.getCode());
+                order.setPayStatus(OrderPayStatusEnum.FRONT_PAY_APPROVE.getCode());
             }
 
             //更新订单总金额
@@ -736,4 +726,255 @@ public class OrderDetailController {
     }
 
 
+    /**
+     * 获取定金信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/getOrderFrontPay", method = RequestMethod.GET)
+    public WebApiResponse<ConsumerFrontPayVo> getOrderFrontPay(@RequestParam(name = "orderNo") String orderNo) {
+        if (StringUtil.isEmptyString(orderNo)) {
+            return error("缺少必要参数");
+        }
+
+        Order order = orderService.selectOrderByOrderNo(orderNo);
+        if (order == null) {
+            return WebApiResponse.error("订单不存在");
+        }
+
+        try {
+            ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(orderNo);
+            if (consumerFrontPay == null) {
+                return WebApiResponse.success(null);
+            }
+
+            ConsumerFrontPayVo consumerFrontPayVo = new ConsumerFrontPayVo();
+
+            String currencyDec = orderService.getCurrencyDec(order);
+            if (consumerFrontPay.getActualAmount() != null) {
+                consumerFrontPayVo.setActualAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
+            }
+            if (consumerFrontPay.getBankFee() > 0) {
+                consumerFrontPayVo.setBankFee(PriceUtil.convertToYuanStr(consumerFrontPay.getBankFee()) + currencyDec);
+            }
+
+            if (consumerFrontPay.getFreightAmount() > 0) {
+                consumerFrontPayVo.setFreightAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFreightAmount()) + currencyDec);
+            }
+
+            if (consumerFrontPay.getRoyaltyAmount() > 0) {
+                consumerFrontPayVo.setRoyaltyAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getRoyaltyAmount()) + currencyDec);
+            }
+
+            if (consumerFrontPay.getOthersFee() > 0) {
+                consumerFrontPayVo.setOthersFee(PriceUtil.convertToYuanStr(consumerFrontPay.getOthersFee()) + currencyDec);
+            }
+
+
+            if (consumerFrontPay.getFreightAmount() > 0) {
+                consumerFrontPayVo.setFreightAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFreightAmount()) + currencyDec);
+            }
+
+
+            if (consumerFrontPay.getCnActualAmount() != null) {
+                consumerFrontPayVo.setCnActualAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getCnActualAmount()) + Constant.YMB);
+            }
+
+            consumerFrontPayVo.setExchangeRate(consumerFrontPay.getExchangeRate());
+
+            consumerFrontPayVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFrontAmount()) + currencyDec);
+            consumerFrontPayVo.setOrderNo(orderNo);
+            consumerFrontPayVo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
+            consumerFrontPayVo.setPayChannel(consumerFrontPay.getPayChannel());
+            consumerFrontPayVo.setPayNo(consumerFrontPay.getPayNo());
+            consumerFrontPayVo.setPayTime(DateUtil.formatToStrTimeV1(consumerFrontPay.getPayTime()));
+            consumerFrontPayVo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
+            consumerFrontPayVo.setReceiptChannel(consumerFrontPay.getReceiptChannel());
+            consumerFrontPayVo.setReceiptNo(consumerFrontPay.getReceiptNo());
+
+            return WebApiResponse.success(consumerFrontPayVo);
+        } catch (Exception ex) {
+            logger.error("获取定金信息异常", ex);
+            return error("获取定金信息异常");
+        }
+    }
+
+
+    /**
+     * 出纳确认订单定金信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/cashApproveFrontPay", method = RequestMethod.POST)
+    public WebApiResponse<String> cashApproveFrontPay(@RequestParam(name = "orderNo") String orderNo,
+                                                      @RequestParam(name = "actualAmount") String actualAmount,
+                                                      @RequestParam(name = "exchangeRate") String exchangeRate,
+                                                      @RequestParam(name = "result") String result,
+                                                      @RequestParam(name = "remark", required = false) String remark) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(orderNo) || StringUtil.isEmptyString(result) || StringUtil.isEmptyString(actualAmount) || StringUtil.isEmptyString(exchangeRate)) {
+                return error("缺少必传参数");
+            }
+
+            Order order = orderService.selectOrderByOrderNo(orderNo);
+            if (order == null) {
+                return WebApiResponse.error("订单不存在");
+            }
+
+            if (RoleEnum.cashier.getCodeName() != userInfo.getRoleName()) {
+                return error("没有权限");
+            }
+
+            ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(orderNo);
+            if (consumerFrontPay == null) {
+                return error("定金信息不存在");
+            }
+
+            if (order.getOrderStatus() != OrderStatusEnum.CASH_FRONT_APV.getCode()) {
+                return error("当前状态无法确认定金！");
+            }
+
+            User user = userService.getUserByUserNo(userInfo.getUserNo());
+
+            if ("N".equals(result)) {
+                order.setOrderStatus(OrderStatusEnum.UN_FRONT_PAY.getCode());
+                orderService.updateOrder(order);
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
+                orderWorkFlow.setOldOrderStatus(OrderStatusEnum.CASH_FRONT_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.cashier.getDec());
+                orderWorkFlow.setOrderNo(order.getOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("审核不通过");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else if ("Y".equals(result)) {
+                order.setOrderStatus(OrderStatusEnum.FIN_FRONT_APV.getCode());
+                orderService.updateOrder(order);
+
+                consumerFrontPay.setExchangeRate(exchangeRate);
+                consumerFrontPay.setActualAmount(PriceUtil.convertToFen(actualAmount));
+                Double cnActualAccount = Double.parseDouble(actualAmount) * Double.valueOf(consumerFrontPay.getExchangeRate());
+                consumerFrontPay.setCnActualAmount(PriceUtil.convertToFen(cnActualAccount));
+                consumerFrontPayService.updateConsumerFrontPay(consumerFrontPay);
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
+                orderWorkFlow.setOldOrderStatus(OrderStatusEnum.CASH_FRONT_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.cashier.getDec());
+                orderWorkFlow.setOrderNo(order.getOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("审核通过");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else {
+                return error("参数有误");
+            }
+
+        } catch (Exception ex) {
+            logger.error("出纳确认订单定金信息异常", ex);
+            return error("出纳确认订单定金信息异常");
+        }
+        return WebApiResponse.success("success");
+    }
+
+
+    /**
+     * 财务审核订单定金信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/finApproveFrontPay", method = RequestMethod.POST)
+    public WebApiResponse<String> finApproveFrontPay(@RequestParam(name = "orderNo") String orderNo,
+                                                     @RequestParam(name = "result") String result,
+                                                     @RequestParam(name = "remark", required = false) String remark) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(orderNo) || StringUtil.isEmptyString(result)) {
+                return error("缺少必传参数");
+            }
+
+            Order order = orderService.selectOrderByOrderNo(orderNo);
+            if (order == null) {
+                return WebApiResponse.error("订单不存在");
+            }
+
+            if (RoleEnum.financial.getCodeName() != userInfo.getRoleName()) {
+                return error("没有权限");
+            }
+
+            ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(orderNo);
+            if (consumerFrontPay == null) {
+                return error("定金信息不存在");
+            }
+
+            if (order.getOrderStatus() != OrderStatusEnum.FIN_FRONT_APV.getCode()) {
+                return error("当前状态财务无法审核定金！");
+            }
+
+            User user = userService.getUserByUserNo(userInfo.getUserNo());
+
+            if ("N".equals(result)) {
+                order.setOrderStatus(OrderStatusEnum.UN_FRONT_PAY.getCode());
+                orderService.updateOrder(order);
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
+                orderWorkFlow.setOldOrderStatus(OrderStatusEnum.FIN_FRONT_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.financial.getDec());
+                orderWorkFlow.setOrderNo(order.getOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("审核不通过");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else if ("Y".equals(result)) {
+                order.setOrderStatus(OrderStatusEnum.DELIVERY.getCode());
+                order.setPayStatus(OrderPayStatusEnum.FRONT_PAY.getCode());
+                order.setReceiptAmount(consumerFrontPay.getActualAmount());
+                orderService.updateOrder(order);
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
+                orderWorkFlow.setOldOrderStatus(OrderStatusEnum.FIN_FRONT_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.financial.getDec());
+                orderWorkFlow.setOrderNo(order.getOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("审核通过");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else {
+                return error("参数有误");
+            }
+
+        } catch (Exception ex) {
+            logger.error("财务审核订单定金信息异常", ex);
+            return error("财务审核订单定金信息异常");
+        }
+        return WebApiResponse.success("success");
+    }
 }

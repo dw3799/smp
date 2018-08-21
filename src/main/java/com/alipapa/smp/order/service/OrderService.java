@@ -1,5 +1,8 @@
 package com.alipapa.smp.order.service;
 
+import com.alipapa.smp.common.enums.OrderCategoryCode;
+import com.alipapa.smp.consumer.pojo.SysDict;
+import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.order.mapper.OrderMapper;
 import com.alipapa.smp.order.pojo.Order;
 import com.alipapa.smp.order.pojo.OrderExample;
@@ -8,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
@@ -21,6 +25,9 @@ public class OrderService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private SysDictService sysDictService;
 
     /**
      * 保存订单
@@ -40,6 +47,7 @@ public class OrderService {
      * @param record
      * @return
      */
+    @Transactional
     public boolean updateOrder(Order record) {
         orderMapper.updateByPrimaryKey(record);
         return true;
@@ -145,4 +153,17 @@ public class OrderService {
     }
 
 
+    /**
+     * @return
+     */
+    public String getCurrencyDec(Order order) {
+        List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
+        String currencyDec = "UNKNOWN";
+        if (CollectionUtils.isEmpty(sysDictList)) {
+            SysDict currencySysDict = sysDictList.get(0);
+            currencyDec = currencySysDict.getDictValue();
+        }
+
+        return currencyDec;
+    }
 }

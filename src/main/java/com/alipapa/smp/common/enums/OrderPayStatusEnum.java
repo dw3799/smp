@@ -7,7 +7,9 @@ public enum OrderPayStatusEnum {
 
     UN_PAY(0, "UN_PAY", "未支付"),
 
-    FRONT_PAY(1, "FRONT_PAY", "已支付定金"),
+    FRONT_PAY_APPROVE(1, "FRONT_PAY_APPROVE", "支付定金审核中"),
+
+    FRONT_PAY(2, "FRONT_PAY", "已支付定金"),
 
     TAIL_PAYING(3, "TAIL_PAYING", "尾款支付中"),
 

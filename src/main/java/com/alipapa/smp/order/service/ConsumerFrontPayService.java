@@ -88,4 +88,15 @@ public class ConsumerFrontPayService {
     }
 
 
+    /**
+     * 补充定金信息
+     *
+     * @param consumerFrontPay
+     * @return
+     */
+    public boolean updateConsumerFrontPay(ConsumerFrontPay consumerFrontPay) {
+        consumerFrontPayMapper.updateByPrimaryKey(consumerFrontPay);
+        return true;
+    }
+
 }
