@@ -365,12 +365,6 @@ public class OrderServiceProxy {
 
                 orderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getDec());
 
-                List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
-
-                if (CollectionUtils.isEmpty(sysDictList)) {
-                    SysDict currencySysDict = sysDictList.get(0);
-                }
-
                 String currencyDec = orderService.getCurrencyDec(order);
                 orderVo.setAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
 
@@ -378,7 +372,6 @@ public class OrderServiceProxy {
                 if (consumerFrontPay != null) {
                     orderVo.setReceiptAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
                 }
-
 
                 orderVo.setBuyerUserName(order.getBuyerUserName());
                 orderVo.setBuyerUserNo(order.getBuyerUserNo());
