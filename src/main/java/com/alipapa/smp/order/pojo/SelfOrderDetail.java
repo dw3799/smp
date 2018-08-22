@@ -21,10 +21,6 @@ public class SelfOrderDetail {
 
     private Integer quantity;
 
-    private Long saleAmount;
-
-    private Long factoryAmount;
-
     private String remark;
 
     private Date createdTime;
@@ -101,22 +97,6 @@ public class SelfOrderDetail {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
-    }
-
-    public Long getSaleAmount() {
-        return saleAmount;
-    }
-
-    public void setSaleAmount(Long saleAmount) {
-        this.saleAmount = saleAmount;
-    }
-
-    public Long getFactoryAmount() {
-        return factoryAmount;
-    }
-
-    public void setFactoryAmount(Long factoryAmount) {
-        this.factoryAmount = factoryAmount;
     }
 
     public String getRemark() {

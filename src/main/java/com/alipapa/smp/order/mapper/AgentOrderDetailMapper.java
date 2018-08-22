@@ -2,8 +2,9 @@ package com.alipapa.smp.order.mapper;
 
 import com.alipapa.smp.order.pojo.AgentOrderDetail;
 import com.alipapa.smp.order.pojo.AgentOrderDetailExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface AgentOrderDetailMapper {
     long countByExample(AgentOrderDetailExample example);

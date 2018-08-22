@@ -1,110 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.alipapa.smp.product.mapper.ProductMapper">
-  <resultMap id="BaseResultMap" type="com.alipapa.smp.product.pojo.Product">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="product_category_id" jdbcType="BIGINT" property="productCategoryId" />
-    <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
-    <result column="product_name" jdbcType="VARCHAR" property="productName" />
-    <result column="op_user_no" jdbcType="VARCHAR" property="opUserNo" />
-    <result column="op_user_name" jdbcType="VARCHAR" property="opUserName" />
-    <result column="op_user_role" jdbcType="VARCHAR" property="opUserRole" />
-    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
-    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
-  </resultMap>
-  <sql id="Example_Where_Clause">
-    <where>
-      <foreach collection="oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+    <resultMap id="BaseResultMap" type="com.alipapa.smp.product.pojo.Product">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="product_category_id" jdbcType="BIGINT" property="productCategoryId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="op_user_no" jdbcType="VARCHAR" property="opUserNo"/>
+        <result column="op_user_name" jdbcType="VARCHAR" property="opUserName"/>
+        <result column="op_user_role" jdbcType="VARCHAR" property="opUserRole"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+    </resultMap>
+
+    <resultMap id="ExtResultMap" type="com.alipapa.smp.product.pojo.ProductExt">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="product_category_id" jdbcType="BIGINT" property="productCategoryId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="op_user_no" jdbcType="VARCHAR" property="opUserNo"/>
+        <result column="op_user_name" jdbcType="VARCHAR" property="opUserName"/>
+        <result column="op_user_role" jdbcType="VARCHAR" property="opUserRole"/>
+        <result column="sale_no" jdbcType="VARCHAR" property="saleNo"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+    </resultMap>
+
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause">
-    <where>
-      <foreach collection="example.oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List">
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
     id, product_category_id, category_name, product_name, op_user_no, op_user_name, op_user_role, 
     created_time, updated_time
   </sql>
-  <select id="selectByExample" parameterType="com.alipapa.smp.product.pojo.ProductExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from product
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from product
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <select id="selectByExample" parameterType="com.alipapa.smp.product.pojo.ProductExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from product
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from product
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from product
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.alipapa.smp.product.pojo.ProductExample">
-    delete from product
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.alipapa.smp.product.pojo.Product">
+    <delete id="deleteByExample" parameterType="com.alipapa.smp.product.pojo.ProductExample">
+        delete from product
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.alipapa.smp.product.pojo.Product">
     insert into product (id, product_category_id, category_name, 
       product_name, op_user_no, op_user_name, 
       op_user_role, created_time, updated_time
@@ -114,154 +130,154 @@
       #{opUserRole,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.alipapa.smp.product.pojo.Product">
-    insert into product
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="productCategoryId != null">
-        product_category_id,
-      </if>
-      <if test="categoryName != null">
-        category_name,
-      </if>
-      <if test="productName != null">
-        product_name,
-      </if>
-      <if test="opUserNo != null">
-        op_user_no,
-      </if>
-      <if test="opUserName != null">
-        op_user_name,
-      </if>
-      <if test="opUserRole != null">
-        op_user_role,
-      </if>
-      <if test="createdTime != null">
-        created_time,
-      </if>
-      <if test="updatedTime != null">
-        updated_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="productCategoryId != null">
-        #{productCategoryId,jdbcType=BIGINT},
-      </if>
-      <if test="categoryName != null">
-        #{categoryName,jdbcType=VARCHAR},
-      </if>
-      <if test="productName != null">
-        #{productName,jdbcType=VARCHAR},
-      </if>
-      <if test="opUserNo != null">
-        #{opUserNo,jdbcType=VARCHAR},
-      </if>
-      <if test="opUserName != null">
-        #{opUserName,jdbcType=VARCHAR},
-      </if>
-      <if test="opUserRole != null">
-        #{opUserRole,jdbcType=VARCHAR},
-      </if>
-      <if test="createdTime != null">
-        #{createdTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatedTime != null">
-        #{updatedTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="com.alipapa.smp.product.pojo.ProductExample" resultType="java.lang.Long">
-    select count(*) from product
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map">
-    update product
-    <set>
-      <if test="record.id != null">
-        id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.productCategoryId != null">
+    <insert id="insertSelective" parameterType="com.alipapa.smp.product.pojo.Product">
+        insert into product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="productCategoryId != null">
+                product_category_id,
+            </if>
+            <if test="categoryName != null">
+                category_name,
+            </if>
+            <if test="productName != null">
+                product_name,
+            </if>
+            <if test="opUserNo != null">
+                op_user_no,
+            </if>
+            <if test="opUserName != null">
+                op_user_name,
+            </if>
+            <if test="opUserRole != null">
+                op_user_role,
+            </if>
+            <if test="createdTime != null">
+                created_time,
+            </if>
+            <if test="updatedTime != null">
+                updated_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="productCategoryId != null">
+                #{productCategoryId,jdbcType=BIGINT},
+            </if>
+            <if test="categoryName != null">
+                #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null">
+                #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="opUserNo != null">
+                #{opUserNo,jdbcType=VARCHAR},
+            </if>
+            <if test="opUserName != null">
+                #{opUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="opUserRole != null">
+                #{opUserRole,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null">
+                #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.alipapa.smp.product.pojo.ProductExample" resultType="java.lang.Long">
+        select count(*) from product
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update product
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.productCategoryId != null">
+                product_category_id = #{record.productCategoryId,jdbcType=BIGINT},
+            </if>
+            <if test="record.categoryName != null">
+                category_name = #{record.categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.productName != null">
+                product_name = #{record.productName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.opUserNo != null">
+                op_user_no = #{record.opUserNo,jdbcType=VARCHAR},
+            </if>
+            <if test="record.opUserName != null">
+                op_user_name = #{record.opUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.opUserRole != null">
+                op_user_role = #{record.opUserRole,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createdTime != null">
+                created_time = #{record.createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.updatedTime != null">
+                updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update product
+        set id = #{record.id,jdbcType=BIGINT},
         product_category_id = #{record.productCategoryId,jdbcType=BIGINT},
-      </if>
-      <if test="record.categoryName != null">
         category_name = #{record.categoryName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.productName != null">
         product_name = #{record.productName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.opUserNo != null">
         op_user_no = #{record.opUserNo,jdbcType=VARCHAR},
-      </if>
-      <if test="record.opUserName != null">
         op_user_name = #{record.opUserName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.opUserRole != null">
         op_user_role = #{record.opUserRole,jdbcType=VARCHAR},
-      </if>
-      <if test="record.createdTime != null">
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.updatedTime != null">
-        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map">
-    update product
-    set id = #{record.id,jdbcType=BIGINT},
-      product_category_id = #{record.productCategoryId,jdbcType=BIGINT},
-      category_name = #{record.categoryName,jdbcType=VARCHAR},
-      product_name = #{record.productName,jdbcType=VARCHAR},
-      op_user_no = #{record.opUserNo,jdbcType=VARCHAR},
-      op_user_name = #{record.opUserName,jdbcType=VARCHAR},
-      op_user_role = #{record.opUserRole,jdbcType=VARCHAR},
-      created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.product.pojo.Product">
-    update product
-    <set>
-      <if test="productCategoryId != null">
-        product_category_id = #{productCategoryId,jdbcType=BIGINT},
-      </if>
-      <if test="categoryName != null">
-        category_name = #{categoryName,jdbcType=VARCHAR},
-      </if>
-      <if test="productName != null">
-        product_name = #{productName,jdbcType=VARCHAR},
-      </if>
-      <if test="opUserNo != null">
-        op_user_no = #{opUserNo,jdbcType=VARCHAR},
-      </if>
-      <if test="opUserName != null">
-        op_user_name = #{opUserName,jdbcType=VARCHAR},
-      </if>
-      <if test="opUserRole != null">
-        op_user_role = #{opUserRole,jdbcType=VARCHAR},
-      </if>
-      <if test="createdTime != null">
-        created_time = #{createdTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatedTime != null">
-        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.product.pojo.Product">
+        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.product.pojo.Product">
+        update product
+        <set>
+            <if test="productCategoryId != null">
+                product_category_id = #{productCategoryId,jdbcType=BIGINT},
+            </if>
+            <if test="categoryName != null">
+                category_name = #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null">
+                product_name = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="opUserNo != null">
+                op_user_no = #{opUserNo,jdbcType=VARCHAR},
+            </if>
+            <if test="opUserName != null">
+                op_user_name = #{opUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="opUserRole != null">
+                op_user_role = #{opUserRole,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.product.pojo.Product">
     update product
     set product_category_id = #{productCategoryId,jdbcType=BIGINT},
       category_name = #{categoryName,jdbcType=VARCHAR},
@@ -273,4 +289,72 @@
       updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+    <select id="listProductByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        <include refid="listProductByParamSql"/>
+        <trim prefix="limit" prefixOverrides=",">
+            <if test="start != null and start != ''">
+                #{start}
+            </if>
+            <if test="size != null and size != ''">
+                , #{size}
+            </if>
+        </trim>
+    </select>
+
+    <sql id="listProductByParamSql">
+        SELECT DISTINCT p.* FROM product p
+        where 1=1
+        <if test="productCategoryId != null">
+            and p.product_category_id = #{productCategoryId}
+        </if>
+        <if test="productName != null and productName != ''">
+            and p.product_name LIKE CONCAT('%',#{productName},'%')
+        </if>
+        ORDER BY p.updated_time DESC
+    </sql>
+
+    <select id="listProductByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+        select count(*) from (
+        <include refid="listProductByParamSql"/>
+        ) T
+    </select>
+
+
+    <select id="listProductBySaleNo" resultMap="ExtResultMap" parameterType="java.util.HashMap">
+        <include refid="listProductBySaleNoSql"/>
+        <trim prefix="limit" prefixOverrides=",">
+            <if test="start != null and start != ''">
+                #{start}
+            </if>
+            <if test="size != null and size != ''">
+                , #{size}
+            </if>
+        </trim>
+    </select>
+
+    <sql id="listProductBySaleNoSql">
+        SELECT DISTINCT
+        DISTINCT p.*, a.sale_no
+        FROM
+        product p
+        LEFT JOIN sub_order s ON p.id = s.product_id
+        where 1=1 and s.sale_no = #{saleNo}
+        <if test="productCategoryId != null">
+            and p.product_category_id = #{productCategoryId}
+        </if>
+        <if test="productName != null and productName != ''">
+            and p.product_name LIKE CONCAT('%',#{productName},'%')
+        </if>
+        ORDER BY p.updated_time DESC
+    </sql>
+
+    <select id="listProductBySaleNoCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+        select count(*) from (
+        <include refid="listProductBySaleNoSql"/>
+        ) T
+    </select>
+
+
 </mapper>

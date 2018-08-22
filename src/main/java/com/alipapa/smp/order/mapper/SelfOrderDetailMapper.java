@@ -2,8 +2,9 @@ package com.alipapa.smp.order.mapper;
 
 import com.alipapa.smp.order.pojo.SelfOrderDetail;
 import com.alipapa.smp.order.pojo.SelfOrderDetailExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface SelfOrderDetailMapper {
     long countByExample(SelfOrderDetailExample example);

@@ -35,19 +35,25 @@ public class SubOrder {
 
     private Long payedAmount;
 
+    private String saleNo;
+
+    private Long saleAmount;
+
+    private Long factoryAmount;
+
     private String productRemark;
 
     private String remark;
+
+    private Date createdTime;
+
+    private Date updatedTime;
 
     // 自营订单明细
     private SelfOrderDetail selfOrderDetail;
 
     // 代理订单明细
     private AgentOrderDetail agentOrderDetail;
-
-    private Date createdTime;
-
-    private Date updatedTime;
 
     public SelfOrderDetail getSelfOrderDetail() {
         return selfOrderDetail;
@@ -191,6 +197,30 @@ public class SubOrder {
 
     public void setPayedAmount(Long payedAmount) {
         this.payedAmount = payedAmount;
+    }
+
+    public String getSaleNo() {
+        return saleNo;
+    }
+
+    public void setSaleNo(String saleNo) {
+        this.saleNo = saleNo == null ? null : saleNo.trim();
+    }
+
+    public Long getSaleAmount() {
+        return saleAmount;
+    }
+
+    public void setSaleAmount(Long saleAmount) {
+        this.saleAmount = saleAmount;
+    }
+
+    public Long getFactoryAmount() {
+        return factoryAmount;
+    }
+
+    public void setFactoryAmount(Long factoryAmount) {
+        this.factoryAmount = factoryAmount;
     }
 
     public String getProductRemark() {

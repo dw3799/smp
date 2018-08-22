@@ -182,8 +182,8 @@ public class OrderDetailController {
 
                     if (OrderTypeEnum.SELF_ORDER == orderTypeEnum) {
                         SelfOrderDetail selfOrderDetail = subOrder.getSelfOrderDetail();
-                        orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(selfOrderDetail.getSaleAmount()) + currencyDec);
-                        orderProductVo.setFactoryAmount(PriceUtil.convertToYuanStr(selfOrderDetail.getFactoryAmount()) + Constant.YMB);
+                        orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(subOrder.getSaleAmount()) + currencyDec);
+                        orderProductVo.setFactoryAmount(PriceUtil.convertToYuanStr(subOrder.getFactoryAmount()) + Constant.YMB);
 
                         orderProductVo.setWeight(selfOrderDetail.getWeight());
                         orderProductVo.setMaterial(selfOrderDetail.getMaterial());
@@ -196,8 +196,8 @@ public class OrderDetailController {
                     } else {
                         AgentOrderDetail agentOrderDetail = subOrder.getAgentOrderDetail();
 
-                        orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(agentOrderDetail.getSaleAmount()) + currencyDec);
-                        orderProductVo.setFactoryAmount(PriceUtil.convertToYuanStr(agentOrderDetail.getFactoryAmount()) + Constant.YMB);
+                        orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(subOrder.getSaleAmount()) + currencyDec);
+                        orderProductVo.setFactoryAmount(PriceUtil.convertToYuanStr(subOrder.getFactoryAmount()) + Constant.YMB);
                         orderProductVo.setUnit(agentOrderDetail.getUnit());
                         orderProductVo.setSinglePackageCount(agentOrderDetail.getSinglePackageCount());
                         orderProductVo.setPackageNumber(agentOrderDetail.getPackageNumber());
@@ -431,6 +431,15 @@ public class OrderDetailController {
                 subOrder.setSubPayStatus(SubOrderPayStatusEnum.UN_PAY.getCode());
                 subOrder.setUpdatedTime(new Date());
 
+                String saleAmount = jsonObject.getString("saleAmount");
+                String factoryAmount = jsonObject.getString("factoryAmount");
+
+                subOrder.setFactoryAmount(PriceUtil.convertToFen(factoryAmount));
+                subOrder.setSaleAmount(PriceUtil.convertToFen(saleAmount));
+                if (subOrder.getId() == null) {
+                    subOrder.setSaleNo(Constant.SALE_NO_PREFIX + product.getId() + consumer.getConsumerNo());
+                }
+
                 if (OrderTypeEnum.SELF_ORDER == orderTypeEnum) {
                     SelfOrderDetail selfOrderDetail = new SelfOrderDetail();
                     if (subOrder != null && subOrder.getSelfOrderDetail() != null) {
@@ -444,16 +453,12 @@ public class OrderDetailController {
                     String suturing = jsonObject.getString("suturing");
                     String printing = jsonObject.getString("printing");
                     Integer quantity = jsonObject.getInteger("quantity");
-                    String saleAmount = jsonObject.getString("saleAmount");
-                    String factoryAmount = jsonObject.getString("factoryAmount");
 
                     selfOrderDetail.setColor(color);
                     selfOrderDetail.setCreatedTime(new Date());
-                    selfOrderDetail.setFactoryAmount(PriceUtil.convertToFen(factoryAmount));
                     selfOrderDetail.setMaterial(material);
                     selfOrderDetail.setPrinting(printing);
                     selfOrderDetail.setQuantity(quantity);
-                    selfOrderDetail.setSaleAmount(PriceUtil.convertToFen(saleAmount));
                     selfOrderDetail.setRemark(null);
                     selfOrderDetail.setSubOrderNo(subOrderNo);
                     selfOrderDetail.setSize(size);
@@ -468,8 +473,6 @@ public class OrderDetailController {
                         agentOrderDetail = subOrder.getAgentOrderDetail();
                     }
 
-                    String saleAmount = jsonObject.getString("saleAmount");
-                    String factoryAmount = jsonObject.getString("factoryAmount");
                     String unit = jsonObject.getString("unit");
                     Integer singlePackageCount = jsonObject.getInteger("singlePackageCount");
                     Integer packageNumber = jsonObject.getInteger("packageNumber");
@@ -479,12 +482,8 @@ public class OrderDetailController {
                     String totalWeight = jsonObject.getString("totalWeight");
 
                     agentOrderDetail.setCreatedTime(new Date());
-                    agentOrderDetail.setFactoryAmount(PriceUtil.convertToFen(factoryAmount));
                     agentOrderDetail.setPackageNumber(packageNumber);
-                    agentOrderDetail.setSaleAmount(PriceUtil.convertToFen(saleAmount));
-                    if (agentOrderDetail.getId() == null) {
-                        agentOrderDetail.setSaleNo(Constant.SALE_NO_PREFIX + product.getId() + consumer.getConsumerNo());
-                    }
+
                     agentOrderDetail.setSinglePackageCount(singlePackageCount);
                     agentOrderDetail.setSingleVolume(singleVolume);
                     agentOrderDetail.setSingleWeight(singleWeight);

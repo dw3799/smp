@@ -7,12 +7,6 @@ public class AgentOrderDetail {
 
     private String subOrderNo;
 
-    private String saleNo;
-
-    private Long saleAmount;
-
-    private Long factoryAmount;
-
     private String unit;
 
     private Integer singlePackageCount;
@@ -47,30 +41,6 @@ public class AgentOrderDetail {
 
     public void setSubOrderNo(String subOrderNo) {
         this.subOrderNo = subOrderNo == null ? null : subOrderNo.trim();
-    }
-
-    public String getSaleNo() {
-        return saleNo;
-    }
-
-    public void setSaleNo(String saleNo) {
-        this.saleNo = saleNo == null ? null : saleNo.trim();
-    }
-
-    public Long getSaleAmount() {
-        return saleAmount;
-    }
-
-    public void setSaleAmount(Long saleAmount) {
-        this.saleAmount = saleAmount;
-    }
-
-    public Long getFactoryAmount() {
-        return factoryAmount;
-    }
-
-    public void setFactoryAmount(Long factoryAmount) {
-        this.factoryAmount = factoryAmount;
     }
 
     public String getUnit() {

@@ -2,7 +2,11 @@ package com.alipapa.smp.product.mapper;
 
 import com.alipapa.smp.product.pojo.Product;
 import com.alipapa.smp.product.pojo.ProductExample;
+
 import java.util.List;
+import java.util.Map;
+
+import com.alipapa.smp.product.pojo.ProductExt;
 import org.apache.ibatis.annotations.Param;
 
 public interface ProductMapper {
@@ -27,4 +31,14 @@ public interface ProductMapper {
     int updateByPrimaryKeySelective(Product record);
 
     int updateByPrimaryKey(Product record);
+
+    List<Product> listProductByParam(Map<String, Object> params);
+
+    long listProductByParamCount(Map<String, Object> params);
+
+    List<ProductExt> listProductBySaleNo(Map<String, Object> params);
+
+    long listProductBySaleNoCount(Map<String, Object> params);
+
+
 }

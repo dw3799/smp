@@ -274,6 +274,13 @@ public class OrderController {
                 subOrder.setSubPayStatus(SubOrderPayStatusEnum.UN_PAY.getCode());
                 subOrder.setUpdatedTime(new Date());
 
+                String saleAmount = jsonObject.getString("saleAmount");
+                String factoryAmount = jsonObject.getString("factoryAmount");
+
+                subOrder.setFactoryAmount(PriceUtil.convertToFen(factoryAmount));
+                subOrder.setSaleAmount(PriceUtil.convertToFen(saleAmount));
+                subOrder.setSaleNo(Constant.SALE_NO_PREFIX + product.getId() + consumer.getConsumerNo());
+
                 if (OrderTypeEnum.SELF_ORDER == orderTypeEnum) {
                     String weight = jsonObject.getString("weight");
                     String material = jsonObject.getString("material");
@@ -282,17 +289,14 @@ public class OrderController {
                     String suturing = jsonObject.getString("suturing");
                     String printing = jsonObject.getString("printing");
                     Integer quantity = jsonObject.getInteger("quantity");
-                    String saleAmount = jsonObject.getString("saleAmount");
-                    String factoryAmount = jsonObject.getString("factoryAmount");
+
 
                     SelfOrderDetail selfOrderDetail = new SelfOrderDetail();
                     selfOrderDetail.setColor(color);
                     selfOrderDetail.setCreatedTime(new Date());
-                    selfOrderDetail.setFactoryAmount(PriceUtil.convertToFen(factoryAmount));
                     selfOrderDetail.setMaterial(material);
                     selfOrderDetail.setPrinting(printing);
                     selfOrderDetail.setQuantity(quantity);
-                    selfOrderDetail.setSaleAmount(PriceUtil.convertToFen(saleAmount));
                     selfOrderDetail.setRemark(null);
                     selfOrderDetail.setSubOrderNo(subOrderNo);
                     selfOrderDetail.setSize(size);
@@ -301,8 +305,6 @@ public class OrderController {
                     selfOrderDetail.setWeight(weight);
                     subOrder.setSelfOrderDetail(selfOrderDetail);
                 } else {
-                    String saleAmount = jsonObject.getString("saleAmount");
-                    String factoryAmount = jsonObject.getString("factoryAmount");
                     String unit = jsonObject.getString("unit");
                     Integer singlePackageCount = jsonObject.getInteger("singlePackageCount");
                     Integer packageNumber = jsonObject.getInteger("packageNumber");
@@ -313,10 +315,8 @@ public class OrderController {
 
                     AgentOrderDetail agentOrderDetail = new AgentOrderDetail();
                     agentOrderDetail.setCreatedTime(new Date());
-                    agentOrderDetail.setFactoryAmount(PriceUtil.convertToFen(factoryAmount));
                     agentOrderDetail.setPackageNumber(packageNumber);
-                    agentOrderDetail.setSaleAmount(PriceUtil.convertToFen(saleAmount));
-                    agentOrderDetail.setSaleNo(Constant.SALE_NO_PREFIX + product.getId() + consumer.getConsumerNo());
+
                     agentOrderDetail.setSinglePackageCount(singlePackageCount);
                     agentOrderDetail.setSingleVolume(singleVolume);
                     agentOrderDetail.setSingleWeight(singleWeight);
