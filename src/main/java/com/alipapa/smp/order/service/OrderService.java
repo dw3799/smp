@@ -92,7 +92,7 @@ public class OrderService {
      *
      * @return
      */
-    public List<Order> getOrderListByParams(Map<String, Object> params) {
+    public List<Order> listOrderByStatus(Map<String, Object> params) {
         if (params == null) {
             params = new HashMap<>();
         }
@@ -115,7 +115,7 @@ public class OrderService {
      * @param params
      * @return
      */
-    public Long listOrderByParamCount(Map<String, Object> params) {
+    public Long listOrderByStatusCount(Map<String, Object> params) {
         return orderMapper.listOrderByParamCount(params);
     }
 
@@ -125,7 +125,7 @@ public class OrderService {
      *
      * @return
      */
-    public List<Order> listApproveOrderByParam(Map<String, Object> params) {
+    public List<Order> listMyOrderByParam(Map<String, Object> params) {
         if (params == null) {
             params = new HashMap<>();
         }
@@ -136,7 +136,7 @@ public class OrderService {
             logger.info("key= " + entry.getKey() + " and value= " + entry.getValue());
         }
 
-        List<Order> orderList = orderMapper.listApproveOrderByParam(params);
+        List<Order> orderList = orderMapper.listMyOrderByParam(params);
 
         return orderList;
     }
@@ -148,8 +148,8 @@ public class OrderService {
      * @param params
      * @return
      */
-    public Long listApproveOrderByParamCount(Map<String, Object> params) {
-        return orderMapper.listApproveOrderByParamCount(params);
+    public Long listMyOrderByParamCount(Map<String, Object> params) {
+        return orderMapper.listMyOrderByParamCount(params);
     }
 
 

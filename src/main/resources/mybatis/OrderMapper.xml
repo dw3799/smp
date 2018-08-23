@@ -584,8 +584,8 @@
     </sql>
 
 
-    <select id="listApproveOrderByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
-        <include refid="listApproveOrderByParamSql"/>
+    <select id="listMyOrderByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        <include refid="listMyOrderByParamSql"/>
         <trim prefix="limit" prefixOverrides=",">
             <if test="start != null and start != ''">
                 #{start}
@@ -596,7 +596,7 @@
         </trim>
     </select>
 
-    <sql id="listApproveOrderByParamSql">
+    <sql id="listMyOrderByParamSql">
         select o.*
         from order o LEFT JOIN `user` u on
         o.saler_user_no = u.user_no
@@ -616,9 +616,9 @@
         ORDER BY o.submit_time DESC
     </sql>
 
-    <select id="listApproveOrderByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+    <select id="listMyOrderByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
         select count(*) from (
-        <include refid="listApproveOrderByParamSql"/>
+        <include refid="listMyOrderByParamSql"/>
         ) T
     </select>
 

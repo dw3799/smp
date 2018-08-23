@@ -36,7 +36,7 @@ public interface OrderMapper {
 
     long listOrderByParamCount(Map<String, Object> params);
 
-    List<Order> listApproveOrderByParam(Map<String, Object> params);
+    List<Order> listMyOrderByParam(Map<String, Object> params);
 
-    long listApproveOrderByParamCount(Map<String, Object> params);
+    long listMyOrderByParamCount(Map<String, Object> params);
 }

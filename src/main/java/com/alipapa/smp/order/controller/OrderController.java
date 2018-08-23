@@ -29,8 +29,10 @@ import com.alipapa.smp.product.pojo.ProductPicture;
 import com.alipapa.smp.product.service.ProductCategoryService;
 import com.alipapa.smp.product.service.ProductPictureService;
 import com.alipapa.smp.product.service.ProductService;
+import com.alipapa.smp.user.pojo.Group;
 import com.alipapa.smp.user.pojo.Role;
 import com.alipapa.smp.user.pojo.User;
+import com.alipapa.smp.user.service.GroupService;
 import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.OrderNumberGenerator;
@@ -44,9 +46,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.alipapa.smp.utils.WebApiResponse.error;
 
@@ -71,6 +71,8 @@ public class OrderController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private GroupService groupService;
 
     @Autowired
     private RoleService roleService;
@@ -597,10 +599,67 @@ public class OrderController {
      */
     @RequestMapping(value = "/listMyOrder", method = RequestMethod.GET)
     public WebApiResponse<List<OrderVo>> listMyOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
-                                                     @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+                                                     @RequestParam(name = "pageNum", required = false) Integer pageNum,
+                                                     @RequestParam(name = "orderNo", required = false) String orderNo,
+                                                     @RequestParam(name = "orderStatus", required = false) String orderStatus,
+                                                     @RequestParam(name = "orderType", required = false) String orderType,
+                                                     @RequestParam(name = "userId", required = false) Long userId,
+                                                     @RequestParam(name = "groupId", required = false) Long groupId,
+                                                     @RequestParam(name = "submitTimeStart", required = false) String submitTimeStart, //YYYY-MM-DD HH:MM SS
+                                                     @RequestParam(name = "submitTimeEnd", required = false) String submitTimeEnd) {
         UserInfo userInfo = UserStatus.getUserInfo();
-        if (userInfo.getRoleName().equals(RoleEnum.cashier.getCodeName())) {
-            return error("没有权限");
+        Map<String, Object> params = new HashMap<>();
+
+        if (StringUtil.isEmptyString(orderNo)) {
+            params.put("orderNo", orderNo);
+        }
+
+        if (StringUtil.isEmptyString(orderStatus)) {
+            params.put("orderStatus", OrderStatusEnum.valueOf(orderStatus).getCode());
+        }
+
+        if (StringUtil.isEmptyString(orderType)) {
+            params.put("orderType", OrderTypeEnum.valueOf(orderType).getCode());
+        }
+
+        if (StringUtil.isEmptyString(orderType)) {
+            params.put("orderType", OrderTypeEnum.valueOf(orderType).getCode());
+        }
+
+        //提交时间开始
+        if (!StringUtil.isEmptyString(submitTimeStart)) {
+            logger.info("submitTimeStart:" + submitTimeStart);
+            params.put("submitTimeStart", submitTimeStart);
+        }
+
+        //提交时间结束
+        if (!StringUtil.isEmptyString(submitTimeEnd)) {
+            logger.info("submitTimeEnd:" + submitTimeEnd);
+            params.put("submitTimeEnd", submitTimeEnd);
+        }
+
+        User user = userService.getUserByUserNo(userInfo.getUserNo());
+
+        if (userInfo.getRoleName().equals(RoleEnum.saler.getCodeName())) {
+            params.put("salerUserNo", user.getUserNo());
+        } else if (userInfo.getRoleName().equals(RoleEnum.supervisor.getCodeName())) {
+            params.put("groupId", user.getGroupId());
+        } else if (userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) || userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName())) {
+            params.put("buyerUserNo", user.getUserNo());
+        } else if (userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+            params.put("buyerGroupId", user.getGroupId());
+        } else {
+            if (userId != null) {
+                User selectedUser = userService.getUserById(userId);
+                params.put("salerUserNo", selectedUser.getUserNo());
+                params.put("buyerUserNo", selectedUser.getUserNo());
+            }
+
+            if (groupId != null) {
+                Group selectedGroup = groupService.getGroupById(groupId);
+                params.put("groupId", selectedGroup.getId());
+                params.put("buyerGroupId", selectedGroup.getId());
+            }
         }
 
         if (pageSize == null) {
@@ -614,12 +673,14 @@ public class OrderController {
         Integer start = (pageNum - 1) * pageSize;
         Integer size = pageSize;
 
-        List<OrderVo> orderVoList = orderServiceProxy.listOrderByStatus(OrderStatusEnum.CASH_FRONT_APV.getCode(), start, size);
+
+        List<OrderVo> orderVoList = orderServiceProxy.listOrderByParams(params, start, size);
         if (CollectionUtils.isEmpty(orderVoList)) {
             WebApiResponse response = WebApiResponse.success(orderVoList);
             response.setTotalCount(orderVoList.get(0).getTotalCount());
             return response;
         }
+        
         return WebApiResponse.success(null);
     }
 

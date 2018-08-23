@@ -252,7 +252,7 @@ public class OrderServiceProxy {
         params.put("salerUserNo", salerUserNo);
         params.put("orderStatus", orderStatus);
 
-        Long totalCount = orderService.listOrderByParamCount(params);
+        Long totalCount = orderService.listMyOrderByParamCount(params);
 
         if (totalCount <= 0) {
             return null;
@@ -260,7 +260,7 @@ public class OrderServiceProxy {
         params.put("start", start);
         params.put("size", size);
 
-        List<Order> orderList = orderService.getOrderListByParams(params);
+        List<Order> orderList = orderService.listMyOrderByParam(params);
 
         List<OrderVo> orderVoList = this.convertOrderVo(orderList, totalCount);
 
@@ -297,7 +297,7 @@ public class OrderServiceProxy {
         params.put("groupId", groupId);
         params.put("orderStatus", OrderStatusEnum.SPR_APV.getCode());
 
-        Long totalCount = orderService.listApproveOrderByParamCount(params);
+        Long totalCount = orderService.listMyOrderByParamCount(params);
 
         if (totalCount <= 0) {
             return null;
@@ -305,7 +305,7 @@ public class OrderServiceProxy {
         params.put("start", start);
         params.put("size", size);
 
-        List<Order> orderList = orderService.listApproveOrderByParam(params);
+        List<Order> orderList = orderService.listMyOrderByParam(params);
 
         List<OrderVo> orderVoList = this.convertOrderVo(orderList, totalCount);
 
@@ -323,7 +323,7 @@ public class OrderServiceProxy {
         Map<String, Object> params = new HashMap<>();
         params.put("orderStatus", orderStatus);
 
-        Long totalCount = orderService.listOrderByParamCount(params);
+        Long totalCount = orderService.listOrderByStatusCount(params);
 
         if (totalCount <= 0) {
             return null;
@@ -331,10 +331,32 @@ public class OrderServiceProxy {
         params.put("start", start);
         params.put("size", size);
 
-        List<Order> orderList = orderService.getOrderListByParams(params);
+        List<Order> orderList = orderService.listOrderByStatus(params);
 
         List<OrderVo> orderVoList = this.convertOrderVo(orderList, totalCount);
 
+        return orderVoList;
+    }
+
+
+    /**
+     * 我的订单列表
+     *
+     * @param params
+     * @return
+     */
+    public List<OrderVo> listOrderByParams(Map<String, Object> params, Integer start, Integer size) {
+        Long totalCount = orderService.listMyOrderByParamCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<Order> orderList = orderService.listMyOrderByParam(params);
+
+        List<OrderVo> orderVoList = this.convertOrderVo(orderList, totalCount);
         return orderVoList;
     }
 
