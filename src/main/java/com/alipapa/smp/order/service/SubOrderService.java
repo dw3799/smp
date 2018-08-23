@@ -5,11 +5,13 @@ import com.alipapa.smp.order.mapper.AgentOrderDetailMapper;
 import com.alipapa.smp.order.mapper.SelfOrderDetailMapper;
 import com.alipapa.smp.order.mapper.SubOrderMapper;
 import com.alipapa.smp.order.pojo.*;
+import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -139,6 +141,58 @@ public class SubOrderService {
                 AgentOrderDetail agentOrderDetail = this.getAgentOrderDetailBySubOrderNo(subOrderNo);
                 subOrder.setAgentOrderDetail(agentOrderDetail);
             }
+            return subOrder;
+        }
+        return null;
+    }
+
+
+    /**
+     * 获取产品订单
+     *
+     * @param productId
+     * @return
+     */
+    public SubOrder getLatestSubOrderByProductId(Long productId) {
+        if (productId == null) {
+            return null;
+        }
+
+        SubOrderExample example = new SubOrderExample();
+        SubOrderExample.Criteria criteria = example.createCriteria();
+        criteria.andProductIdEqualTo(productId);
+        example.setOrderByClause("createdTime desc");
+
+        List<SubOrder> subOrderList = subOrderMapper.selectByExample(example);
+
+        if (!CollectionUtils.isEmpty(subOrderList)) {
+            SubOrder subOrder = subOrderList.get(0);
+            return subOrder;
+        }
+        return null;
+    }
+
+
+    /**
+     * 获取产品订单
+     *
+     * @param productId
+     * @return
+     */
+    public SubOrder getMostSubOrderByProductId(Long productId) {
+        if (productId == null) {
+            return null;
+        }
+        SubOrderExample example = new SubOrderExample();
+        SubOrderExample.Criteria criteria = example.createCriteria();
+        criteria.andProductIdEqualTo(productId);
+        criteria.andCreatedTimeGreaterThan(DateUtil.getSomeMonthDateToTime(new Date(), -3));
+        example.setOrderByClause("factoryAmount desc");
+
+        List<SubOrder> subOrderList = subOrderMapper.selectByExample(example);
+
+        if (!CollectionUtils.isEmpty(subOrderList)) {
+            SubOrder subOrder = subOrderList.get(0);
             return subOrder;
         }
         return null;

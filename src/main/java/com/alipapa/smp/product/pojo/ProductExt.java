@@ -21,6 +21,16 @@ public class ProductExt {
 
     private Date updatedTime;
 
+    private String saleNo;
+
+    public String getSaleNo() {
+        return saleNo;
+    }
+
+    public void setSaleNo(String saleNo) {
+        this.saleNo = saleNo;
+    }
+
     public Long getId() {
         return id;
     }

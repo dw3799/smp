@@ -2,6 +2,8 @@ package com.alipapa.smp.product.vo;
 
 public class ProductVo {
 
+    private Long productId;
+
     private String categoryName;
 
     private String productName;
@@ -15,6 +17,14 @@ public class ProductVo {
     private String saleNo;
 
     private Long totalCount;
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
     public String getSaleNo() {
         return saleNo;

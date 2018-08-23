@@ -589,4 +589,39 @@ public class OrderController {
     }
 
 
+    /**
+     * 我的订单查询
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listMyOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<OrderVo>> listMyOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                     @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        if (userInfo.getRoleName().equals(RoleEnum.cashier.getCodeName())) {
+            return error("没有权限");
+        }
+
+        if (pageSize == null) {
+            pageSize = 30;
+        }
+
+        if (pageNum == null) {
+            pageNum = 1;
+        }
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        List<OrderVo> orderVoList = orderServiceProxy.listOrderByStatus(OrderStatusEnum.CASH_FRONT_APV.getCode(), start, size);
+        if (CollectionUtils.isEmpty(orderVoList)) {
+            WebApiResponse response = WebApiResponse.success(orderVoList);
+            response.setTotalCount(orderVoList.get(0).getTotalCount());
+            return response;
+        }
+        return WebApiResponse.success(null);
+    }
+
+
 }

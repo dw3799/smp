@@ -7,6 +7,7 @@ import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.order.vo.OrderVo;
 import com.alipapa.smp.product.pojo.ProductCategory;
 import com.alipapa.smp.product.service.ProductCategoryService;
+import com.alipapa.smp.product.service.ProductService;
 import com.alipapa.smp.product.vo.ProductCategoryVo;
 import com.alipapa.smp.product.vo.ProductVo;
 import com.alipapa.smp.utils.StringUtil;
@@ -37,6 +38,10 @@ public class ProductController {
 
     @Autowired
     private ProductCategoryService productCategoryService;
+
+
+    @Autowired
+    private ProductService productService;
 
     /**
      * 产品类别查询下拉列表
@@ -99,20 +104,34 @@ public class ProductController {
                                                        @RequestParam(name = "productCategoryId", required = false) Long productCategoryId,
                                                        @RequestParam(name = "productName", required = false) String productName,
                                                        @RequestParam(name = "saleNo", required = false) String saleNo) {
-        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (pageSize == null) {
+                pageSize = 30;
+            }
 
-        if (pageSize == null) {
-            pageSize = 30;
+            if (pageNum == null) {
+                pageNum = 1;
+            }
+
+            Integer start = (pageNum - 1) * pageSize;
+            Integer size = pageSize;
+            List<ProductVo> productVoList = null;
+
+            if (StringUtil.isNotEmptyString(saleNo)) {
+                productVoList = productService.listProductByParam(productCategoryId, productName, start, size);
+            } else {
+                productVoList = productService.listProductBySaleNo(productCategoryId, productName, saleNo, start, size);
+            }
+
+            if (CollectionUtils.isEmpty(productVoList)) {
+                WebApiResponse response = WebApiResponse.success(productVoList);
+                response.setTotalCount(productVoList.get(0).getTotalCount());
+                return response;
+            }
+        } catch (Exception ex) {
+            logger.error("产品管理列表查询异常", ex);
+            return error("产品管理列表查询异常");
         }
-
-        if (pageNum == null) {
-            pageNum = 1;
-        }
-
-        Integer start = (pageNum - 1) * pageSize;
-        Integer size = pageSize;
-
-
         return WebApiResponse.success(null);
     }
 
