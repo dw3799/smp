@@ -598,8 +598,10 @@
 
     <sql id="listMyOrderByParamSql">
         select o.*
-        from order o LEFT JOIN `user` u on
-        o.saler_user_no = u.user_no
+        from order o
+        LEFT JOIN `user` u on o.saler_user_no = u.user_no
+        LEFT JOIN `user` s on o.buyer_user_no = s.user_no
+
         where 1=1
         <if test="consumerNo != null and consumerNo != ''">
             and o.consumer_no = #{consumerNo}
@@ -607,11 +609,34 @@
         <if test="orderStatus != null">
             and o.order_status = #{orderStatus}
         </if>
+
+        <if test="orderNo != null and orderNo != ''">
+            and o.order_no = #{orderNo}
+        </if>
+
+        <if test="orderType != null">
+            and o.order_type = #{orderType}
+        </if>
+        <if test="submitTimeStart != null and  submitTimeStart != '' ">
+            <![CDATA[ and o.submit_time >= str_to_date(#{submitTimeStart},'%Y/%m/%d %H:%i:%s')]]>
+        </if>
+        <if test="submitTimeEnd != null and  submitTimeEnd != '' ">
+            <![CDATA[ and o.submitTimeEnd <= str_to_date(#{submitTimeEnd},'%Y/%m/%d %H:%i:%s')]]>
+        </if>
+
         <if test="salerUserNo != null and salerUserNo != ''">
             and o.saler_user_no = #{salerUserNo}
         </if>
+        <if test="buyerUserNo != null and buyerUserNo != ''">
+            OR o.buyer_user_no = #{buyerUserNo}
+        </if>
+
         <if test="groupId != null">
             and u.group_id = #{groupId}
+        </if>
+
+        <if test="buyerGroupId != null">
+            OR s.group_id = #{buyerGroupId}
         </if>
         ORDER BY o.submit_time DESC
     </sql>

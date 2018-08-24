@@ -168,7 +168,7 @@ public class OrderServiceProxy {
         Map<String, Object> params = new HashMap<>();
         params.put("consumerNo", consumerNo);
 
-        Long totalCount = orderService.listOrderByParamCount(params);
+        Long totalCount = orderService.listOrderByStatusCount(params);
 
         if (totalCount <= 0) {
             return null;
@@ -176,7 +176,7 @@ public class OrderServiceProxy {
         params.put("start", start);
         params.put("size", size);
 
-        List<Order> orderList = orderService.getOrderListByParams(params);
+        List<Order> orderList = orderService.listOrderByStatus(params);
         if (!CollectionUtils.isEmpty(orderList)) {
             for (Order order : orderList) {
                 ConsumerOrderVo consumerOrderVo = new ConsumerOrderVo();

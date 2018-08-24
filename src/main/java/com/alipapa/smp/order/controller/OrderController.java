@@ -622,10 +622,6 @@ public class OrderController {
             params.put("orderType", OrderTypeEnum.valueOf(orderType).getCode());
         }
 
-        if (StringUtil.isEmptyString(orderType)) {
-            params.put("orderType", OrderTypeEnum.valueOf(orderType).getCode());
-        }
-
         //提交时间开始
         if (!StringUtil.isEmptyString(submitTimeStart)) {
             logger.info("submitTimeStart:" + submitTimeStart);
@@ -680,7 +676,7 @@ public class OrderController {
             response.setTotalCount(orderVoList.get(0).getTotalCount());
             return response;
         }
-        
+
         return WebApiResponse.success(null);
     }
 
