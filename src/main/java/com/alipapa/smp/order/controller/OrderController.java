@@ -107,20 +107,31 @@ public class OrderController {
      */
     @RequestMapping(value = "/orderSelect", method = RequestMethod.GET)
     public WebApiResponse<List<SysDictVo>> orderSelect(@RequestParam("categoryCode") Integer categoryCode) {
-        if (categoryCode == null || CategoryCode.valueOf(categoryCode) == null) {
+        if (categoryCode == null || OrderCategoryCode.valueOf(categoryCode) == null) {
             return WebApiResponse.error("参数有误！");
         }
         List<SysDictVo> sysDictVoList = new ArrayList<>();
-
-        List<SysDict> sysDictList = sysDictService.listSysDictLikeText(OrderCategoryCode.valueOf(categoryCode).getCodeName(), null);
-        if (!CollectionUtils.isEmpty(sysDictList)) {
-            for (SysDict sysDict : sysDictList) {
+        
+        if (OrderCategoryCode.OrderStatus == OrderCategoryCode.valueOf(categoryCode)) {
+            for (OrderStatusEnum orderStatus : OrderStatusEnum.values()) {
                 SysDictVo sysDictVo = new SysDictVo();
-                sysDictVo.setId(sysDict.getId());
-                sysDictVo.setCategoryCode(sysDict.getCategoryCode());
-                sysDictVo.setDictText(sysDict.getDictText());
-                sysDictVo.setDictValue(sysDict.getDictValue());
+                sysDictVo.setId(Long.valueOf(orderStatus.getCode()));
+                sysDictVo.setCategoryCode(OrderCategoryCode.OrderStatus.getCodeName());
+                sysDictVo.setDictText(orderStatus.getDec());
+                sysDictVo.setDictValue(orderStatus.getCodeName());
                 sysDictVoList.add(sysDictVo);
+            }
+        } else {
+            List<SysDict> sysDictList = sysDictService.listSysDictLikeText(OrderCategoryCode.valueOf(categoryCode).getCodeName(), null);
+            if (!CollectionUtils.isEmpty(sysDictList)) {
+                for (SysDict sysDict : sysDictList) {
+                    SysDictVo sysDictVo = new SysDictVo();
+                    sysDictVo.setId(sysDict.getId());
+                    sysDictVo.setCategoryCode(sysDict.getCategoryCode());
+                    sysDictVo.setDictText(sysDict.getDictText());
+                    sysDictVo.setDictValue(sysDict.getDictValue());
+                    sysDictVoList.add(sysDictVo);
+                }
             }
         }
         return WebApiResponse.success(sysDictVoList);

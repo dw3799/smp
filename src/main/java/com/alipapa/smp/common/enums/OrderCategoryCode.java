@@ -8,7 +8,9 @@ public enum OrderCategoryCode {
 
     OrderType(2, "OrderType", "订单类型"),
 
-    PayChannel(3, "PayChannel", "支付渠道");
+    PayChannel(3, "PayChannel", "支付渠道"),
+
+    OrderStatus(4, "orderStatus", "订单状态");
 
 
     OrderCategoryCode(int code, String codeName, String dec) {
