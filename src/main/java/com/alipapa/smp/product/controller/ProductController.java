@@ -1,13 +1,18 @@
 package com.alipapa.smp.product.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alipapa.smp.common.enums.RoleEnum;
+import com.alipapa.smp.common.request.UserInfo;
+import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.product.pojo.Picture;
+import com.alipapa.smp.product.pojo.Product;
 import com.alipapa.smp.product.pojo.ProductCategory;
 import com.alipapa.smp.product.service.PictureService;
 import com.alipapa.smp.product.service.ProductCategoryService;
 import com.alipapa.smp.product.service.ProductService;
 import com.alipapa.smp.product.vo.ProductCategoryVo;
 import com.alipapa.smp.product.vo.ProductVo;
+import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.OrderNumberGenerator;
 import com.alipapa.smp.utils.StringUtil;
@@ -90,22 +95,6 @@ public class ProductController {
         return success(null);
     }
 
-
-    /**
-     * 添加产品
-     *
-     * @param
-     * @return
-     */
-    @RequestMapping(value = "/createProduct", method = RequestMethod.POST)
-    public WebApiResponse<String> createProduct(@RequestParam(value = "categoryName", required = false) String categoryName) {
-        if (StringUtil.isEmptyString(categoryName)) {
-            return WebApiResponse.error("参数有误！");
-        }
-        return success("success");
-    }
-
-
     /**
      * 产品管理列表查询
      *
@@ -156,6 +145,11 @@ public class ProductController {
      */
     @RequestMapping(value = "/picUpload", method = RequestMethod.POST)
     public WebApiResponse<JSONObject> sendWelfare(@RequestParam(value = "file") MultipartFile multipartFile, HttpServletRequest request) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        if (!userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+            return error("没有权限");
+        }
+
         try {
             String nowDay = DateUtil.formatToStr(new Date());
 
@@ -223,6 +217,41 @@ public class ProductController {
             throw new Exception("复制文件异常");
         }
     }
+
+
+    /**
+     * 添加产品
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/createProduct", method = RequestMethod.POST)
+    public WebApiResponse<String> createProduct(@RequestParam(value = "categoryName") String categoryName,
+                                                @RequestParam(value = "categoryId", required = false) Long categoryId,
+                                                @RequestParam(value = "productName") String productName,
+                                                @RequestParam(value = "picNos", required = false) String picNos) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        try {
+            if (!userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+                return error("没有权限");
+            }
+
+            if (StringUtil.isEmptyString(categoryName) || StringUtil.isEmptyString(productName)) {
+                return WebApiResponse.error("缺少必填参数！");
+            }
+
+            if (productService.getProductByName(productName) != null) {
+                return error("该产品已存在！");
+            }
+            productService.saveProduct(categoryName, categoryId, productName, picNos, userInfo);
+            return success("success");
+        } catch (Exception ex) {
+            logger.error("添加产品异常", ex);
+            return error("添加产品异常");
+        }
+    }
+
 
 }
 

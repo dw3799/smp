@@ -1,24 +1,25 @@
 package com.alipapa.smp.product.service;
 
 import com.alipapa.smp.common.Constant;
+import com.alipapa.smp.common.request.UserInfo;
+import com.alipapa.smp.order.pojo.ConsumerFrontPay;
+import com.alipapa.smp.order.pojo.ConsumerFrontPayExample;
 import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.product.mapper.ProductMapper;
-import com.alipapa.smp.product.pojo.Product;
-import com.alipapa.smp.product.pojo.ProductExt;
-import com.alipapa.smp.product.pojo.ProductPicture;
+import com.alipapa.smp.product.pojo.*;
 import com.alipapa.smp.product.vo.ProductVo;
 import com.alipapa.smp.utils.PriceUtil;
+import com.alipapa.smp.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ProductService {
@@ -33,6 +34,8 @@ public class ProductService {
     @Autowired
     private SubOrderService subOrderService;
 
+    @Autowired
+    private ProductCategoryService productCategoryService;
 
     /**
      * @param productId
@@ -41,6 +44,48 @@ public class ProductService {
     public Product getProductById(Long productId) {
         return productMapper.selectByPrimaryKey(productId);
     }
+
+
+    /**
+     * @param categoryName
+     * @param categoryId
+     * @param productName
+     * @param picNos
+     * @return
+     */
+    @Transactional
+    public boolean saveProduct(String categoryName, Long categoryId, String productName, String picNos, UserInfo userInfo) throws Exception {
+        ProductCategory productCategory = null;
+        if (categoryId != null) {
+            productCategory = productCategoryService.getProductCategoryById(categoryId);
+            categoryName = productCategory.getCategoryName();
+        } else {
+            productCategory = productCategoryService.getProductCategoryByName(categoryName);
+            if (productCategory == null) { //添加分类
+                productCategory = new ProductCategory();
+                productCategory.setCategoryName(categoryName);
+                productCategory.setCategoryCode(categoryName);
+                productCategory.setCreatedTime(new Date());
+                productCategory.setUpdatedTime(new Date());
+                productCategoryService.saveProductCategory(productCategory);
+                Thread.sleep(1000);
+                productCategory = productCategoryService.getProductCategoryByName(categoryName);
+            }
+        }
+
+        Product product = new Product();
+        product.setCategoryName(categoryName);
+        product.setCreatedTime(new Date());
+        product.setOpUserName(userInfo.getUserName());
+        product.setOpUserNo(userInfo.getUserNo());
+        product.setOpUserRole(userInfo.getRoleName());
+        product.setProductCategoryId(productCategory.getId());
+        product.setProductName(productName);
+        product.setUpdatedTime(new Date());
+        productMapper.insert(product);
+        return true;
+    }
+
 
     /**
      * @param productCategoryId
@@ -68,6 +113,27 @@ public class ProductService {
 
         return productVoList;
     }
+
+
+    /**
+     * @param productName
+     * @return
+     */
+    public Product getProductByName(String productName) {
+        if (StringUtil.isEmptyString(productName)) {
+            return null;
+        }
+        ProductExample example = new ProductExample();
+        ProductExample.Criteria criteria = example.createCriteria();
+        criteria.andProductNameEqualTo(productName);
+
+        List<Product> productList = productMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(productList)) {
+            return productList.get(0);
+        }
+        return null;
+    }
+
 
     /**
      * @param productCategoryId

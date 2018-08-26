@@ -31,18 +31,48 @@ public class ProductCategoryService {
 
 
     /**
+     * @param productCategory
+     * @return
+     */
+    public boolean saveProductCategory(ProductCategory productCategory) {
+        productCategoryMapper.insert(productCategory);
+        return true;
+    }
+
+
+    /**
      * @param productCategoryName
      * @return
      */
     public List<ProductCategory> listProductCategoryByName(String productCategoryName) {
         ProductCategoryExample example = new ProductCategoryExample();
         ProductCategoryExample.Criteria criteria = example.createCriteria();
-        if (StringUtil.isEmptyString(productCategoryName)) {
+        if (StringUtil.isNotEmptyString(productCategoryName)) {
             criteria.andCategoryCodeLike("%" + productCategoryName + "%");
         }
         List<ProductCategory> productCategoryList = productCategoryMapper.selectByExample(example);
         if (!CollectionUtils.isEmpty(productCategoryList)) {
             return productCategoryList;
+        }
+        return null;
+    }
+
+
+    /**
+     * @param productCategoryName
+     * @return
+     */
+    public ProductCategory getProductCategoryByName(String productCategoryName) {
+        if (StringUtil.isEmptyString(productCategoryName)) {
+            return null;
+        }
+        ProductCategoryExample example = new ProductCategoryExample();
+        ProductCategoryExample.Criteria criteria = example.createCriteria();
+        criteria.andCategoryNameEqualTo(productCategoryName);
+
+        List<ProductCategory> productCategoryList = productCategoryMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(productCategoryList)) {
+            return productCategoryList.get(0);
         }
         return null;
     }

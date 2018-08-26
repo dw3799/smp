@@ -3,8 +3,10 @@ package com.alipapa.smp.common;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.exception.ServiceException;
+import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.pojo.UserRole;
 import com.alipapa.smp.user.service.UserRoleService;
+import com.alipapa.smp.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -23,6 +25,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
     private UserRoleService userRoleService;
 
+    private UserService userService;
+
+
     /**
      * Handler执行之前调用这个方法
      */
@@ -33,6 +38,11 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             userRoleService = (UserRoleService) factory.getBean("userRoleService");
         }
 
+        if (userService == null) {
+            BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
+            userService = (UserService) factory.getBean("userService");
+        }
+
 
         if (request.getRequestURI().indexOf("login") >= 0 || request.getRequestURI().indexOf("listRole") >= 0) {
             return true;
@@ -40,6 +50,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         String token = request.getParameter("token");
         String uuid = request.getParameter("uuid");
         String userRoleId = request.getParameter("userRoleId");
+
+
         //1：token为空
         if (token == null) {
             response.setStatus(500);
@@ -51,6 +63,13 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             response.setStatus(500);
             throw new ServiceException("token校验失败，请重新登录！");
         }
+
+        User user = userService.getUserByUserNo(userRole.getUserNo());
+        if (user == null) {
+            response.setStatus(500);
+            throw new ServiceException("token校验失败，请重新登录！");
+        }
+
         //3：信息不正确
         if (!uuid.equals(userRole.getUuid()) || !userRoleId.equals(String.valueOf(userRole.getId()))) {
             response.setStatus(500);
@@ -71,6 +90,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         userInfo.setUuid(userRole.getUuid());
         userInfo.setUserRoleId(userRole.getId());
         userInfo.setRoleId(userRole.getRoleId());
+        userInfo.setUserName(user.getName());
         UserStatus.setUserInfo(userInfo);
         return super.preHandle(request, response, handler);
     }
