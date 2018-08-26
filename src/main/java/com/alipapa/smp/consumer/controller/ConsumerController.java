@@ -535,7 +535,7 @@ public class ConsumerController {
             consumer.setCompanyAddress(companyAddress);
             consumer.setCompanyWebsite(companyWebsite);
             consumer.setSkype(skype);
-            
+
             consumer.setConsignee(consignee);
             consumer.setTelMobile(telMobile);
             consumer.setPostalCode(postalCode);
@@ -600,11 +600,24 @@ public class ConsumerController {
      * @return
      */
     @RequestMapping(value = "/memberCondition", method = RequestMethod.GET)
-    public WebApiResponse<List<FuzzyUserVo>> memberCondition() {
+    public WebApiResponse<List<FuzzyUserVo>> memberCondition(@RequestParam(value = "groupId", required = false) Long groupId) {
         UserInfo userInfo = UserStatus.getUserInfo();
         if ("admin".equals(userInfo.getRoleName())) {//管理员返回所有人员
-            List<FuzzyUserVo> fuzzyUserVoList = userService.userSearch(null);
-            return WebApiResponse.success(fuzzyUserVoList);
+            if (groupId != null) {
+                List<User> userList = userService.listUserByGroupId(groupId);
+                List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+                for (User member : userList) {
+                    FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                    fuzzyUserVo.setUserId(member.getId());
+                    fuzzyUserVo.setUserNo(member.getUserNo());
+                    fuzzyUserVo.setName(member.getName());
+                    fuzzyUserVoList.add(fuzzyUserVo);
+                }
+                return WebApiResponse.success(fuzzyUserVoList);
+            } else {
+                List<FuzzyUserVo> fuzzyUserVoList = userService.userSearch(null);
+                return WebApiResponse.success(fuzzyUserVoList);
+            }
         }
 
         User user = userService.getUserById(userInfo.getUserId());
