@@ -35,6 +35,8 @@ import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.service.GroupService;
 import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserService;
+import com.alipapa.smp.user.vo.FuzzyUserVo;
+import com.alipapa.smp.user.vo.GroupSelectVo;
 import com.alipapa.smp.utils.OrderNumberGenerator;
 import com.alipapa.smp.utils.PriceUtil;
 import com.alipapa.smp.utils.StringUtil;
@@ -680,5 +682,98 @@ public class OrderController {
         return WebApiResponse.success(null);
     }
 
+
+    /**
+     * 我的订单查询-组列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/groupCondition", method = RequestMethod.GET)
+    public WebApiResponse<List<GroupSelectVo>> groupSelect() {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        if ("admin".equals(userInfo.getRoleName())) {//管理员返回所有组
+            return WebApiResponse.success(groupService.listAllGroupSelect());
+        }
+
+        User user = userService.getUserById(userInfo.getUserId());
+        if (1 == user.getIsLeader()) {
+            Group group = groupService.getGroupById(user.getGroupId());
+            GroupSelectVo groupSelectVo = new GroupSelectVo();
+            groupSelectVo.setGroupId(group.getId());
+            groupSelectVo.setGroupNo(group.getGroupNo());
+            groupSelectVo.setGroupName(group.getName());
+            List<GroupSelectVo> groupSelectVoList = new ArrayList<>();
+            groupSelectVoList.add(groupSelectVo);
+            return WebApiResponse.success(groupSelectVoList);
+        } else {
+            Group group = groupService.getGroupById(user.getGroupId());
+            if (group != null) {
+                GroupSelectVo groupSelectVo = new GroupSelectVo();
+                groupSelectVo.setGroupId(group.getId());
+                groupSelectVo.setGroupNo(group.getGroupNo());
+                groupSelectVo.setGroupName(group.getName());
+                List<GroupSelectVo> groupSelectVoList = new ArrayList<>();
+                groupSelectVoList.add(groupSelectVo);
+                return WebApiResponse.success(groupSelectVoList);
+            }
+        }
+
+        return WebApiResponse.success(null);
+    }
+
+
+    /**
+     * 我的订单查询-组员列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/memberCondition", method = RequestMethod.GET)
+    public WebApiResponse<List<FuzzyUserVo>> memberCondition(@RequestParam(value = "groupId", required = false) Long groupId) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        if ("admin".equals(userInfo.getRoleName())) {//管理员返回所有人员
+            if (groupId != null) {
+                List<User> userList = userService.listUserByGroupId(groupId);
+                List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+                for (User member : userList) {
+                    FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                    fuzzyUserVo.setUserId(member.getId());
+                    fuzzyUserVo.setUserNo(member.getUserNo());
+                    fuzzyUserVo.setName(member.getName());
+                    fuzzyUserVoList.add(fuzzyUserVo);
+                }
+                return WebApiResponse.success(fuzzyUserVoList);
+            } else {
+                List<FuzzyUserVo> fuzzyUserVoList = userService.userSearch(null);
+                return WebApiResponse.success(fuzzyUserVoList);
+            }
+        }
+
+        User user = userService.getUserById(userInfo.getUserId());
+        if (1 == user.getIsLeader()) {
+            Group group = groupService.getGroupById(user.getGroupId());
+            List<User> userList = userService.listUserByGroupId(group.getId());
+
+            List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+            for (User member : userList) {
+                FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                fuzzyUserVo.setUserId(member.getId());
+                fuzzyUserVo.setUserNo(member.getUserNo());
+                fuzzyUserVo.setName(member.getName());
+                fuzzyUserVoList.add(fuzzyUserVo);
+            }
+            return WebApiResponse.success(fuzzyUserVoList);
+        } else {
+            FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+            fuzzyUserVo.setUserId(user.getId());
+            fuzzyUserVo.setUserNo(user.getUserNo());
+            fuzzyUserVo.setName(user.getName());
+            List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
+            fuzzyUserVoList.add(fuzzyUserVo);
+            return WebApiResponse.success(fuzzyUserVoList);
+        }
+    }
 
 }
