@@ -111,7 +111,7 @@ public class OrderController {
             return WebApiResponse.error("参数有误！");
         }
         List<SysDictVo> sysDictVoList = new ArrayList<>();
-        
+
         if (OrderCategoryCode.OrderStatus == OrderCategoryCode.valueOf(categoryCode)) {
             for (OrderStatusEnum orderStatus : OrderStatusEnum.values()) {
                 SysDictVo sysDictVo = new SysDictVo();
@@ -269,8 +269,8 @@ public class OrderController {
 
                 if (!CollectionUtils.isEmpty(productPictureList)) {
                     ProductPicture productPicture = productPictureList.get(0);
-                    subOrder.setMiniPic(productPicture.getPicName());
-                    subOrder.setPic(productPicture.getPicName());
+                    subOrder.setMiniPic(productPicture.getPicNo());
+                    subOrder.setPic(productPicture.getPicNo());
                 }
 
                 subOrder.setProductAmount(PriceUtil.convertToFen(subProductAmount));

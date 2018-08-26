@@ -122,7 +122,7 @@ public class ProductService {
             List<ProductPicture> productPictureList = productPicturesService.listProductPictureByProductId(product.getId());
             if (!CollectionUtils.isEmpty(productPictureList)) {
                 ProductPicture productPicture = productPictureList.get(0);
-                productVo.setPic(productPicture.getPicName());
+                productVo.setPic(productPicture.getPicNo());
             }
             SubOrder subOrder = subOrderService.getLatestSubOrderByProductId(product.getId());
             if (subOrder != null) {
@@ -162,7 +162,7 @@ public class ProductService {
             List<ProductPicture> productPictureList = productPicturesService.listProductPictureByProductId(product.getId());
             if (!CollectionUtils.isEmpty(productPictureList)) {
                 ProductPicture productPicture = productPictureList.get(0);
-                productVo.setPic(productPicture.getPicName());
+                productVo.setPic(productPicture.getPicNo());
             }
             SubOrder subOrder = subOrderService.getLatestSubOrderByProductId(product.getId());
             if (subOrder != null) {

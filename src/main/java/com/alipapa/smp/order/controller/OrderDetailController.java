@@ -412,8 +412,8 @@ public class OrderDetailController {
 
                 if (!CollectionUtils.isEmpty(productPictureList)) {
                     ProductPicture productPicture = productPictureList.get(0);
-                    subOrder.setMiniPic(productPicture.getPicName());
-                    subOrder.setPic(productPicture.getPicName());
+                    subOrder.setMiniPic(productPicture.getPicNo());
+                    subOrder.setPic(productPicture.getPicNo());
                 }
 
                 subOrder.setProductAmount(PriceUtil.convertToFen(subProductAmount));

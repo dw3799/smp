@@ -7,11 +7,11 @@ public class ProductPicture {
 
     private Long productId;
 
-    private String picName;
+    private String picId;
+
+    private String picNo;
 
     private Integer fileType;
-
-    private Integer sort;
 
     private Date createdTime;
 
@@ -33,12 +33,20 @@ public class ProductPicture {
         this.productId = productId;
     }
 
-    public String getPicName() {
-        return picName;
+    public String getPicId() {
+        return picId;
     }
 
-    public void setPicName(String picName) {
-        this.picName = picName == null ? null : picName.trim();
+    public void setPicId(String picId) {
+        this.picId = picId == null ? null : picId.trim();
+    }
+
+    public String getPicNo() {
+        return picNo;
+    }
+
+    public void setPicNo(String picNo) {
+        this.picNo = picNo == null ? null : picNo.trim();
     }
 
     public Integer getFileType() {
@@ -47,14 +55,6 @@ public class ProductPicture {
 
     public void setFileType(Integer fileType) {
         this.fileType = fileType;
-    }
-
-    public Integer getSort() {
-        return sort;
-    }
-
-    public void setSort(Integer sort) {
-        this.sort = sort;
     }
 
     public Date getCreatedTime() {

@@ -36,6 +36,11 @@ public class ProductPictureService {
      * @return
      */
     public List<ProductPicture> listProductPictureByProductId(Long productId) {
+        if (productId == null) {
+            return null;
+        }
+
+        logger.info("listProductPictureByProductId,productId=" + productId);
         ProductPictureExample example = new ProductPictureExample();
         ProductPictureExample.Criteria criteria = example.createCriteria();
         criteria.andProductIdEqualTo(productId);
@@ -45,6 +50,5 @@ public class ProductPictureService {
         }
         return null;
     }
-
 
 }
