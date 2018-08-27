@@ -253,6 +253,118 @@ public class ProductController {
     }
 
 
+    /**
+     * 图片删除
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/delPic", method = RequestMethod.POST)
+    public WebApiResponse<String> delPic(@RequestParam(value = "picNo") String picNo) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (!userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+                return error("没有权限");
+            }
+
+            if (StringUtil.isEmptyString(picNo)) {
+                return WebApiResponse.error("缺少必填参数！");
+            }
+
+            productService.delPicture(picNo);
+
+            return WebApiResponse.success("success");
+        } catch (Exception ex) {
+            logger.error("图片删除异常", ex);
+            return error("图片删除异常");
+        }
+    }
+
+
+    /**
+     * 产品删除
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/delProduct", method = RequestMethod.POST)
+    public WebApiResponse<String> delProduct(@RequestParam(value = "productIds") String productIds) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (!userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+                return error("没有权限");
+            }
+
+            if (StringUtil.isEmptyString(productIds)) {
+                return WebApiResponse.error("缺少必填参数！");
+            }
+
+
+            return WebApiResponse.success("success");
+        } catch (Exception ex) {
+            logger.error("产品删除异常", ex);
+            return error("产品删除异常");
+        }
+    }
+
+
+    /**
+     * 下载产品图片
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/downloadPic", method = RequestMethod.POST)
+    public WebApiResponse<String> downloadPic(@RequestParam(value = "picNo") String picNo) {
+        try {
+
+            if (StringUtil.isEmptyString(picNo)) {
+                return WebApiResponse.error("缺少必填参数！");
+            }
+
+
+            return WebApiResponse.success("success");
+        } catch (Exception ex) {
+            logger.error("下载产品图片异常", ex);
+            return error("下载产品图片异常");
+        }
+    }
+
+
+    /**
+     * 更新产品
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/updateProduct", method = RequestMethod.POST)
+    public WebApiResponse<String> updateProduct(@RequestParam(value = "categoryName") String categoryName,
+                                                @RequestParam(value = "productId") Long productId,
+                                                @RequestParam(value = "categoryId", required = false) Long categoryId,
+                                                @RequestParam(value = "productName") String productName,
+                                                @RequestParam(value = "picNos", required = false) String picNos) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (!userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+                return error("没有权限");
+            }
+
+            if (productId == null || StringUtil.isEmptyString(categoryName) || StringUtil.isEmptyString(productName)) {
+                return WebApiResponse.error("缺少必填参数！");
+            }
+
+            if (productService.getProductById(productId) == null) {
+                return error("该产品不存在！");
+            }
+            productService.saveProduct(categoryName, categoryId, productName, picNos, userInfo);
+            return success("success");
+        } catch (Exception ex) {
+            logger.error("添加产品异常", ex);
+            return error("添加产品异常");
+        }
+    }
+
+
 }
 
 

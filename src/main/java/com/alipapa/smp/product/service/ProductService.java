@@ -2,8 +2,6 @@ package com.alipapa.smp.product.service;
 
 import com.alipapa.smp.common.Constant;
 import com.alipapa.smp.common.request.UserInfo;
-import com.alipapa.smp.order.pojo.ConsumerFrontPay;
-import com.alipapa.smp.order.pojo.ConsumerFrontPayExample;
 import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.product.mapper.ProductMapper;
@@ -17,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -29,13 +27,17 @@ public class ProductService {
     private ProductMapper productMapper;
 
     @Autowired
-    private ProductPictureService productPicturesService;
+    private ProductPictureService productPictureService;
 
     @Autowired
     private SubOrderService subOrderService;
 
     @Autowired
     private ProductCategoryService productCategoryService;
+
+
+    @Autowired
+    private PictureService pictureService;
 
     /**
      * @param productId
@@ -83,9 +85,62 @@ public class ProductService {
         product.setProductName(productName);
         product.setUpdatedTime(new Date());
         productMapper.insert(product);
+
+        if (StringUtil.isNotEmptyString(picNos)) {
+            Thread.sleep(1000);
+            product = this.getProductByName(productName);
+
+            String[] picArray = picNos.split(";");
+            for (String picNo : picArray) {
+                Picture picture = pictureService.getPictureByPicNo(picNo);
+                if (picture == null) {
+                    logger.info("getPictureByPicNo is null,picNo=" + picNo);
+                    continue;
+                }
+
+                ProductPicture productPicture = new ProductPicture();
+                productPicture.setCreatedTime(new Date());
+                productPicture.setFileType(0);
+                productPicture.setPicId(String.valueOf(picture.getId()));
+                productPicture.setPicNo(picNo);
+                productPicture.setProductId(product.getId());
+                productPicture.setUpdatedTime(new Date());
+                productPictureService.save(productPicture);
+            }
+        }
+
         return true;
     }
 
+
+    /**
+     * 图片删除
+     *
+     * @param picNo
+     * @return
+     */
+    @Transactional
+    public boolean delPicture(String picNo) throws Exception {
+        Picture picture = pictureService.getPictureByPicNo(picNo);
+        if (picture == null) {
+            logger.info("getPictureByPicNo is null,picNo=" + picNo);
+            return false;
+        }
+
+        File file = new File(picture.getPath());
+        if (file.exists()) {
+            file.delete();
+        }
+
+        List<ProductPicture> productPictureList = productPictureService.listProductPictureByPicNo(picNo);
+        if (!CollectionUtils.isEmpty(productPictureList)) {
+            for (ProductPicture productPicture : productPictureList) {
+                productPictureService.delete(productPicture);
+            }
+        }
+        pictureService.delete(picture);
+        return true;
+    }
 
     /**
      * @param productCategoryId
@@ -185,7 +240,7 @@ public class ProductService {
             productVo.setTotalCount(totalCount);
             productVo.setSaleNo(null);
 
-            List<ProductPicture> productPictureList = productPicturesService.listProductPictureByProductId(product.getId());
+            List<ProductPicture> productPictureList = productPictureService.listProductPictureByProductId(product.getId());
             if (!CollectionUtils.isEmpty(productPictureList)) {
                 ProductPicture productPicture = productPictureList.get(0);
                 productVo.setPic(productPicture.getPicNo());
@@ -225,7 +280,7 @@ public class ProductService {
             productVo.setTotalCount(totalCount);
             productVo.setSaleNo(product.getSaleNo());
 
-            List<ProductPicture> productPictureList = productPicturesService.listProductPictureByProductId(product.getId());
+            List<ProductPicture> productPictureList = productPictureService.listProductPictureByProductId(product.getId());
             if (!CollectionUtils.isEmpty(productPictureList)) {
                 ProductPicture productPicture = productPictureList.get(0);
                 productVo.setPic(productPicture.getPicNo());

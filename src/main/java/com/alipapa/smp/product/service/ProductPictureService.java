@@ -19,6 +19,25 @@ public class ProductPictureService {
     @Autowired
     private ProductPictureMapper productPictureMapper;
 
+    /**
+     * @param productPicture
+     * @return
+     */
+    public boolean save(ProductPicture productPicture) {
+        productPictureMapper.insert(productPicture);
+        return true;
+    }
+
+
+    /**
+     * @param productPicture
+     * @return
+     */
+    public boolean delete(ProductPicture productPicture) {
+        productPictureMapper.deleteByPrimaryKey(productPicture.getId());
+        return true;
+    }
+
 
     /**
      * @param productPictureId
@@ -50,5 +69,29 @@ public class ProductPictureService {
         }
         return null;
     }
+
+
+    /**
+     * 根据产品ID获取图片
+     *
+     * @param picNo
+     * @return
+     */
+    public List<ProductPicture> listProductPictureByPicNo(String picNo) {
+        if (picNo == null) {
+            return null;
+        }
+
+        logger.info("listProductPictureByPicNo,picNo=" + picNo);
+        ProductPictureExample example = new ProductPictureExample();
+        ProductPictureExample.Criteria criteria = example.createCriteria();
+        criteria.andPicNoEqualTo(picNo);
+        List<ProductPicture> productPictureList = productPictureMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(productPictureList)) {
+            return productPictureList;
+        }
+        return null;
+    }
+
 
 }
