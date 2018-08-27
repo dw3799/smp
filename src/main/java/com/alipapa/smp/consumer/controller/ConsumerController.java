@@ -54,7 +54,6 @@ public class ConsumerController {
     @Autowired
     private SysDictService sysDictService;
 
-
     @Autowired
     private ConsumerService consumerService;
 
