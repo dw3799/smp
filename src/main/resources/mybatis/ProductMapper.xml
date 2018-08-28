@@ -11,6 +11,7 @@
         <result column="op_user_role" jdbcType="VARCHAR" property="opUserRole"/>
         <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
         <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+        <result column="is_del" jdbcType="INTEGER" property="isDel"/>
     </resultMap>
 
     <resultMap id="ExtResultMap" type="com.alipapa.smp.product.pojo.ProductExt">
@@ -88,7 +89,7 @@
     </sql>
     <sql id="Base_Column_List">
     id, product_category_id, category_name, product_name, op_user_no, op_user_name, op_user_role, 
-    created_time, updated_time
+    created_time, updated_time, is_del
   </sql>
     <select id="selectByExample" parameterType="com.alipapa.smp.product.pojo.ProductExample" resultMap="BaseResultMap">
         select
@@ -123,12 +124,12 @@
     <insert id="insert" parameterType="com.alipapa.smp.product.pojo.Product">
     insert into product (id, product_category_id, category_name, 
       product_name, op_user_no, op_user_name, 
-      op_user_role, created_time, updated_time
-      )
+      op_user_role, created_time, updated_time, 
+      is_del)
     values (#{id,jdbcType=BIGINT}, #{productCategoryId,jdbcType=BIGINT}, #{categoryName,jdbcType=VARCHAR}, 
       #{productName,jdbcType=VARCHAR}, #{opUserNo,jdbcType=VARCHAR}, #{opUserName,jdbcType=VARCHAR}, 
-      #{opUserRole,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
-      )
+      #{opUserRole,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, 
+      #{isDel,jdbcType=INTEGER})
   </insert>
     <insert id="insertSelective" parameterType="com.alipapa.smp.product.pojo.Product">
         insert into product
@@ -160,6 +161,9 @@
             <if test="updatedTime != null">
                 updated_time,
             </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -188,6 +192,9 @@
             </if>
             <if test="updatedTime != null">
                 #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -227,6 +234,9 @@
             <if test="record.updatedTime != null">
                 updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="record.isDel != null">
+                is_del = #{record.isDel,jdbcType=INTEGER},
+            </if>
         </set>
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -242,7 +252,8 @@
         op_user_name = #{record.opUserName,jdbcType=VARCHAR},
         op_user_role = #{record.opUserRole,jdbcType=VARCHAR},
         created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
+        updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+        is_del = #{record.isDel,jdbcType=INTEGER}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
@@ -274,6 +285,9 @@
             <if test="updatedTime != null">
                 updated_time = #{updatedTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="isDel != null">
+                is_del = #{isDel,jdbcType=INTEGER},
+            </if>
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
@@ -286,7 +300,8 @@
       op_user_name = #{opUserName,jdbcType=VARCHAR},
       op_user_role = #{opUserRole,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      is_del = #{isDel,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 
@@ -305,7 +320,7 @@
 
     <sql id="listProductByParamSql">
         SELECT DISTINCT p.* FROM product p
-        where 1=1
+        where 1=1 and p.is_del=0
         <if test="productCategoryId != null">
             and p.product_category_id = #{productCategoryId}
         </if>
@@ -340,7 +355,7 @@
         FROM
         product p
         LEFT JOIN sub_order s ON p.id = s.product_id
-        where 1=1 and s.sale_no = #{saleNo}
+        where 1=1 and p.is_del=0 and s.sale_no = #{saleNo}
         <if test="productCategoryId != null">
             and p.product_category_id = #{productCategoryId}
         </if>
@@ -355,6 +370,5 @@
         <include refid="listProductBySaleNoSql"/>
         ) T
     </select>
-
 
 </mapper>

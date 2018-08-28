@@ -270,9 +270,7 @@ public class ProductController {
             if (StringUtil.isEmptyString(picNo)) {
                 return WebApiResponse.error("缺少必填参数！");
             }
-
             productService.delPicture(picNo);
-
             return WebApiResponse.success("success");
         } catch (Exception ex) {
             logger.error("图片删除异常", ex);
@@ -300,36 +298,17 @@ public class ProductController {
             }
 
 
+            String[] productIdArray = productIds.split(";");
+
+            for (String productId : productIdArray) {
+                productService.delProduct(Long.valueOf(productId));
+            }
             return WebApiResponse.success("success");
         } catch (Exception ex) {
             logger.error("产品删除异常", ex);
             return error("产品删除异常");
         }
     }
-
-
-    /**
-     * 下载产品图片
-     *
-     * @param
-     * @return
-     */
-    @RequestMapping(value = "/downloadPic", method = RequestMethod.POST)
-    public WebApiResponse<String> downloadPic(@RequestParam(value = "picNo") String picNo) {
-        try {
-
-            if (StringUtil.isEmptyString(picNo)) {
-                return WebApiResponse.error("缺少必填参数！");
-            }
-
-
-            return WebApiResponse.success("success");
-        } catch (Exception ex) {
-            logger.error("下载产品图片异常", ex);
-            return error("下载产品图片异常");
-        }
-    }
-
 
     /**
      * 更新产品
@@ -356,11 +335,32 @@ public class ProductController {
             if (productService.getProductById(productId) == null) {
                 return error("该产品不存在！");
             }
-            productService.saveProduct(categoryName, categoryId, productName, picNos, userInfo);
+            productService.updateProduct(productId, categoryName, categoryId, productName, picNos, userInfo);
             return success("success");
         } catch (Exception ex) {
-            logger.error("添加产品异常", ex);
-            return error("添加产品异常");
+            logger.error("更新产品异常", ex);
+            return error("更新产品异常");
+        }
+    }
+
+
+    /**
+     * 下载产品图片
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/downloadPic", method = RequestMethod.POST)
+    public WebApiResponse<String> downloadPic(@RequestParam(value = "picNo") String picNo) {
+        try {
+            if (StringUtil.isEmptyString(picNo)) {
+                return WebApiResponse.error("缺少必填参数！");
+            }
+
+            return WebApiResponse.success("success");
+        } catch (Exception ex) {
+            logger.error("下载产品图片异常", ex);
+            return error("下载产品图片异常");
         }
     }
 

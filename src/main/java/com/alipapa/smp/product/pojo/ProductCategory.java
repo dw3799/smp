@@ -13,6 +13,8 @@ public class ProductCategory {
 
     private Date updatedTime;
 
+    private Integer isDel;
+
     public Long getId() {
         return id;
     }
@@ -51,5 +53,13 @@ public class ProductCategory {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public Integer getIsDel() {
+        return isDel;
+    }
+
+    public void setIsDel(Integer isDel) {
+        this.isDel = isDel;
     }
 }

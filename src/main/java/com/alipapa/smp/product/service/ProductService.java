@@ -35,7 +35,6 @@ public class ProductService {
     @Autowired
     private ProductCategoryService productCategoryService;
 
-
     @Autowired
     private PictureService pictureService;
 
@@ -47,7 +46,6 @@ public class ProductService {
         return productMapper.selectByPrimaryKey(productId);
     }
 
-
     /**
      * @param categoryName
      * @param categoryId
@@ -57,26 +55,11 @@ public class ProductService {
      */
     @Transactional
     public boolean saveProduct(String categoryName, Long categoryId, String productName, String picNos, UserInfo userInfo) throws Exception {
-        ProductCategory productCategory = null;
-        if (categoryId != null) {
-            productCategory = productCategoryService.getProductCategoryById(categoryId);
-            categoryName = productCategory.getCategoryName();
-        } else {
-            productCategory = productCategoryService.getProductCategoryByName(categoryName);
-            if (productCategory == null) { //添加分类
-                productCategory = new ProductCategory();
-                productCategory.setCategoryName(categoryName);
-                productCategory.setCategoryCode(categoryName);
-                productCategory.setCreatedTime(new Date());
-                productCategory.setUpdatedTime(new Date());
-                productCategoryService.saveProductCategory(productCategory);
-                Thread.sleep(1000);
-                productCategory = productCategoryService.getProductCategoryByName(categoryName);
-            }
-        }
+
+        ProductCategory productCategory = productCategoryService.getCategory(categoryId, categoryName);
 
         Product product = new Product();
-        product.setCategoryName(categoryName);
+        product.setCategoryName(productCategory.getCategoryName());
         product.setCreatedTime(new Date());
         product.setOpUserName(userInfo.getUserName());
         product.setOpUserNo(userInfo.getUserNo());
@@ -84,6 +67,8 @@ public class ProductService {
         product.setProductCategoryId(productCategory.getId());
         product.setProductName(productName);
         product.setUpdatedTime(new Date());
+        product.setIsDel(0);
+
         productMapper.insert(product);
 
         if (StringUtil.isNotEmptyString(picNos)) {
@@ -114,6 +99,58 @@ public class ProductService {
 
 
     /**
+     * @param productId
+     * @param categoryName
+     * @param categoryId
+     * @param productName
+     * @param picNos
+     * @return
+     */
+    @Transactional
+    public boolean updateProduct(Long productId, String categoryName, Long categoryId, String productName, String picNos, UserInfo userInfo) throws Exception {
+        Product product = this.getProductById(productId);
+        if (product == null) {
+            throw new Exception("产品不存在！");
+        }
+        ProductCategory productCategory = productCategoryService.getCategory(categoryId, categoryName);
+
+        product.setCategoryName(productCategory.getCategoryName());
+        product.setOpUserName(userInfo.getUserName());
+        product.setOpUserNo(userInfo.getUserNo());
+        product.setOpUserRole(userInfo.getRoleName());
+        product.setProductCategoryId(productCategory.getId());
+        product.setProductName(productName);
+        product.setUpdatedTime(new Date());
+        productMapper.insert(product);
+
+        if (StringUtil.isNotEmptyString(picNos)) {
+            String[] picArray = picNos.split(";");
+            for (String picNo : picArray) {
+                Picture picture = pictureService.getPictureByPicNo(picNo);
+                if (picture == null) {
+                    logger.info("getPictureByPicNo is null,picNo=" + picNo);
+                    continue;
+                }
+
+                ProductPicture productPicture = productPictureService.getProductPictureByProductIdAndPicNo(product.getId(), picNo);
+                if (productPicture != null) {
+                    continue;
+                }
+                productPicture = new ProductPicture();
+                productPicture.setCreatedTime(new Date());
+                productPicture.setFileType(0);
+                productPicture.setPicId(String.valueOf(picture.getId()));
+                productPicture.setPicNo(picNo);
+                productPicture.setProductId(product.getId());
+                productPicture.setUpdatedTime(new Date());
+                productPictureService.save(productPicture);
+            }
+        }
+        return true;
+    }
+
+
+    /**
      * 图片删除
      *
      * @param picNo
@@ -139,6 +176,24 @@ public class ProductService {
             }
         }
         pictureService.delete(picture);
+        return true;
+    }
+
+
+    /**
+     * 产品作废
+     *
+     * @param productId
+     * @return
+     */
+    @Transactional
+    public boolean delProduct(Long productId) throws Exception {
+        Product product = this.getProductById(productId);
+        if (product == null) {
+            throw new Exception("产品不存在！");
+        }
+        product.setIsDel(1);
+        productMapper.updateByPrimaryKey(product);
         return true;
     }
 
@@ -175,6 +230,27 @@ public class ProductService {
      * @return
      */
     public Product getProductByName(String productName) {
+        if (StringUtil.isEmptyString(productName)) {
+            return null;
+        }
+        ProductExample example = new ProductExample();
+        ProductExample.Criteria criteria = example.createCriteria();
+        criteria.andProductNameEqualTo(productName);
+        criteria.andIsDelEqualTo(0);
+
+        List<Product> productList = productMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(productList)) {
+            return productList.get(0);
+        }
+        return null;
+    }
+
+
+    /**
+     * @param productName
+     * @return
+     */
+    public Product getProductByNameWithoutStatus(String productName) {
         if (StringUtil.isEmptyString(productName)) {
             return null;
         }

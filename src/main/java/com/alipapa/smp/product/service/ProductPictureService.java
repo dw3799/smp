@@ -3,6 +3,7 @@ package com.alipapa.smp.product.service;
 import com.alipapa.smp.product.mapper.ProductPictureMapper;
 import com.alipapa.smp.product.pojo.ProductPicture;
 import com.alipapa.smp.product.pojo.ProductPictureExample;
+import com.alipapa.smp.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,31 @@ public class ProductPictureService {
         List<ProductPicture> userList = productPictureMapper.selectByExample(example);
         if (!CollectionUtils.isEmpty(userList)) {
             return userList;
+        }
+        return null;
+    }
+
+
+    /**
+     * 根据产品ID获取图片
+     *
+     * @param productId
+     * @return
+     */
+    public ProductPicture getProductPictureByProductIdAndPicNo(Long productId, String picNo) {
+        if (productId == null || StringUtil.isEmptyString(picNo)) {
+            return null;
+        }
+
+        logger.info("listProductPictureByProductId,productId=" + productId);
+        ProductPictureExample example = new ProductPictureExample();
+        ProductPictureExample.Criteria criteria = example.createCriteria();
+        criteria.andProductIdEqualTo(productId);
+        criteria.andPicNoEqualTo(picNo);
+
+        List<ProductPicture> userList = productPictureMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(userList)) {
+            return userList.get(0);
         }
         return null;
     }

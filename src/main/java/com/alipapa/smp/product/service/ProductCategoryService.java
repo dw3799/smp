@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -77,5 +78,26 @@ public class ProductCategoryService {
         return null;
     }
 
+
+    public ProductCategory getCategory(Long categoryId, String categoryName) throws Exception {
+        ProductCategory productCategory = null;
+        if (categoryId != null) {
+            productCategory = this.getProductCategoryById(categoryId);
+            categoryName = productCategory.getCategoryName();
+        } else {
+            productCategory = this.getProductCategoryByName(categoryName);
+            if (productCategory == null) { //添加分类
+                productCategory = new ProductCategory();
+                productCategory.setCategoryName(categoryName);
+                productCategory.setCategoryCode(categoryName);
+                productCategory.setCreatedTime(new Date());
+                productCategory.setUpdatedTime(new Date());
+                this.saveProductCategory(productCategory);
+                Thread.sleep(1000);
+                productCategory = this.getProductCategoryByName(categoryName);
+            }
+        }
+        return productCategory;
+    }
 
 }
