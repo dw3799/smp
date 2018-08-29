@@ -63,7 +63,7 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
 @CrossOrigin
 @RequestMapping("/api/order")
 public class OrderController {
-    private static Logger logger = LoggerFactory.getLogger(ConsumerController.class);
+    private static Logger logger = LoggerFactory.getLogger(OrderController.class);
 
 
     @Autowired
