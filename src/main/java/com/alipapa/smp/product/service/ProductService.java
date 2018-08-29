@@ -250,6 +250,27 @@ public class ProductService {
      * @param productName
      * @return
      */
+    public List<Product> listProductByProductName(String productName) {
+        if (StringUtil.isEmptyString(productName)) {
+            return null;
+        }
+        ProductExample example = new ProductExample();
+        ProductExample.Criteria criteria = example.createCriteria();
+        criteria.andProductNameLike("%" + productName + "%");
+        criteria.andIsDelEqualTo(0);
+
+        List<Product> productList = productMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(productList)) {
+            return productList;
+        }
+        return null;
+    }
+
+
+    /**
+     * @param productName
+     * @return
+     */
     public Product getProductByNameWithoutStatus(String productName) {
         if (StringUtil.isEmptyString(productName)) {
             return null;

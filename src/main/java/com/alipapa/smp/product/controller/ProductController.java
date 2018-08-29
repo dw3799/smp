@@ -100,7 +100,7 @@ public class ProductController {
 
         return success(null);
     }
-
+    
     /**
      * 产品管理列表查询
      *
@@ -132,7 +132,7 @@ public class ProductController {
                 productVoList = productService.listProductBySaleNo(productCategoryId, productName, saleNo, start, size);
             }
 
-            if (CollectionUtils.isEmpty(productVoList)) {
+            if (!CollectionUtils.isEmpty(productVoList)) {
                 WebApiResponse response = success(productVoList);
                 response.setTotalCount(productVoList.get(0).getTotalCount());
                 return response;
