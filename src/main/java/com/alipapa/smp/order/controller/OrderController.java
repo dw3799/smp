@@ -614,6 +614,7 @@ public class OrderController {
     public WebApiResponse<List<OrderVo>> listMyOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
                                                      @RequestParam(name = "pageNum", required = false) Integer pageNum,
                                                      @RequestParam(name = "orderNo", required = false) String orderNo,
+                                                     @RequestParam(name = "consumerName", required = false) String consumerName,
                                                      @RequestParam(name = "orderStatus", required = false) String orderStatus,
                                                      @RequestParam(name = "orderType", required = false) String orderType,
                                                      @RequestParam(name = "userId", required = false) Long userId,
@@ -623,26 +624,30 @@ public class OrderController {
         UserInfo userInfo = UserStatus.getUserInfo();
         Map<String, Object> params = new HashMap<>();
 
-        if (StringUtil.isEmptyString(orderNo)) {
+        if (StringUtil.isNotEmptyString(orderNo)) {
             params.put("orderNo", orderNo);
         }
 
-        if (StringUtil.isEmptyString(orderStatus)) {
+        if (StringUtil.isNotEmptyString(consumerName)) {
+            params.put("consumerName", consumerName);
+        }
+
+        if (StringUtil.isNotEmptyString(orderStatus)) {
             params.put("orderStatus", OrderStatusEnum.valueOf(orderStatus).getCode());
         }
 
-        if (StringUtil.isEmptyString(orderType)) {
+        if (StringUtil.isNotEmptyString(orderType)) {
             params.put("orderType", OrderTypeEnum.valueOf(orderType).getCode());
         }
 
         //提交时间开始
-        if (!StringUtil.isEmptyString(submitTimeStart)) {
+        if (!StringUtil.isNotEmptyString(submitTimeStart)) {
             logger.info("submitTimeStart:" + submitTimeStart);
             params.put("submitTimeStart", submitTimeStart);
         }
 
         //提交时间结束
-        if (!StringUtil.isEmptyString(submitTimeEnd)) {
+        if (!StringUtil.isNotEmptyString(submitTimeEnd)) {
             logger.info("submitTimeEnd:" + submitTimeEnd);
             params.put("submitTimeEnd", submitTimeEnd);
         }

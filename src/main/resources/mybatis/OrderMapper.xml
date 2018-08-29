@@ -601,10 +601,9 @@
         from order o
         LEFT JOIN `user` u on o.saler_user_no = u.user_no
         LEFT JOIN `user` s on o.buyer_user_no = s.user_no
-
         where 1=1
-        <if test="consumerNo != null and consumerNo != ''">
-            and o.consumer_no = #{consumerNo}
+        <if test="consumerName != null and consumerName != ''">
+            and o.consumer_name LIKE CONCAT('%',#{consumerName},'%')
         </if>
         <if test="orderStatus != null">
             and o.order_status = #{orderStatus}

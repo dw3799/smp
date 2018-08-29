@@ -7,10 +7,13 @@ import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.product.pojo.Picture;
 import com.alipapa.smp.product.pojo.Product;
 import com.alipapa.smp.product.pojo.ProductCategory;
+import com.alipapa.smp.product.pojo.ProductPicture;
 import com.alipapa.smp.product.service.PictureService;
 import com.alipapa.smp.product.service.ProductCategoryService;
+import com.alipapa.smp.product.service.ProductPictureService;
 import com.alipapa.smp.product.service.ProductService;
 import com.alipapa.smp.product.vo.ProductCategoryVo;
+import com.alipapa.smp.product.vo.ProductDetailVo;
 import com.alipapa.smp.product.vo.ProductVo;
 import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.utils.DateUtil;
@@ -58,6 +61,9 @@ public class ProductController {
 
     @Autowired
     private PictureService pictureService;
+
+    @Autowired
+    private ProductPictureService productPictureService;
 
     @Value("${upload.fail.pathPrefix}")
     private String pathPrefix;
@@ -146,7 +152,7 @@ public class ProductController {
     @RequestMapping(value = "/picUpload", method = RequestMethod.POST)
     public WebApiResponse<JSONObject> sendWelfare(@RequestParam(value = "file") MultipartFile multipartFile, HttpServletRequest request) {
         UserInfo userInfo = UserStatus.getUserInfo();
-        if (!userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+        if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
             return error("没有权限");
         }
 
@@ -233,7 +239,7 @@ public class ProductController {
         UserInfo userInfo = UserStatus.getUserInfo();
 
         try {
-            if (!userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
                 return error("没有权限");
             }
 
@@ -263,7 +269,7 @@ public class ProductController {
     public WebApiResponse<String> delPic(@RequestParam(value = "picNo") String picNo) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {
-            if (!userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
                 return error("没有权限");
             }
 
@@ -289,7 +295,7 @@ public class ProductController {
     public WebApiResponse<String> delProduct(@RequestParam(value = "productIds") String productIds) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {
-            if (!userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
                 return error("没有权限");
             }
 
@@ -324,7 +330,7 @@ public class ProductController {
                                                 @RequestParam(value = "picNos", required = false) String picNos) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {
-            if (!userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
                 return error("没有权限");
             }
 
@@ -343,6 +349,56 @@ public class ProductController {
         }
     }
 
+
+    /**
+     * 获取产品详情
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/getProduct", method = RequestMethod.POST)
+    public WebApiResponse<ProductDetailVo> getProduct(@RequestParam(value = "productId") Long productId) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+                return error("没有权限");
+            }
+
+            if (productId == null) {
+                return WebApiResponse.error("缺少必填参数！");
+            }
+
+            Product product = productService.getProductById(productId);
+
+            if (product == null) {
+                return error("产品ID有误");
+            }
+
+            if (product.getIsDel() == 1) {
+                return error("产品已作废");
+            }
+
+            ProductDetailVo productDetailVo = new ProductDetailVo();
+            productDetailVo.setCategoryId(product.getProductCategoryId());
+            productDetailVo.setCategoryName(product.getCategoryName());
+            productDetailVo.setProductId(product.getId());
+            productDetailVo.setProductName(product.getProductName());
+            List<ProductPicture> productPictureList = productPictureService.listProductPictureByProductId(productId);
+
+            if (!CollectionUtils.isEmpty(productPictureList)) {
+                String picNos = "";
+                for (ProductPicture productPicture : productPictureList) {
+                    picNos = picNos + productPicture.getPicNo() + ";";
+                }
+                productDetailVo.setPicNos(picNos.substring(0, picNos.length() - 1));
+            }
+
+            return success(productDetailVo);
+        } catch (Exception ex) {
+            logger.error("获取产品详情异常", ex);
+            return error("获取产品详情异常");
+        }
+    }
 
     /**
      * 下载产品图片
