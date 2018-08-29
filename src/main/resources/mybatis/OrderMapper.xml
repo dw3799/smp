@@ -102,7 +102,7 @@
             distinct
         </if>
         <include refid="Base_Column_List"/>
-        from order
+        from `order`
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
@@ -113,21 +113,21 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from order
+        from `order`
         where id = #{id,jdbcType=BIGINT}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from order
+    delete from `order`
     where id = #{id,jdbcType=BIGINT}
   </delete>
     <delete id="deleteByExample" parameterType="com.alipapa.smp.order.pojo.OrderExample">
-        delete from order
+        delete from `order`
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
     <insert id="insert" parameterType="com.alipapa.smp.order.pojo.Order">
-        insert into order (id, order_no, order_type,
+        insert into `order` (id, order_no, order_type,
         order_status, pay_status, consumer_no,
         consumer_name, consumer_country, saler_user_no,
         saler_user_name, buyer_user_no, buyer_user_name,
@@ -148,7 +148,7 @@
         #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
     </insert>
     <insert id="insertSelective" parameterType="com.alipapa.smp.order.pojo.Order">
-        insert into order
+        insert into `order`
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -317,7 +317,7 @@
         </if>
     </select>
     <update id="updateByExampleSelective" parameterType="map">
-        update order
+        update `order`
         <set>
             <if test="record.id != null">
                 id = #{record.id,jdbcType=BIGINT},
@@ -403,7 +403,7 @@
         </if>
     </update>
     <update id="updateByExample" parameterType="map">
-        update order
+        update `order`
         set id = #{record.id,jdbcType=BIGINT},
         order_no = #{record.orderNo,jdbcType=VARCHAR},
         order_type = #{record.orderType,jdbcType=INTEGER},
@@ -435,7 +435,7 @@
         </if>
     </update>
     <update id="updateByPrimaryKeySelective" parameterType="com.alipapa.smp.order.pojo.Order">
-        update order
+        update `order`
         <set>
             <if test="orderNo != null">
                 order_no = #{orderNo,jdbcType=VARCHAR},
@@ -516,7 +516,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.alipapa.smp.order.pojo.Order">
-        update order
+        update `order`
         set order_no = #{orderNo,jdbcType=VARCHAR},
         order_type = #{orderType,jdbcType=INTEGER},
         order_status = #{orderStatus,jdbcType=INTEGER},
@@ -567,7 +567,7 @@
 
     <sql id="queryOrderSql">
         select o.*
-        from order o
+        from `order` o
         where 1=1
         <if test="consumerNo != null and consumerNo != ''">
             and o.consumer_no = #{consumerNo}
@@ -597,11 +597,13 @@
     </select>
 
     <sql id="listMyOrderByParamSql">
-        select o.*
-        from order o
-        LEFT JOIN `user` u on o.saler_user_no = u.user_no
-        LEFT JOIN `user` s on o.buyer_user_no = s.user_no
-        where 1=1
+        SELECT o.*
+        FROM
+        `order` o
+        LEFT JOIN `user` u ON o.saler_user_no = u.user_no
+        LEFT JOIN `user` s ON o.buyer_user_no = s.user_no
+        WHERE
+        1 = 1
         <if test="consumerName != null and consumerName != ''">
             and o.consumer_name LIKE CONCAT('%',#{consumerName},'%')
         </if>

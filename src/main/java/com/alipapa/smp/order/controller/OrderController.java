@@ -381,7 +381,7 @@ public class OrderController {
         Integer size = pageSize;
 
         List<ConsumerOrderVo> consumerOrderVoList = orderServiceProxy.listConsumerOrder(consumerNo, start, size);
-        if (CollectionUtils.isEmpty(consumerOrderVoList)) {
+        if (!CollectionUtils.isEmpty(consumerOrderVoList)) {
             WebApiResponse response = WebApiResponse.success(consumerOrderVoList);
             response.setTotalCount(consumerOrderVoList.get(0).getTotalCount());
             return response;
@@ -426,7 +426,7 @@ public class OrderController {
         Integer size = pageSize;
 
         List<OrderVo> orderVoList = orderServiceProxy.listOrderBySalerUserNo(userInfo.getUserNo(), OrderStatusEnum.UN_SUBMIT.getCode(), start, size);
-        if (CollectionUtils.isEmpty(orderVoList)) {
+        if (!CollectionUtils.isEmpty(orderVoList)) {
             WebApiResponse response = WebApiResponse.success(orderVoList);
             response.setTotalCount(orderVoList.get(0).getTotalCount());
             return response;
@@ -493,7 +493,7 @@ public class OrderController {
         }
 
         List<OrderVo> orderVoList = orderServiceProxy.listApproveOrder(user.getGroupId(), start, size);
-        if (CollectionUtils.isEmpty(orderVoList)) {
+        if (!CollectionUtils.isEmpty(orderVoList)) {
             WebApiResponse response = WebApiResponse.success(orderVoList);
             response.setTotalCount(orderVoList.get(0).getTotalCount());
             return response;
@@ -525,7 +525,7 @@ public class OrderController {
         Integer size = pageSize;
 
         List<OrderVo> orderVoList = orderServiceProxy.listOrderBySalerUserNo(userInfo.getUserNo(), OrderStatusEnum.UN_FRONT_PAY.getCode(), start, size);
-        if (CollectionUtils.isEmpty(orderVoList)) {
+        if (!CollectionUtils.isEmpty(orderVoList)) {
             WebApiResponse response = WebApiResponse.success(orderVoList);
             response.setTotalCount(orderVoList.get(0).getTotalCount());
             return response;
@@ -560,7 +560,7 @@ public class OrderController {
         Integer size = pageSize;
 
         List<OrderVo> orderVoList = orderServiceProxy.listOrderByStatus(OrderStatusEnum.CASH_FRONT_APV.getCode(), start, size);
-        if (CollectionUtils.isEmpty(orderVoList)) {
+        if (!CollectionUtils.isEmpty(orderVoList)) {
             WebApiResponse response = WebApiResponse.success(orderVoList);
             response.setTotalCount(orderVoList.get(0).getTotalCount());
             return response;
@@ -595,7 +595,7 @@ public class OrderController {
         Integer size = pageSize;
 
         List<OrderVo> orderVoList = orderServiceProxy.listOrderByStatus(OrderStatusEnum.FIN_FRONT_APV.getCode(), start, size);
-        if (CollectionUtils.isEmpty(orderVoList)) {
+        if (!CollectionUtils.isEmpty(orderVoList)) {
             WebApiResponse response = WebApiResponse.success(orderVoList);
             response.setTotalCount(orderVoList.get(0).getTotalCount());
             return response;
@@ -663,13 +663,13 @@ public class OrderController {
         } else if (userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
             params.put("buyerGroupId", user.getGroupId());
         } else {
-            if (userId != null) {
+            if (userId != null && userId > 0) {
                 User selectedUser = userService.getUserById(userId);
                 params.put("salerUserNo", selectedUser.getUserNo());
                 params.put("buyerUserNo", selectedUser.getUserNo());
             }
 
-            if (groupId != null) {
+            if (groupId != null && groupId > 0) {
                 Group selectedGroup = groupService.getGroupById(groupId);
                 params.put("groupId", selectedGroup.getId());
                 params.put("buyerGroupId", selectedGroup.getId());
@@ -689,7 +689,7 @@ public class OrderController {
 
 
         List<OrderVo> orderVoList = orderServiceProxy.listOrderByParams(params, start, size);
-        if (CollectionUtils.isEmpty(orderVoList)) {
+        if (!CollectionUtils.isEmpty(orderVoList)) {
             WebApiResponse response = WebApiResponse.success(orderVoList);
             response.setTotalCount(orderVoList.get(0).getTotalCount());
             return response;
