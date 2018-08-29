@@ -179,7 +179,7 @@ public class OrderDetailController {
                     orderProductVo.setProductAmount(PriceUtil.convertToYuanStr(subOrder.getProductAmount()) + currencyDec);
                     orderProductVo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(subOrder.getExpectPurchaseAmount()) + Constant.YMB);
                     orderProductVo.setProductRemark(subOrder.getProductRemark());
-
+                    orderProductVo.setPicNo(subOrder.getPic());
                     if (OrderTypeEnum.SELF_ORDER == orderTypeEnum) {
                         SelfOrderDetail selfOrderDetail = subOrder.getSelfOrderDetail();
                         orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(subOrder.getSaleAmount()) + currencyDec);

@@ -23,6 +23,9 @@ public class OrderProductVo {
     private String saleAmount;
     private String factoryAmount;
 
+    private String picNo;
+
+
     //----- 自营订单------
     private String weight;
     private String material;
@@ -41,6 +44,15 @@ public class OrderProductVo {
     private String singleWeight;
     private String totalVolume;
     private String totalWeight;
+
+
+    public String getPicNo() {
+        return picNo;
+    }
+
+    public void setPicNo(String picNo) {
+        this.picNo = picNo;
+    }
 
     public String getSubOrderNo() {
         return subOrderNo;

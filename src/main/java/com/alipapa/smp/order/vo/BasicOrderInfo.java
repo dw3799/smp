@@ -6,6 +6,8 @@ public class BasicOrderInfo {
 
     private String consumerNo;
 
+    private String currency;
+
     private String consumerName;
 
     private String consumerCountry;
@@ -28,6 +30,13 @@ public class BasicOrderInfo {
 
     private String createDateTime;
 
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
     public String getProductAmount() {
         return productAmount;

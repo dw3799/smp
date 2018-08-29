@@ -121,6 +121,15 @@ public class OrderController {
                 sysDictVo.setDictValue(orderStatus.getCodeName());
                 sysDictVoList.add(sysDictVo);
             }
+        } else if (OrderCategoryCode.OrderType == OrderCategoryCode.valueOf(categoryCode)) {
+            for (OrderTypeEnum orderType : OrderTypeEnum.values()) {
+                SysDictVo sysDictVo = new SysDictVo();
+                sysDictVo.setId(Long.valueOf(orderType.getCode()));
+                sysDictVo.setCategoryCode(OrderCategoryCode.OrderType.getCodeName());
+                sysDictVo.setDictText(orderType.getDec());
+                sysDictVo.setDictValue(orderType.getCodeName());
+                sysDictVoList.add(sysDictVo);
+            }
         } else {
             List<SysDict> sysDictList = sysDictService.listSysDictLikeText(OrderCategoryCode.valueOf(categoryCode).getCodeName(), null);
             if (!CollectionUtils.isEmpty(sysDictList)) {
