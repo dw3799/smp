@@ -762,12 +762,14 @@ public class OrderController {
             if (groupId != null) {
                 List<User> userList = userService.listUserByGroupId(groupId);
                 List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
-                for (User member : userList) {
-                    FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
-                    fuzzyUserVo.setUserId(member.getId());
-                    fuzzyUserVo.setUserNo(member.getUserNo());
-                    fuzzyUserVo.setName(member.getName());
-                    fuzzyUserVoList.add(fuzzyUserVo);
+                if (!CollectionUtils.isEmpty(userList)) {
+                    for (User member : userList) {
+                        FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                        fuzzyUserVo.setUserId(member.getId());
+                        fuzzyUserVo.setUserNo(member.getUserNo());
+                        fuzzyUserVo.setName(member.getName());
+                        fuzzyUserVoList.add(fuzzyUserVo);
+                    }
                 }
                 return WebApiResponse.success(fuzzyUserVoList);
             } else {
@@ -782,12 +784,14 @@ public class OrderController {
             List<User> userList = userService.listUserByGroupId(group.getId());
 
             List<FuzzyUserVo> fuzzyUserVoList = new ArrayList<>();
-            for (User member : userList) {
-                FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
-                fuzzyUserVo.setUserId(member.getId());
-                fuzzyUserVo.setUserNo(member.getUserNo());
-                fuzzyUserVo.setName(member.getName());
-                fuzzyUserVoList.add(fuzzyUserVo);
+            if (!CollectionUtils.isEmpty(userList)) {
+                for (User member : userList) {
+                    FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
+                    fuzzyUserVo.setUserId(member.getId());
+                    fuzzyUserVo.setUserNo(member.getUserNo());
+                    fuzzyUserVo.setName(member.getName());
+                    fuzzyUserVoList.add(fuzzyUserVo);
+                }
             }
             return WebApiResponse.success(fuzzyUserVoList);
         } else {

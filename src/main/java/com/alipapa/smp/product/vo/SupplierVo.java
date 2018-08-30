@@ -10,16 +10,26 @@ public class SupplierVo {
 
     private String city;
 
-    private String bankName;
+    private String mobile;
 
-    private String bankBranch;
+    private Long totalCount;
 
-    private String bankNo;
 
-    private String bankAccount;
+    public Long getTotalCount() {
+        return totalCount;
+    }
 
-    private String address;
+    public void setTotalCount(Long totalCount) {
+        this.totalCount = totalCount;
+    }
 
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
     public Long getId() {
         return id;
@@ -51,45 +61,5 @@ public class SupplierVo {
 
     public void setCity(String city) {
         this.city = city;
-    }
-
-    public String getBankName() {
-        return bankName;
-    }
-
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
-    }
-
-    public String getBankBranch() {
-        return bankBranch;
-    }
-
-    public void setBankBranch(String bankBranch) {
-        this.bankBranch = bankBranch;
-    }
-
-    public String getBankNo() {
-        return bankNo;
-    }
-
-    public void setBankNo(String bankNo) {
-        this.bankNo = bankNo;
-    }
-
-    public String getBankAccount() {
-        return bankAccount;
-    }
-
-    public void setBankAccount(String bankAccount) {
-        this.bankAccount = bankAccount;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 }

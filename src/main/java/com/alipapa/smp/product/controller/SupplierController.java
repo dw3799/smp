@@ -1,8 +1,11 @@
 package com.alipapa.smp.product.controller;
 
+import com.alipapa.smp.common.enums.OrderStatusEnum;
+import com.alipapa.smp.common.enums.OrderTypeEnum;
 import com.alipapa.smp.common.enums.RoleEnum;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
+import com.alipapa.smp.order.vo.OrderVo;
 import com.alipapa.smp.product.pojo.Product;
 import com.alipapa.smp.product.pojo.ProductCategory;
 import com.alipapa.smp.product.pojo.Supplier;
@@ -83,9 +86,12 @@ public class SupplierController {
     @RequestMapping(value = "/listSupplier", method = RequestMethod.GET)
     public WebApiResponse<List<SupplierVo>> listSupplier(@RequestParam(name = "pageSize", required = false) Integer pageSize,
                                                          @RequestParam(name = "pageNum", required = false) Integer pageNum,
-                                                         @RequestParam(name = "productCategoryId", required = false) Long productCategoryId,
+                                                         @RequestParam(name = "supplierName", required = false) String supplierName,
+                                                         @RequestParam(name = "chargeUser", required = false) String chargeUser,
+                                                         @RequestParam(name = "productCategoryName", required = false) String productCategoryName,
                                                          @RequestParam(name = "productName", required = false) String productName,
-                                                         @RequestParam(name = "saleNo", required = false) String saleNo) {
+                                                         @RequestParam(name = "mobile", required = false) String mobile,
+                                                         @RequestParam(name = "city", required = false) String city) {
         try {
             if (pageSize == null) {
                 pageSize = 30;
@@ -97,14 +103,43 @@ public class SupplierController {
 
             Integer start = (pageNum - 1) * pageSize;
             Integer size = pageSize;
-            List<ProductVo> productVoList = null;
 
+            HashMap<String, Object> params = new HashMap<>();
+            if (StringUtil.isNotEmptyString(supplierName)) {
+                params.put("supplierName", supplierName);
+            }
 
+            if (StringUtil.isNotEmptyString(chargeUser)) {
+                params.put("chargeUser", chargeUser);
+            }
+
+            if (StringUtil.isNotEmptyString(productCategoryName)) {
+                params.put("productCategoryName", productCategoryName);
+            }
+
+            if (StringUtil.isNotEmptyString(productName)) {
+                params.put("productName", productName);
+            }
+
+            if (StringUtil.isNotEmptyString(mobile)) {
+                params.put("mobile", mobile);
+            }
+
+            if (StringUtil.isNotEmptyString(city)) {
+                params.put("city", city);
+            }
+
+            List<SupplierVo> supplierVoList = supplierService.listSupplierByParams(params, start, size);
+            if (!CollectionUtils.isEmpty(supplierVoList)) {
+                WebApiResponse response = WebApiResponse.success(supplierVoList);
+                response.setTotalCount(supplierVoList.get(0).getTotalCount());
+                return response;
+            }
         } catch (Exception ex) {
-            logger.error("产品管理列表查询异常", ex);
-            return error("产品管理列表查询异常");
+            logger.error("供应商列表查询异常", ex);
+            return error("供应商列表查询异常");
         }
-        return success(null);
+        return WebApiResponse.success(null);
     }
 
 

@@ -1,8 +1,12 @@
 package com.alipapa.smp.product.mapper;
 
+import com.alipapa.smp.order.pojo.Order;
 import com.alipapa.smp.product.pojo.Supplier;
 import com.alipapa.smp.product.pojo.SupplierExample;
+
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface SupplierMapper {
@@ -27,4 +31,8 @@ public interface SupplierMapper {
     int updateByPrimaryKeySelective(Supplier record);
 
     int updateByPrimaryKey(Supplier record);
+
+    List<Supplier> listSupplierByParams(Map<String, Object> params);
+
+    long listSupplierByParamsCount(Map<String, Object> params);
 }
