@@ -6,15 +6,11 @@ import com.alipapa.smp.common.enums.RoleEnum;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.order.vo.OrderVo;
-import com.alipapa.smp.product.pojo.Product;
-import com.alipapa.smp.product.pojo.ProductCategory;
-import com.alipapa.smp.product.pojo.Supplier;
-import com.alipapa.smp.product.pojo.SupplierProduct;
+import com.alipapa.smp.product.pojo.*;
+import com.alipapa.smp.product.service.ProductPictureService;
 import com.alipapa.smp.product.service.ProductService;
 import com.alipapa.smp.product.service.SupplierService;
-import com.alipapa.smp.product.vo.ProductCategoryVo;
-import com.alipapa.smp.product.vo.ProductVo;
-import com.alipapa.smp.product.vo.SupplierVo;
+import com.alipapa.smp.product.vo.*;
 import com.alipapa.smp.utils.StringUtil;
 import com.alipapa.smp.utils.WebApiResponse;
 import org.slf4j.Logger;
@@ -51,6 +47,9 @@ public class SupplierController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductPictureService productPictureService;
 
 
     /**
@@ -320,5 +319,96 @@ public class SupplierController {
         }
     }
 
+
+    /**
+     * 获取供应商详情
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/getSupplierBasicInfo", method = RequestMethod.GET)
+    public WebApiResponse<Supplier> getSupplierBasicInfo(@RequestParam(value = "supplierId") Long supplierId) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+                return error("没有权限");
+            }
+
+            if (supplierId == null) {
+                return WebApiResponse.error("缺少必填参数！");
+            }
+
+            Supplier supplier = supplierService.getSupplierById(supplierId);
+
+            if (supplier == null) {
+                return error("供应商ID有误");
+            }
+
+            return success(supplier);
+        } catch (Exception ex) {
+            logger.error("获取供应商详情异常", ex);
+            return error("获取供应商详情异常");
+        }
+    }
+
+
+    /**
+     * 获取供应商产品列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listSupplierProduct", method = RequestMethod.GET)
+    public WebApiResponse<List<SupplierProductVo>> listSupplierProduct(@RequestParam(value = "supplierId") Long supplierId) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+                return error("没有权限");
+            }
+
+            if (supplierId == null) {
+                return WebApiResponse.error("缺少必填参数！");
+            }
+
+            List<SupplierProduct> supplierProductList = supplierService.listSupplierProductBySupplierId(supplierId);
+
+
+            List<SupplierProductVo> supplierProductVoList = new ArrayList<>();
+            if (!CollectionUtils.isEmpty(supplierProductList)) {
+                for (SupplierProduct supplierProduct : supplierProductList) {
+                    SupplierProductVo supplierProductVo = new SupplierProductVo();
+                    supplierProductVo.setId(supplierProduct.getId());
+                    supplierProductVo.setProductId(supplierProduct.getProductId());
+                    supplierProductVo.setSupplierId(supplierProduct.getSupplierId());
+                    supplierProductVo.setProductName(supplierProduct.getProductName());
+                    supplierProductVo.setSupplierName(supplierProduct.getSupplierName());
+
+                    Product product = productService.getProductById(supplierProduct.getProductId());
+                    supplierProductVo.setProductCategoryId(product.getProductCategoryId());
+                    supplierProductVo.setProductCategoryName(product.getCategoryName());
+
+                    List<ProductPicture> productPictureList = productPictureService.listProductPictureByProductId(supplierProduct.getProductId());
+
+                    if (!CollectionUtils.isEmpty(productPictureList)) {
+                        Integer size = productPictureList.size();
+                        supplierProductVo.setPicNo1(productPictureList.get(0).getPicNo());
+
+                        if (size > 1) {
+                            supplierProductVo.setPicNo2(productPictureList.get(1).getPicNo());
+                        }
+
+                        if (size > 2) {
+                            supplierProductVo.setPicNo3(productPictureList.get(2).getPicNo());
+                        }
+                    }
+                    supplierProductVoList.add(supplierProductVo);
+                }
+            }
+            return success(supplierProductVoList);
+        } catch (Exception ex) {
+            logger.error("获取供应商产品列表异常", ex);
+            return error("获取供应商产品列表异常");
+        }
+    }
 
 }

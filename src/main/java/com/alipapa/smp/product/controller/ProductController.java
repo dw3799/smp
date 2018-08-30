@@ -100,7 +100,7 @@ public class ProductController {
 
         return success(null);
     }
-    
+
     /**
      * 产品管理列表查询
      *
@@ -356,7 +356,7 @@ public class ProductController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/getProduct", method = RequestMethod.POST)
+    @RequestMapping(value = "/getProduct", method = RequestMethod.GET)
     public WebApiResponse<ProductDetailVo> getProduct(@RequestParam(value = "productId") Long productId) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {
