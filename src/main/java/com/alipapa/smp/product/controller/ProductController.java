@@ -538,9 +538,10 @@ public class ProductController {
             bos.close();
             buffer = bos.toByteArray();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("File2byte:", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("File2byte:", e);
+
         }
         return buffer;
     }
