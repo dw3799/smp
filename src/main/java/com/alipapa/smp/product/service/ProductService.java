@@ -250,13 +250,17 @@ public class ProductService {
      * @param productName
      * @return
      */
-    public List<Product> listProductByProductName(String productName) {
+    public List<Product> listProductByProductNameAndCategory(String productName, Long productCategoryId) {
         if (StringUtil.isEmptyString(productName)) {
             return null;
         }
         ProductExample example = new ProductExample();
         ProductExample.Criteria criteria = example.createCriteria();
         criteria.andProductNameLike("%" + productName + "%");
+
+        if (productCategoryId != null) {
+            criteria.andProductCategoryIdEqualTo(productCategoryId);
+        }
         criteria.andIsDelEqualTo(0);
 
         List<Product> productList = productMapper.selectByExample(example);

@@ -20,20 +20,27 @@ import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.OrderNumberGenerator;
 import com.alipapa.smp.utils.StringUtil;
 import com.alipapa.smp.utils.WebApiResponse;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.alipapa.smp.utils.WebApiResponse.error;
 import static com.alipapa.smp.utils.WebApiResponse.success;
@@ -68,14 +75,40 @@ public class ProductController {
     @Value("${upload.fail.pathPrefix}")
     private String pathPrefix;
 
+
+    /**
+     * 产品查询下拉列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listProductSelect", method = RequestMethod.GET)
+    public WebApiResponse<List<Product>> listProductSelect(@RequestParam(value = "productName", required = false) String productName,
+                                                           @RequestParam(value = "productCategoryId", required = false) Long productCategoryId) {
+        if (StringUtil.isEmptyString(productName)) {
+            return WebApiResponse.error("参数有误！");
+        }
+        try {
+            List<Product> productList = productService.listProductByProductNameAndCategory(productName, productCategoryId);
+            if (!CollectionUtils.isEmpty(productList)) {
+                return success(productList);
+            }
+        } catch (Exception ex) {
+            logger.error("产品查询下拉列表异常", ex);
+            return error("产品查询下拉列表异常");
+        }
+        return success(null);
+    }
+
+
     /**
      * 产品类别查询下拉列表
      *
      * @param
      * @return
      */
-    @RequestMapping(value = "/listProductCategory", method = RequestMethod.GET)
-    public WebApiResponse<List<ProductCategoryVo>> listProductCategory(@RequestParam(value = "categoryName", required = false) String categoryName) {
+    @RequestMapping(value = "/listProductCategorySelect", method = RequestMethod.GET)
+    public WebApiResponse<List<ProductCategoryVo>> listProductCategorySelect(@RequestParam(value = "categoryName", required = false) String categoryName) {
         if (StringUtil.isEmptyString(categoryName)) {
             return WebApiResponse.error("参数有误！");
         }
@@ -406,18 +439,110 @@ public class ProductController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/downloadPic", method = RequestMethod.POST)
-    public WebApiResponse<String> downloadPic(@RequestParam(value = "picNo") String picNo) {
+    @RequestMapping(value = "/downloadPic/{picNo}", method = RequestMethod.GET)
+    public ResponseEntity downloadPic(@PathVariable(value = "picNo") String picNo) {
         try {
             if (StringUtil.isEmptyString(picNo)) {
-                return WebApiResponse.error("缺少必填参数！");
+                logger.error("缺少必填参数！");
+                return null;
             }
 
-            return WebApiResponse.success("success");
+            Picture picture = pictureService.getPictureByPicNo(picNo);
+            if (picture == null) {
+                logger.error("图片不存在");
+                return null;
+            }
+
+
+            File file = new File(picture.getPath());
+            if (!file.exists()) {
+                logger.error("图片文件不存在");
+                return null;
+            }
+
+
+            String picSuffix = StringUtil.substringAfterLast(picture.getPath(), ".");
+
+            logger.info("download filePath: {} , picSuffix:{}", picture.getPath(), picSuffix);
+
+            byte[] pictureData = File2byte(file);
+            if (pictureData == null) {
+                logger.error("获取图片信息为空");
+                return null;
+            }
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add("Cache-Control", "no-store");
+            httpHeaders.add("Pragma", "no-cache");
+            httpHeaders.add("content-type", "image/" + picSuffix);
+            httpHeaders.add("expires", "0");
+            return new ResponseEntity(pictureData, httpHeaders, HttpStatus.OK);
         } catch (Exception ex) {
             logger.error("下载产品图片异常", ex);
-            return error("下载产品图片异常");
         }
+        return null;
+    }
+
+
+    @RequestMapping(value = "/image/{picNo}", method = RequestMethod.GET)
+    public byte[] downImage(@PathVariable String picNo) {
+        try {
+            if (StringUtil.isEmptyString(picNo)) {
+                logger.error("缺少必填参数！");
+                return null;
+            }
+
+            Picture picture = pictureService.getPictureByPicNo(picNo);
+            if (picture == null) {
+                logger.error("图片不存在");
+                return null;
+            }
+
+
+            File file = new File(picture.getPath());
+            if (!file.exists()) {
+                logger.error("图片文件不存在");
+                return null;
+            }
+
+            String picSuffix = StringUtil.substringAfterLast(picture.getPath(), ".");
+
+            logger.info("download filePath: {} , picSuffix:{}", picture.getPath(), picSuffix);
+
+            byte[] pictureData = File2byte(file);
+            if (pictureData == null) {
+                logger.error("获取图片信息为空");
+                return null;
+            }
+
+
+            return pictureData;
+        } catch (Exception ex) {
+            logger.error("文件下载失败", ex);
+        }
+        return null;
+    }
+
+
+    private static byte[] File2byte(File file) {
+        byte[] buffer = null;
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] b = new byte[1024];
+            int n;
+            while ((n = fis.read(b)) != -1) {
+                bos.write(b, 0, n);
+            }
+            fis.close();
+            bos.close();
+            buffer = bos.toByteArray();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return buffer;
     }
 
 

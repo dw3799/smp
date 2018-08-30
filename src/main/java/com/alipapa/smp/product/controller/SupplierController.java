@@ -53,30 +53,6 @@ public class SupplierController {
 
 
     /**
-     * 产品查询下拉列表
-     *
-     * @param
-     * @return
-     */
-    @RequestMapping(value = "/listProductAdd", method = RequestMethod.GET)
-    public WebApiResponse<List<Product>> listProductAdd(@RequestParam(value = "productName", required = false) String productName) {
-        if (StringUtil.isEmptyString(productName)) {
-            return WebApiResponse.error("参数有误！");
-        }
-        try {
-            List<Product> productList = productService.listProductByProductName(productName);
-            if (!CollectionUtils.isEmpty(productList)) {
-                return success(productList);
-            }
-        } catch (Exception ex) {
-            logger.error("产品查询下拉列表异常", ex);
-            return error("产品查询下拉列表异常");
-        }
-        return success(null);
-    }
-
-
-    /**
      * 供应商列表查询
      *
      * @param

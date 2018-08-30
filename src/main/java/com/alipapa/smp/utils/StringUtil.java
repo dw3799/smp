@@ -760,4 +760,17 @@ public class StringUtil implements Serializable {
         }
         return str.substring(str.length() - len);
     }
+
+
+    public static String substringAfterLast(String str, String separator) {
+        if (isEmptyString(str)) {
+            return str;
+        } else if (isEmptyString(separator)) {
+            return "";
+        } else {
+            int pos = str.lastIndexOf(separator);
+            return pos != -1 && pos != str.length() - separator.length() ? str.substring(pos + separator.length()) : "";
+        }
+    }
+
 }
