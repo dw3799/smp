@@ -83,15 +83,36 @@ public class ProductController {
      * @return
      */
     @RequestMapping(value = "/listProductSelect", method = RequestMethod.GET)
-    public WebApiResponse<List<Product>> listProductSelect(@RequestParam(value = "productName", required = false) String productName,
-                                                           @RequestParam(value = "productCategoryId", required = false) Long productCategoryId) {
+    public WebApiResponse<List<ProductDetailVo>> listProductSelect(@RequestParam(value = "productName", required = false) String productName,
+                                                                   @RequestParam(value = "productCategoryId", required = false) Long productCategoryId) {
         if (StringUtil.isEmptyString(productName)) {
             return WebApiResponse.error("参数有误！");
         }
         try {
+            List<ProductDetailVo> productDetailVoList = new ArrayList<>();
+
             List<Product> productList = productService.listProductByProductNameAndCategory(productName, productCategoryId);
             if (!CollectionUtils.isEmpty(productList)) {
-                return success(productList);
+
+                for (Product product : productList) {
+                    ProductDetailVo productDetailVo = new ProductDetailVo();
+                    productDetailVo.setCategoryId(product.getProductCategoryId());
+                    productDetailVo.setCategoryName(product.getCategoryName());
+                    productDetailVo.setProductId(product.getId());
+                    productDetailVo.setProductName(product.getProductName());
+                    List<ProductPicture> productPictureList = productPictureService.listProductPictureByProductId(product.getId());
+
+                    if (!CollectionUtils.isEmpty(productPictureList)) {
+                        String picNos = "";
+                        for (ProductPicture productPicture : productPictureList) {
+                            picNos = picNos + productPicture.getPicNo() + ";";
+                        }
+                        productDetailVo.setPicNos(picNos.substring(0, picNos.length() - 1));
+                    }
+                    productDetailVoList.add(productDetailVo);
+                }
+
+                return success(productDetailVoList);
             }
         } catch (Exception ex) {
             logger.error("产品查询下拉列表异常", ex);
