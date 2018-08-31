@@ -50,12 +50,20 @@ public class SupplierService {
         return true;
     }
 
+    /**
+     * @param supplierProductId
+     * @return
+     */
+    public boolean delSupplierProduct(Long supplierProductId) {
+        supplierProductMapper.deleteByPrimaryKey(supplierProductId);
+        return true;
+    }
 
     /**
      * @param supplierId
      * @return
      */
-    public boolean delSupplier(Long supplierId) {
+    public boolean delSupplierById(Long supplierId) {
         supplierMapper.deleteByPrimaryKey(supplierId);
         return true;
     }

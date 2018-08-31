@@ -5,7 +5,7 @@
 
     <groupId>com.alipapa.smp</groupId>
     <artifactId>smp-frontier</artifactId>
-    <version>1.6.9-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>smp-frontier</name>

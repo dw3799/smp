@@ -285,7 +285,7 @@ public class SupplierController {
 
             if (!CollectionUtils.isEmpty(deletedSupplierProductList)) {
                 for (Long id : deletedSupplierProductList) {
-                    supplierService.delSupplier(id);
+                    supplierService.delSupplierProduct(id);
                 }
             }
             return success("success");
@@ -386,5 +386,38 @@ public class SupplierController {
             return error("获取供应商产品列表异常");
         }
     }
+
+
+    /**
+     * 供应商批量删除
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/delSupplier", method = RequestMethod.POST)
+    public WebApiResponse<String> delProduct(@RequestParam(value = "supplierIds") String supplierIds) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+                return error("没有权限");
+            }
+
+            if (StringUtil.isEmptyString(supplierIds)) {
+                return WebApiResponse.error("缺少必填参数！");
+            }
+
+
+            String[] supplierIdsArray = supplierIds.split(";");
+
+            for (String supplierId : supplierIdsArray) {
+                supplierService.delSupplierById(Long.valueOf(supplierId));
+            }
+            return WebApiResponse.success("success");
+        } catch (Exception ex) {
+            logger.error("产品删除异常", ex);
+            return error("产品删除异常");
+        }
+    }
+
 
 }
