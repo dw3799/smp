@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -63,7 +64,14 @@ public class SupplierService {
      * @param supplierId
      * @return
      */
+    @Transactional
     public boolean delSupplierById(Long supplierId) {
+        List<SupplierProduct> supplierProductList = this.listSupplierProductBySupplierId(supplierId);
+        if (!CollectionUtils.isEmpty(supplierProductList)) {
+            for (SupplierProduct supplierProduct : supplierProductList) {
+                this.delSupplierProduct(supplierProduct.getId());
+            }
+        }
         supplierMapper.deleteByPrimaryKey(supplierId);
         return true;
     }
@@ -123,6 +131,7 @@ public class SupplierService {
 
         List<SupplierProduct> supplierList = supplierProductMapper.selectByExample(example);
         if (!CollectionUtils.isEmpty(supplierList)) {
+            logger.info("supplierList:" + supplierList.size());
             return supplierList;
         }
         return null;

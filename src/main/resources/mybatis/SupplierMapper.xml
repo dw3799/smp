@@ -444,7 +444,7 @@
             and p.product_name LIKE CONCAT('%',#{productName},'%')
         </if>
 
-        ORDER BY o.submit_time DESC
+        ORDER BY s.updated_time DESC
     </sql>
 
     <select id="listSupplierByParamsCount" resultType="java.lang.Long" parameterType="java.util.HashMap">

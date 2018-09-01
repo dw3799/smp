@@ -194,10 +194,11 @@ public class OrderServiceProxy {
 
                 List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
 
-                if (CollectionUtils.isEmpty(sysDictList)) {
+                if (!CollectionUtils.isEmpty(sysDictList)) {
                     SysDict currencySysDict = sysDictList.get(0);
                     consumerOrderVo.setAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencySysDict.getDictValue());
                 }
+                consumerOrderVoList.add(consumerOrderVo);
             }
         }
 
@@ -223,12 +224,13 @@ public class OrderServiceProxy {
 
             String currency = null;
             for (Order order : orderList) {
+                if (StringUtil.isEmptyString(currency)) {
+                    currency = order.getCurrency();
+                }
+                
                 if (order.getOrderStatus() == OrderStatusEnum.COMPLETE.getCode()) {
                     dealOrderCount++;
                     amount = amount + order.getOrderAmount();
-                    if (StringUtil.isEmptyString(currency)) {
-                        currency = order.getCurrency();
-                    }
                 }
             }
             List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), currency);
@@ -399,6 +401,7 @@ public class OrderServiceProxy {
                 orderVo.setBuyerUserNo(order.getBuyerUserNo());
                 orderVo.setSalerUserNo(order.getSalerUserNo());
                 orderVo.setSalerUserName(order.getSalerUserName());
+                orderVoList.add(orderVo);
             }
         }
         return orderVoList;

@@ -85,9 +85,6 @@ public class ProductController {
     @RequestMapping(value = "/listProductSelect", method = RequestMethod.GET)
     public WebApiResponse<List<ProductDetailVo>> listProductSelect(@RequestParam(value = "productName", required = false) String productName,
                                                                    @RequestParam(value = "productCategoryId", required = false) Long productCategoryId) {
-        if (StringUtil.isEmptyString(productName)) {
-            return WebApiResponse.error("参数有误！");
-        }
         try {
             List<ProductDetailVo> productDetailVoList = new ArrayList<>();
 
@@ -130,9 +127,6 @@ public class ProductController {
      */
     @RequestMapping(value = "/listProductCategorySelect", method = RequestMethod.GET)
     public WebApiResponse<List<ProductCategoryVo>> listProductCategorySelect(@RequestParam(value = "categoryName", required = false) String categoryName) {
-        if (StringUtil.isEmptyString(categoryName)) {
-            return WebApiResponse.error("参数有误！");
-        }
         try {
             List<ProductCategory> productCategoryList = productCategoryService.listProductCategoryByName(categoryName);
 
@@ -180,7 +174,7 @@ public class ProductController {
             Integer size = pageSize;
             List<ProductVo> productVoList = null;
 
-            if (StringUtil.isNotEmptyString(saleNo)) {
+            if (StringUtil.isEmptyString(saleNo)) {
                 productVoList = productService.listProductByParam(productCategoryId, productName, start, size);
             } else {
                 productVoList = productService.listProductBySaleNo(productCategoryId, productName, saleNo, start, size);

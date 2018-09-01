@@ -506,7 +506,7 @@ public class UserController {
                 FuzzyUserVo fuzzyUserVo = new FuzzyUserVo();
                 fuzzyUserVo.setUserId(user.getId());
                 fuzzyUserVo.setName(user.getName());
-                fuzzyUserVo.setUserNo(user.getName());
+                fuzzyUserVo.setUserNo(user.getUserNo());
                 fuzzyUserVoList.add(fuzzyUserVo);
             }
         }

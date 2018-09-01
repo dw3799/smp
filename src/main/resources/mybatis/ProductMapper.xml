@@ -351,7 +351,7 @@
 
     <sql id="listProductBySaleNoSql">
         SELECT DISTINCT
-        DISTINCT p.*, a.sale_no
+        DISTINCT p.*, s.sale_no
         FROM
         product p
         LEFT JOIN sub_order s ON p.id = s.product_id

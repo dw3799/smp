@@ -61,7 +61,7 @@ public class OrderService {
         OrderExample example = new OrderExample();
         OrderExample.Criteria criteria = example.createCriteria();
         criteria.andConsumerNoEqualTo(consumerNo);
-        example.setOrderByClause("submitTime desc");
+        example.setOrderByClause("submit_time desc");
         return orderMapper.selectByExample(example);
     }
 
@@ -159,7 +159,7 @@ public class OrderService {
     public String getCurrencyDec(Order order) {
         List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
         String currencyDec = "UNKNOWN";
-        if (CollectionUtils.isEmpty(sysDictList)) {
+        if (!CollectionUtils.isEmpty(sysDictList)) {
             SysDict currencySysDict = sysDictList.get(0);
             currencyDec = currencySysDict.getDictValue();
         }

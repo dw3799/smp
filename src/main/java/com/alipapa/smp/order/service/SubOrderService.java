@@ -161,7 +161,7 @@ public class SubOrderService {
         SubOrderExample example = new SubOrderExample();
         SubOrderExample.Criteria criteria = example.createCriteria();
         criteria.andProductIdEqualTo(productId);
-        example.setOrderByClause("createdTime desc");
+        example.setOrderByClause("created_time desc");
 
         List<SubOrder> subOrderList = subOrderMapper.selectByExample(example);
 
@@ -187,7 +187,7 @@ public class SubOrderService {
         SubOrderExample.Criteria criteria = example.createCriteria();
         criteria.andProductIdEqualTo(productId);
         criteria.andCreatedTimeGreaterThan(DateUtil.getSomeMonthDateToTime(new Date(), -3));
-        example.setOrderByClause("factoryAmount desc");
+        example.setOrderByClause("factory_amount desc");
 
         List<SubOrder> subOrderList = subOrderMapper.selectByExample(example);
 

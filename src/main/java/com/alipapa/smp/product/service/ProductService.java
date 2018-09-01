@@ -121,7 +121,7 @@ public class ProductService {
         product.setProductCategoryId(productCategory.getId());
         product.setProductName(productName);
         product.setUpdatedTime(new Date());
-        productMapper.insert(product);
+        productMapper.updateByPrimaryKey(product);
 
         if (StringUtil.isNotEmptyString(picNos)) {
             String[] picArray = picNos.split(";");
@@ -251,13 +251,12 @@ public class ProductService {
      * @return
      */
     public List<Product> listProductByProductNameAndCategory(String productName, Long productCategoryId) {
-        if (StringUtil.isEmptyString(productName)) {
-            return null;
-        }
+
         ProductExample example = new ProductExample();
         ProductExample.Criteria criteria = example.createCriteria();
-        criteria.andProductNameLike("%" + productName + "%");
-
+        if (StringUtil.isNotEmptyString(productName)) {
+            criteria.andProductNameLike("%" + productName + "%");
+        }
         if (productCategoryId != null) {
             criteria.andProductCategoryIdEqualTo(productCategoryId);
         }
@@ -355,6 +354,7 @@ public class ProductService {
             if (mostSubOrder != null) {
                 productVo.setMostFactoryAmount(PriceUtil.convertToYuanStr(mostSubOrder.getFactoryAmount()) + Constant.YMB);
             }
+            productVoList.add(productVo);
         }
         return productVoList;
     }
@@ -395,6 +395,7 @@ public class ProductService {
             if (mostSubOrder != null) {
                 productVo.setMostFactoryAmount(PriceUtil.convertToYuanStr(mostSubOrder.getFactoryAmount()) + Constant.YMB);
             }
+            productVoList.add(productVo);
         }
         return productVoList;
     }
