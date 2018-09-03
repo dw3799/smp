@@ -496,12 +496,16 @@ public class OrderController {
 
         User user = userService.getUserById(userInfo.getUserId());
         Role role = roleService.getRoleById(userInfo.getRoleId());
+        List<OrderVo> orderVoList = null;
 
-        if (1 != user.getIsLeader() && !"1".equals(role.getRoleLevel())) { //组长且为主管有权限
-            return error("没有权限");
+        if (userInfo.getRoleName().equals(RoleEnum.admin.getCodeName())) {
+            orderVoList = orderServiceProxy.listApproveOrder(null, start, size);
+        } else {
+            if (1 != user.getIsLeader() && !"1".equals(role.getRoleLevel())) { //组长且为主管有权限
+                return error("没有权限");
+            }
+            orderVoList = orderServiceProxy.listApproveOrder(user.getGroupId(), start, size);
         }
-
-        List<OrderVo> orderVoList = orderServiceProxy.listApproveOrder(user.getGroupId(), start, size);
         if (!CollectionUtils.isEmpty(orderVoList)) {
             WebApiResponse response = WebApiResponse.success(orderVoList);
             response.setTotalCount(orderVoList.get(0).getTotalCount());

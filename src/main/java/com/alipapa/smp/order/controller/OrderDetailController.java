@@ -420,7 +420,7 @@ public class OrderDetailController {
                 subOrder.setProductCategoryId(productCategoryId);
                 subOrder.setProductCategory(productCategory.getCategoryName());
                 subOrder.setPayedAmount(0L);
-                subOrder.setProductFrontAmount(null);
+                subOrder.setProductFrontAmount(0L);
                 subOrder.setProductId(productId);
                 subOrder.setProductName(product.getProductName());
                 subOrder.setProductRemark(productRemark);
