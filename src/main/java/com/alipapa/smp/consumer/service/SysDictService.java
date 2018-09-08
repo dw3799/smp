@@ -36,6 +36,17 @@ public class SysDictService {
         return sysDictMapper.selectByPrimaryKey(id);
     }
 
+
+    /**
+     * @param sysDict
+     * @return
+     */
+    public boolean delete(SysDict sysDict) {
+        sysDictMapper.deleteByPrimaryKey(sysDict.getId());
+        return true;
+    }
+
+
     /**
      * @param sysDict
      * @return
