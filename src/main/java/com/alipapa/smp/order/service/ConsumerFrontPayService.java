@@ -46,7 +46,6 @@ public class ConsumerFrontPayService {
 
         if (consumerFrontPay.getId() != null) {
             consumerFrontPayMapper.updateByPrimaryKey(consumerFrontPay);
-            consumerFrontPayMapper.insert(consumerFrontPay);
             if (order.getOrderStatus() == OrderStatusEnum.UN_FRONT_PAY.getCode()) {
                 orderWorkFlow.setRemark("更新定金信息");
             } else if (order.getOrderStatus() == OrderStatusEnum.CASH_FRONT_APV.getCode()) {

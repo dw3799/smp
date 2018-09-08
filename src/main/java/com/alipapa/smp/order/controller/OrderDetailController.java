@@ -131,6 +131,7 @@ public class OrderDetailController {
             basicOrderInfo.setSubmitDateTime(DateUtil.formatToStrTimeV1(order.getSubmitTime()));
             basicOrderInfo.setBuyerUserNo(order.getBuyerUserNo());
             basicOrderInfo.setBuyerUserName(order.getBuyerUserName());
+            basicOrderInfo.setCurrency(currencyDec);
 
             basicOrderInfo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
             basicOrderInfo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
@@ -172,6 +173,8 @@ public class OrderDetailController {
             if (!CollectionUtils.isEmpty(subOrderList)) {
                 for (SubOrder subOrder : subOrderList) {
                     OrderProductVo orderProductVo = new OrderProductVo();
+                    orderProductVo.setSubOrderNo(subOrder.getSubOrderNo());
+                    orderProductVo.setOrderNo(subOrder.getOrderNo());
                     orderProductVo.setProductCategoryId(subOrder.getProductCategoryId());
                     orderProductVo.setProductCategory(subOrder.getProductCategory());
                     orderProductVo.setProductId(subOrder.getProductId());
@@ -533,8 +536,10 @@ public class OrderDetailController {
                 return WebApiResponse.error("订单不存在");
             }
 
-            if (RoleEnum.supervisor.getCodeName() != userInfo.getRoleName()) {
-                return error("没有权限");
+            if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+                if (RoleEnum.supervisor.getCodeName() != userInfo.getRoleName()) {
+                    return error("没有权限");
+                }
             }
 
             if (order.getOrderStatus() != OrderStatusEnum.SPR_APV.getCode()) {
@@ -686,9 +691,9 @@ public class OrderDetailController {
             } else {
                 consumerFrontPay.setRoyaltyAmount(0L);
             }
-
-
-            consumerFrontPay.setCnActualAmount(null); //财务审核时补充
+            consumerFrontPay.setFrontAmount(PriceUtil.convertToFen(frontAmount));
+            consumerFrontPay.setActualAmount(0L);
+            consumerFrontPay.setCnActualAmount(0L); //财务审核时补充
             consumerFrontPay.setConsumerCountry(order.getConsumerCountry());
             consumerFrontPay.setConsumerName(order.getConsumerName());
             consumerFrontPay.setConsumerNo(order.getConsumerNo());

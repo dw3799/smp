@@ -37,7 +37,7 @@ public class OrderWorkFlowService {
         OrderWorkFlowExample.Criteria criteria = example.createCriteria();
         criteria.andOrderNoEqualTo(orderNo);
         criteria.andTypeEqualTo(type);
-        example.setOrderByClause("createdTime desc");
+        example.setOrderByClause("created_time desc");
         return orderWorkFlowMapper.selectByExample(example);
 
 
