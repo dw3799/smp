@@ -49,14 +49,14 @@ public class ConsumerFrontPayService {
             if (order.getOrderStatus() == OrderStatusEnum.UN_FRONT_PAY.getCode()) {
                 orderWorkFlow.setRemark("更新定金信息");
             } else if (order.getOrderStatus() == OrderStatusEnum.CASH_FRONT_APV.getCode()) {
-                orderWorkFlow.setRemark("更新并提交订单");
+                orderWorkFlow.setRemark("更新并提交定金信息");
             }
         } else {
             consumerFrontPayMapper.insert(consumerFrontPay);
             if (order.getOrderStatus() == OrderStatusEnum.UN_FRONT_PAY.getCode()) {
                 orderWorkFlow.setRemark("保存定金信息");
             } else if (order.getOrderStatus() == OrderStatusEnum.CASH_FRONT_APV.getCode()) {
-                orderWorkFlow.setRemark("保存并提交订单");
+                orderWorkFlow.setRemark("保存并提交定金信息");
             }
         }
 
