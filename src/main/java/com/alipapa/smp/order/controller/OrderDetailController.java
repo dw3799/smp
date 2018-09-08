@@ -828,10 +828,11 @@ public class OrderDetailController {
                 return WebApiResponse.error("订单不存在");
             }
 
-            if (RoleEnum.cashier.getCodeName() != userInfo.getRoleName()) {
-                return error("没有权限");
+            if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+                if (RoleEnum.cashier.getCodeName() != userInfo.getRoleName()) {
+                    return error("没有权限");
+                }
             }
-
             ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(orderNo);
             if (consumerFrontPay == null) {
                 return error("定金信息不存在");
@@ -917,11 +918,12 @@ public class OrderDetailController {
             if (order == null) {
                 return WebApiResponse.error("订单不存在");
             }
-
-            if (RoleEnum.financial.getCodeName() != userInfo.getRoleName()) {
-                return error("没有权限");
+            if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+                if (RoleEnum.financial.getCodeName() != userInfo.getRoleName()) {
+                    return error("没有权限");
+                }
             }
-
+            
             ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(orderNo);
             if (consumerFrontPay == null) {
                 return error("定金信息不存在");
