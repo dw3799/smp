@@ -170,6 +170,16 @@ public class OrderController {
             String opType = request.getParameter("opType");
 
 
+            logger.info("orderType=" + orderType);
+            logger.info("consumerNo=" + consumerNo);
+            logger.info("buyerUserNo=" + buyerUserNo);
+            logger.info("productionCycle=" + productionCycle);
+            logger.info("currency=" + currency);
+            logger.info("productAmount=" + productAmount);
+            logger.info("expectPurchaseAmount=" + expectPurchaseAmount);
+            logger.info("opType=" + opType);
+            logger.info("products=" + products);
+
             //可为空
             String orderVolume = request.getParameter("orderVolume");
             String orderWeight = request.getParameter("orderWeight");
