@@ -10,6 +10,7 @@ import com.alipapa.smp.order.service.*;
 import com.alipapa.smp.order.vo.ConsumerOrderCount;
 import com.alipapa.smp.order.vo.ConsumerOrderVo;
 import com.alipapa.smp.order.vo.OrderVo;
+import com.alipapa.smp.order.vo.TailPayOrderVo;
 import com.alipapa.smp.user.vo.UserVo;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
@@ -227,7 +228,7 @@ public class OrderServiceProxy {
                 if (StringUtil.isEmptyString(currency)) {
                     currency = order.getCurrency();
                 }
-                
+
                 if (order.getOrderStatus() == OrderStatusEnum.COMPLETE.getCode()) {
                     dealOrderCount++;
                     amount = amount + order.getOrderAmount();
@@ -364,6 +365,82 @@ public class OrderServiceProxy {
 
 
     /**
+     * 获取待提交尾款订单列表
+     *
+     * @param salerUserNo
+     * @return
+     */
+    public List<TailPayOrderVo> listTailPayOrderBySalerUserNo(String salerUserNo, Integer start, Integer size) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("salerUserNo", salerUserNo);
+        params.put("orderStatus", OrderStatusEnum.DELIVERY.getCode());
+
+        Long totalCount = orderService.listOrderByStatusCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<Order> orderList = orderService.listOrderByStatus(params);
+
+        List<TailPayOrderVo> orderVoList = this.convertTailPayOrderVo(orderList, totalCount);
+
+        return orderVoList;
+    }
+
+
+    /**
+     * 获取待出纳审核尾款订单列表
+     *
+     * @return
+     */
+    public List<TailPayOrderVo> listCasherTailPayApvOrder(Integer start, Integer size) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderStatus", OrderStatusEnum.DELIVERY.getCode());
+        params.put("payStatus", OrderPayStatusEnum.TAIL_CASH_APV.getCode());
+
+        Long totalCount = orderService.listOrderByStatusCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<Order> orderList = orderService.listOrderByStatus(params);
+
+        List<TailPayOrderVo> orderVoList = this.convertTailPayOrderVo(orderList, totalCount);
+        return orderVoList;
+    }
+
+    /**
+     * 获取待出纳审核尾款订单列表
+     *
+     * @return
+     */
+    public List<TailPayOrderVo> listFinTailApvOrder(Integer start, Integer size) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderStatus", OrderStatusEnum.DELIVERY.getCode());
+        params.put("payStatus", OrderPayStatusEnum.TAIL_FIN_APV.getCode());
+
+        Long totalCount = orderService.listOrderByStatusCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<Order> orderList = orderService.listOrderByStatus(params);
+
+        List<TailPayOrderVo> orderVoList = this.convertTailPayOrderVo(orderList, totalCount);
+        return orderVoList;
+    }
+
+
+    /**
      * VO转换
      *
      * @return
@@ -406,4 +483,53 @@ public class OrderServiceProxy {
         }
         return orderVoList;
     }
+
+
+    /**
+     * VO转换
+     *
+     * @return
+     */
+    private List<TailPayOrderVo> convertTailPayOrderVo(List<Order> orderList, Long totalCount) {
+        List<TailPayOrderVo> orderVoList = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(orderList)) {
+            for (Order order : orderList) {
+                if (order.getPayStatus() == OrderPayStatusEnum.FRONT_PAY.getCode() || order.getPayStatus() == OrderPayStatusEnum.TAIL_PAYING.getCode()
+                        || order.getPayStatus() == OrderPayStatusEnum.TAIL_CASH_APV.getCode()
+                        || order.getPayStatus() == OrderPayStatusEnum.TAIL_FIN_APV.getCode()
+                        || order.getPayStatus() == OrderPayStatusEnum.TAIL_PAYED.getCode()) {
+                    TailPayOrderVo orderVo = new TailPayOrderVo();
+                    orderVo.setConsumerName(order.getConsumerName());
+                    orderVo.setConsumerNo(order.getConsumerNo());
+                    orderVo.setConsumerCountry(order.getConsumerCountry());
+                    orderVo.setOrderNo(order.getOrderNo());
+                    orderVo.setTotalCount(totalCount);
+                    orderVo.setOrderType(OrderTypeEnum.valueOf(order.getOrderType()).getDec());
+
+                    Date submitTime = order.getSubmitTime();
+                    if (submitTime != null) {
+                        orderVo.setSubmitDateTime(DateUtil.formatToStrTimeV1(submitTime));
+                    }
+                    orderVo.setCreateDateTime(DateUtil.formatToStrTimeV1(order.getCreatedTime()));
+
+                    orderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getDec());
+
+                    String currencyDec = orderService.getCurrencyDec(order);
+                    orderVo.setAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
+
+                    orderVo.setReceiptAmount(PriceUtil.convertToYuanStr(order.getReceiptAmount()) + currencyDec);
+
+                    ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(order.getOrderNo());
+                    orderVo.setReceiptFrontPay(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
+                    orderVo.setReceiptTailPay(PriceUtil.convertToYuanStr(order.getReceiptAmount() - consumerFrontPay.getActualAmount()) + currencyDec);
+                    orderVo.setTailPay(PriceUtil.convertToYuanStr(order.getProductAmount() - order.getReceiptAmount()) + currencyDec);
+
+                    orderVoList.add(orderVo);
+                }
+            }
+        }
+        return orderVoList;
+    }
+
 }

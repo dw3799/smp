@@ -575,6 +575,9 @@
         <if test="orderStatus != null">
             and o.order_status = #{orderStatus}
         </if>
+        <if test="payStatus != null">
+            and o.pay_status = #{payStatus}
+        </if>
 
         <if test="salerUserNo != null and salerUserNo != ''">
             and o.saler_user_no = #{salerUserNo}
