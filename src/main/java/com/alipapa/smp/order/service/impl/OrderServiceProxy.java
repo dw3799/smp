@@ -415,30 +415,6 @@ public class OrderServiceProxy {
         return orderVoList;
     }
 
-    /**
-     * 获取待出纳审核尾款订单列表
-     *
-     * @return
-     */
-    public List<TailPayOrderVo> listFinTailApvOrder(Integer start, Integer size) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("orderStatus", OrderStatusEnum.DELIVERY.getCode());
-        params.put("payStatus", OrderPayStatusEnum.TAIL_FIN_APV.getCode());
-
-        Long totalCount = orderService.listOrderByStatusCount(params);
-
-        if (totalCount <= 0) {
-            return null;
-        }
-        params.put("start", start);
-        params.put("size", size);
-
-        List<Order> orderList = orderService.listOrderByStatus(params);
-
-        List<TailPayOrderVo> orderVoList = this.convertTailPayOrderVo(orderList, totalCount);
-        return orderVoList;
-    }
-
 
     /**
      * VO转换
@@ -497,7 +473,6 @@ public class OrderServiceProxy {
             for (Order order : orderList) {
                 if (order.getPayStatus() == OrderPayStatusEnum.FRONT_PAY.getCode() || order.getPayStatus() == OrderPayStatusEnum.TAIL_PAYING.getCode()
                         || order.getPayStatus() == OrderPayStatusEnum.TAIL_CASH_APV.getCode()
-                        || order.getPayStatus() == OrderPayStatusEnum.TAIL_FIN_APV.getCode()
                         || order.getPayStatus() == OrderPayStatusEnum.TAIL_PAYED.getCode()) {
                     TailPayOrderVo orderVo = new TailPayOrderVo();
                     orderVo.setConsumerName(order.getConsumerName());
@@ -523,7 +498,7 @@ public class OrderServiceProxy {
                     ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(order.getOrderNo());
                     orderVo.setReceiptFrontPay(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
                     orderVo.setReceiptTailPay(PriceUtil.convertToYuanStr(order.getReceiptAmount() - consumerFrontPay.getActualAmount()) + currencyDec);
-                    orderVo.setTailPay(PriceUtil.convertToYuanStr(order.getProductAmount() - order.getReceiptAmount()) + currencyDec);
+                    orderVo.setResTailPay(PriceUtil.convertToYuanStr(order.getProductAmount() - order.getReceiptAmount()) + currencyDec);
 
                     orderVoList.add(orderVo);
                 }

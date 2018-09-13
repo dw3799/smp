@@ -22,17 +22,27 @@ public class TailPayOrderVo {
     private String orderStatus;
 
     private String createDateTime;
-    
+
     private String receiptAmount; //已收款，外币
 
     private String receiptFrontPay; //已支付定金,外币
 
     private String receiptTailPay; //已支付尾款，外币
 
-    private String tailPay; //剩余尾款，外币
+    private String tailPay; //本次支付的尾款，外币
+
+    private String resTailPay; //剩余尾款，外币
 
     private Long totalCount;
 
+
+    public String getResTailPay() {
+        return resTailPay;
+    }
+
+    public void setResTailPay(String resTailPay) {
+        this.resTailPay = resTailPay;
+    }
 
     public String getReceiptFrontPay() {
         return receiptFrontPay;

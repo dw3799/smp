@@ -15,11 +15,9 @@ public enum OrderPayStatusEnum {
 
     TAIL_CASH_APV(4, "TAIL_CASH_APV", "出纳确认尾款中"),
 
-    TAIL_FIN_APV(5, "TAIL_FIN_APV", "财务审核尾款中"),
+    TAIL_PAYED(5, "TAIL_PAYED", "尾款支付完成"),
 
-    TAIL_PAYED(6, "TAIL_PAYED", "尾款支付完成"),
-
-    SUCCESS(7, "SUCCESS", "支付成功");
+    SUCCESS(6, "SUCCESS", "支付成功");
 
     OrderPayStatusEnum(int code, String codeName, String dec) {
         this.code = code;
