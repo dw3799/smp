@@ -164,41 +164,4 @@ public class OrderTailPayController {
         return WebApiResponse.success(null);
     }
 
-
-    /**
-     * 待财务审核尾款订单列表
-     *
-     * @param
-     * @return
-     */
-    @RequestMapping(value = "/listFinTailApvOrder", method = RequestMethod.GET)
-    public WebApiResponse<List<TailPayOrderVo>> listFinTailApvOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
-                                                                    @RequestParam(name = "pageNum", required = false) Integer pageNum) {
-        UserInfo userInfo = UserStatus.getUserInfo();
-        if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
-            if (userInfo.getRoleName().equals(RoleEnum.financial.getCodeName())) {
-                return error("没有权限");
-            }
-        }
-
-        if (pageSize == null) {
-            pageSize = 30;
-        }
-
-        if (pageNum == null) {
-            pageNum = 1;
-        }
-
-        Integer start = (pageNum - 1) * pageSize;
-        Integer size = pageSize;
-
-        List<TailPayOrderVo> orderVoList = orderServiceProxy.listFinTailApvOrder(start, size);
-        if (!CollectionUtils.isEmpty(orderVoList)) {
-            WebApiResponse response = WebApiResponse.success(orderVoList);
-            response.setTotalCount(orderVoList.get(0).getTotalCount());
-            return response;
-        }
-        return WebApiResponse.success(null);
-    }
-
 }

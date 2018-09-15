@@ -78,6 +78,19 @@ public class UserRoleService {
      * @param userRole
      * @return
      */
+    public boolean saveUserRole(UserRole userRole) {
+        if (userRole == null) {
+            return false;
+        }
+        userRoleMapper.insert(userRole);
+        return true;
+    }
+
+
+    /**
+     * @param userRole
+     * @return
+     */
     public boolean updateUserRole(UserRole userRole) {
         if (userRole == null || userRole.getId() == null) {
             return false;

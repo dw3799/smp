@@ -200,9 +200,6 @@ public class ProductController {
     @RequestMapping(value = "/picUpload", method = RequestMethod.POST)
     public WebApiResponse<JSONObject> sendWelfare(@RequestParam(value = "file") MultipartFile multipartFile, HttpServletRequest request) {
         UserInfo userInfo = UserStatus.getUserInfo();
-        if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
-            return error("没有权限");
-        }
 
         try {
             String nowDay = DateUtil.formatToStr(new Date());
@@ -287,9 +284,6 @@ public class ProductController {
         UserInfo userInfo = UserStatus.getUserInfo();
 
         try {
-            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
-                return error("没有权限");
-            }
 
             if (StringUtil.isEmptyString(categoryName) || StringUtil.isEmptyString(productName)) {
                 return WebApiResponse.error("缺少必填参数！");
@@ -317,9 +311,9 @@ public class ProductController {
     public WebApiResponse<String> delPic(@RequestParam(value = "picNo") String picNo) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {
-            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+/*            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
                 return error("没有权限");
-            }
+            }*/
 
             if (StringUtil.isEmptyString(picNo)) {
                 return WebApiResponse.error("缺少必填参数！");
@@ -343,10 +337,6 @@ public class ProductController {
     public WebApiResponse<String> delProduct(@RequestParam(value = "productIds") String productIds) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {
-            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
-                return error("没有权限");
-            }
-
             if (StringUtil.isEmptyString(productIds)) {
                 return WebApiResponse.error("缺少必填参数！");
             }
@@ -378,10 +368,6 @@ public class ProductController {
                                                 @RequestParam(value = "picNos", required = false) String picNos) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {
-            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
-                return error("没有权限");
-            }
-
             if (productId == null || StringUtil.isEmptyString(categoryName) || StringUtil.isEmptyString(productName)) {
                 return WebApiResponse.error("缺少必填参数！");
             }
@@ -408,9 +394,6 @@ public class ProductController {
     public WebApiResponse<ProductDetailVo> getProduct(@RequestParam(value = "productId") Long productId) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {
-            if (!userInfo.getRoleName().equals(RoleEnum.admin.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) && !userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
-                return error("没有权限");
-            }
 
             if (productId == null) {
                 return WebApiResponse.error("缺少必填参数！");
