@@ -567,11 +567,11 @@ public class OrderController {
     public WebApiResponse<List<OrderVo>> listCasherFrontApvOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
                                                                  @RequestParam(name = "pageNum", required = false) Integer pageNum) {
         UserInfo userInfo = UserStatus.getUserInfo();
-        if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+/*        if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
             if (userInfo.getRoleName().equals(RoleEnum.cashier.getCodeName())) {
                 return error("没有权限");
             }
-        }
+        }*/
 
         if (pageSize == null) {
             pageSize = 30;
@@ -604,11 +604,11 @@ public class OrderController {
     public WebApiResponse<List<OrderVo>> listFinFrontApvOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
                                                               @RequestParam(name = "pageNum", required = false) Integer pageNum) {
         UserInfo userInfo = UserStatus.getUserInfo();
-        if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+/*        if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
             if (userInfo.getRoleName().equals(RoleEnum.financial.getCodeName())) {
                 return error("没有权限");
             }
-        }
+        }*/
 
         if (pageSize == null) {
             pageSize = 30;
