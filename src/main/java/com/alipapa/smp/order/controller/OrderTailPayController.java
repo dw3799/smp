@@ -174,6 +174,9 @@ public class OrderTailPayController {
             }
 
 
+
+
+
 /*            orderNo：M210808132222, //必传，订单编号
              tailAmount："3600.50" //必传，本次支付尾款金额
             receiptChannel："支付宝" //必传，收款渠道，下拉列表接口请求获取
@@ -184,6 +187,11 @@ public class OrderTailPayController {
 
 
             String tailAmount = request.getParameter("tailAmount"); //应收定金
+
+/*            if (PriceUtil.convertToFen(tailAmount) > order.getOrderAmount() - order.getReceiptAmount()) {
+                return error("");
+            }*/
+
             String receiptChannel = request.getParameter("receiptChannel");
             String receiptNo = request.getParameter("receiptNo");
             String payChannel = request.getParameter("payChannel");

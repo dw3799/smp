@@ -498,7 +498,7 @@ public class OrderServiceProxy {
                     ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(order.getOrderNo());
                     orderVo.setReceiptFrontPay(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
                     orderVo.setReceiptTailPay(PriceUtil.convertToYuanStr(order.getReceiptAmount() - consumerFrontPay.getActualAmount()) + currencyDec);
-                    orderVo.setResTailPay(PriceUtil.convertToYuanStr(order.getProductAmount() - order.getReceiptAmount()) + currencyDec);
+                    orderVo.setResTailPay(PriceUtil.convertToYuanStr(order.getOrderAmount() - order.getReceiptAmount()) + currencyDec);
 
                     orderVoList.add(orderVo);
                 }

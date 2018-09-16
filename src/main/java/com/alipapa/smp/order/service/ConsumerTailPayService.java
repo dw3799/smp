@@ -9,6 +9,7 @@ import com.alipapa.smp.utils.PriceUtil;
 import com.alipapa.smp.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,7 @@ public class ConsumerTailPayService {
      * @param consumerTailPay
      * @return
      */
+    @Transactional
     public boolean saveConsumerTailPay(ConsumerTailPay consumerTailPay, Order order) {
         OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
         orderWorkFlow.setCreatedTime(new Date());
@@ -39,7 +41,7 @@ public class ConsumerTailPayService {
         orderWorkFlow.setOpUserRole(RoleEnum.saler.getDec());
         orderWorkFlow.setOrderNo(order.getOrderNo());
         orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
-
+        orderWorkFlow.setResult("提交成功");
         consumerTailPayMapper.insert(consumerTailPay);
         orderWorkFlow.setRemark("提交订单尾款" + PriceUtil.convertToYuanStr(consumerTailPay.getTailAmount()));
         orderWorkFlowService.save(orderWorkFlow);
