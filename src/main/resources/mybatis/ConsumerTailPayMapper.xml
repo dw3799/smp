@@ -19,6 +19,7 @@
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -81,7 +82,7 @@
   <sql id="Base_Column_List">
     id, order_no, consumer_no, consumer_name, consumer_country, receipt_channel, receipt_no, 
     pay_channel, pay_no, tail_amount, actual_tail_amount, exchange_rate, cn_actual_tail_amount, 
-    tail_pay_time, remark, created_time, updated_time
+    tail_pay_time, remark, created_time, updated_time, pay_status
   </sql>
   <select id="selectByExample" parameterType="com.alipapa.smp.order.pojo.ConsumerTailPayExample" resultMap="BaseResultMap">
     select
@@ -119,13 +120,15 @@
       receipt_no, pay_channel, pay_no, 
       tail_amount, actual_tail_amount, exchange_rate, 
       cn_actual_tail_amount, tail_pay_time, remark, 
-      created_time, updated_time)
+      created_time, updated_time, pay_status
+      )
     values (#{id,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{consumerNo,jdbcType=VARCHAR}, 
       #{consumerName,jdbcType=VARCHAR}, #{consumerCountry,jdbcType=VARCHAR}, #{receiptChannel,jdbcType=VARCHAR}, 
       #{receiptNo,jdbcType=VARCHAR}, #{payChannel,jdbcType=VARCHAR}, #{payNo,jdbcType=VARCHAR}, 
       #{tailAmount,jdbcType=BIGINT}, #{actualTailAmount,jdbcType=BIGINT}, #{exchangeRate,jdbcType=VARCHAR}, 
       #{cnActualTailAmount,jdbcType=BIGINT}, #{tailPayTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
-      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, #{payStatus,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.alipapa.smp.order.pojo.ConsumerTailPay">
     insert into consumer_tail_pay
@@ -181,6 +184,9 @@
       <if test="updatedTime != null">
         updated_time,
       </if>
+      <if test="payStatus != null">
+        pay_status,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -233,6 +239,9 @@
       </if>
       <if test="updatedTime != null">
         #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payStatus != null">
+        #{payStatus,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -296,6 +305,9 @@
       <if test="record.updatedTime != null">
         updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.payStatus != null">
+        pay_status = #{record.payStatus,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -319,7 +331,8 @@
       tail_pay_time = #{record.tailPayTime,jdbcType=TIMESTAMP},
       remark = #{record.remark,jdbcType=VARCHAR},
       created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
+      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+      pay_status = #{record.payStatus,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -375,6 +388,9 @@
       <if test="updatedTime != null">
         updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="payStatus != null">
+        pay_status = #{payStatus,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -395,7 +411,8 @@
       tail_pay_time = #{tailPayTime,jdbcType=TIMESTAMP},
       remark = #{remark,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      pay_status = #{payStatus,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -17,7 +17,9 @@ public enum OrderPayStatusEnum {
 
     TAIL_PAYED(5, "TAIL_PAYED", "尾款支付完成"),
 
-    SUCCESS(6, "SUCCESS", "支付成功");
+    SUCCESS(6, "SUCCESS", "支付成功"),
+
+    TAIL_PAY_FAILED(7, "TAIL_PAY_FAILED", "尾款支付失败");
 
     OrderPayStatusEnum(int code, String codeName, String dec) {
         this.code = code;

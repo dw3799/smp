@@ -37,6 +37,8 @@ public class ConsumerTailPay {
 
     private Date updatedTime;
 
+    private Integer payStatus;
+
     public Long getId() {
         return id;
     }
@@ -171,5 +173,13 @@ public class ConsumerTailPay {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public Integer getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(Integer payStatus) {
+        this.payStatus = payStatus;
     }
 }
