@@ -1,8 +1,12 @@
 package com.alipapa.smp.order.mapper;
 
+import com.alipapa.smp.order.pojo.Order;
 import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.pojo.SubOrderExample;
+
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface SubOrderMapper {
@@ -27,4 +31,8 @@ public interface SubOrderMapper {
     int updateByPrimaryKeySelective(SubOrder record);
 
     int updateByPrimaryKey(SubOrder record);
+
+    List<SubOrder> listMySubOrderByParam(Map<String, Object> params);
+
+    long listMySubOrderByParamCount(Map<String, Object> params);
 }

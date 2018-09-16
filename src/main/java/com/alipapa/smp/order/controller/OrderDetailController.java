@@ -957,6 +957,33 @@ public class OrderDetailController {
                 order.setOrderStatus(OrderStatusEnum.DELIVERY.getCode());
                 order.setPayStatus(OrderPayStatusEnum.FRONT_PAY.getCode());
                 order.setReceiptAmount(consumerFrontPay.getActualAmount());
+
+                //采购单状态修改
+                List<SubOrder> subOrderList = subOrderService.listSubOrderByOrderNoWithOutDetail(order.getOrderNo());
+                if (!CollectionUtils.isEmpty(subOrderList)) {
+                    for (SubOrder subOrder : subOrderList) {
+                        subOrder.setSubOrderStatus(SubOrderStatusEnum.SPR_BUYER_APV.getCode());
+                        subOrder.setSubPayStatus(SubOrderPayStatusEnum.UN_PAY.getCode());
+                        subOrder.setCreatedTime(new Date());
+                        subOrderService.updateSubOrder(subOrder);
+
+                        //保存采购单流转记录
+                        OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                        orderWorkFlow.setCreatedTime(new Date());
+                        orderWorkFlow.setNewOrderStatus(subOrder.getSubOrderStatus());
+                        orderWorkFlow.setOldOrderStatus(SubOrderStatusEnum.CREATE.getCode());
+                        orderWorkFlow.setOpUserName(order.getSalerUserName());
+                        orderWorkFlow.setOpUserNo(order.getSalerUserNo());
+                        orderWorkFlow.setOpUserRole("system");
+                        orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+                        orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+                        orderWorkFlow.setRemark("定金审核通过，自动生成采购单");
+                        orderWorkFlow.setResult("生成采购单成功");
+                        orderWorkFlow.setUpdatedTime(new Date());
+                        orderWorkFlowService.save(orderWorkFlow);
+                    }
+                }
+
                 orderService.updateOrder(order);
 
                 //保存订单流转记录

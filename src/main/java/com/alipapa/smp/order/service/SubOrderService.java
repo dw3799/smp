@@ -68,6 +68,18 @@ public class SubOrderService {
 
 
     /**
+     * 修改产品/采购订单
+     *
+     * @param record
+     * @return
+     */
+    public boolean updateSubOrder(SubOrder record) {
+        subOrderMapper.updateByPrimaryKey(record);
+        return true;
+    }
+
+
+    /**
      * 修改产品订单
      *
      * @param record
@@ -83,6 +95,21 @@ public class SubOrderService {
         }
         subOrderMapper.deleteByPrimaryKey(record.getId());
         return true;
+    }
+
+
+    /**
+     * 获取产品订单
+     *
+     * @param orderNo
+     * @return
+     */
+    public List<SubOrder> listSubOrderByOrderNoWithOutDetail(String orderNo) {
+        SubOrderExample example = new SubOrderExample();
+        SubOrderExample.Criteria criteria = example.createCriteria();
+        criteria.andOrderNoEqualTo(orderNo);
+        List<SubOrder> subOrderList = subOrderMapper.selectByExample(example);
+        return subOrderList;
     }
 
 
