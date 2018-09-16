@@ -191,7 +191,7 @@ public class OrderServiceProxy {
                     consumerOrderVo.setSubmitDate(DateUtil.formatToStr(submitTime));
                 }
 
-                consumerOrderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getCodeName());
+                consumerOrderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getDec());
 
                 List<SysDict> sysDictList = sysDictService.listSysDict(OrderCategoryCode.Currency.getCodeName(), order.getCurrency());
 
