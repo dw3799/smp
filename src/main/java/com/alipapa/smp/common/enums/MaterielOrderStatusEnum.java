@@ -3,7 +3,7 @@ package com.alipapa.smp.common.enums;
 /**
  * 订单状态枚举
  */
-public enum SubOrderStatusEnum {
+public enum MaterielOrderStatusEnum {
 
     CREATE(0, "CREATE", "已创建"),
 
@@ -17,39 +17,17 @@ public enum SubOrderStatusEnum {
 
     BUYER_FOLLOW_ORDER(5, "BUYER_FOLLOW_ORDER", "待采购补充跟单状态"),
 
-    FACTORY(6, "FACTORY", "工厂生产中"),
+    FACTORY_ORDERED(6, "FACTORY_ORDERED", "工厂生产中——已下单"),
 
-    COMPLETE(7, "COMPLETE", "订单完成"),
+    FACTORY_MATERIEL(7, "FACTORY_MATERIEL", "工厂生产中——下料"),
 
-    CLOSE(8, "CLOSE", "订单关闭");
+    FACTORY_PRINTING(8, "FACTORY_PRINTING", "工厂生产中——印刷"),
 
-    /*
-待采购下单
-待采购主管审核采购订单
-待财务审核采购定金
-待出纳支付采购定金
-待采购补充跟单状态
-工厂生产中
+    FACTORY_INVOICE(9, "FACTORY_INVOICE", "工厂生产中——已发货"),
 
+    DISCARDED(10, "DISCARDED", "作废");
 
-
-
-
-待质检
-待提交发货申请
-待财务审核发货申请
-待寻找运输渠道
-待出库
-
-
-待财务审核采购尾款
-待出纳支付采购尾款
-订单完成
-订单关闭
-
-    */
-
-    SubOrderStatusEnum(int code, String codeName, String dec) {
+    MaterielOrderStatusEnum(int code, String codeName, String dec) {
         this.code = code;
         this.codeName = codeName;
         this.dec = dec;
@@ -73,9 +51,9 @@ public enum SubOrderStatusEnum {
         return dec;
     }
 
-    public static SubOrderStatusEnum valueOf(int code) {
-        SubOrderStatusEnum[] consumerScopeEnums = SubOrderStatusEnum.values();
-        for (SubOrderStatusEnum consumerScopeEnum : consumerScopeEnums) {
+    public static MaterielOrderStatusEnum valueOf(int code) {
+        MaterielOrderStatusEnum[] consumerScopeEnums = MaterielOrderStatusEnum.values();
+        for (MaterielOrderStatusEnum consumerScopeEnum : consumerScopeEnums) {
             if (consumerScopeEnum.getCode() == code) {
                 return consumerScopeEnum;
             }

@@ -1,12 +1,14 @@
 package com.alipapa.smp.order.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.Constant;
-import com.alipapa.smp.common.enums.OrderTypeEnum;
-import com.alipapa.smp.common.enums.OrderWorkFlowTypeEnum;
-import com.alipapa.smp.common.enums.SubOrderStatusEnum;
+import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
+import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.order.pojo.*;
+import com.alipapa.smp.order.service.MaterielOrderService;
 import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.SubOrderService;
@@ -14,6 +16,15 @@ import com.alipapa.smp.order.service.impl.SubOrderServiceProxy;
 import com.alipapa.smp.order.vo.OrderProductVo;
 import com.alipapa.smp.order.vo.OrderWorkFlowVo;
 import com.alipapa.smp.order.vo.SubOrderVo;
+import com.alipapa.smp.product.pojo.Product;
+import com.alipapa.smp.product.pojo.ProductCategory;
+import com.alipapa.smp.product.pojo.ProductPicture;
+import com.alipapa.smp.product.pojo.Supplier;
+import com.alipapa.smp.product.service.ProductCategoryService;
+import com.alipapa.smp.product.service.ProductPictureService;
+import com.alipapa.smp.product.service.ProductService;
+import com.alipapa.smp.product.service.SupplierService;
+import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
 import com.alipapa.smp.utils.StringUtil;
@@ -24,10 +35,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.alipapa.smp.utils.WebApiResponse.error;
+import static com.alipapa.smp.utils.WebApiResponse.success;
 
 /**
  * 采购订单接口
@@ -45,10 +59,8 @@ public class SubOrderController {
     @Autowired
     private OrderService orderService;
 
-
     @Autowired
     private SubOrderServiceProxy subOrderServiceProxy;
-
 
     @Autowired
     private SubOrderService subOrderService;
@@ -56,6 +68,20 @@ public class SubOrderController {
     @Autowired
     private OrderWorkFlowService orderWorkFlowService;
 
+    @Autowired
+    private MaterielOrderService materielOrderService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductCategoryService productCategoryService;
+
+    @Autowired
+    private ProductPictureService productPictureService;
+
+    @Autowired
+    private SupplierService supplierService;
 
     /**
      * 采购获取待提交采购单
@@ -210,5 +236,141 @@ public class SubOrderController {
         return WebApiResponse.success(orderWorkFlowVoList);
     }
 
+    /**
+     * 物料订单明细（待提交采购订单页面）
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/saveSubOrder", method = RequestMethod.POST)
+    public WebApiResponse<String> saveSubOrder(HttpServletRequest request) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        try {
+            //不能为空
+            String subOrderNo = request.getParameter("subOrderNo");
+
+            SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(subOrderNo);
+            if (subOrder == null) {
+                return WebApiResponse.error("采购订单不存在");
+            }
+
+            Order order = orderService.selectOrderByOrderNo(subOrder.getOrderNo());
+
+            if (!order.getBuyerUserNo().equals(userInfo.getUserNo())) {
+                return error("没有权限");
+            }
+
+            if (subOrder.getSubOrderStatus() != SubOrderStatusEnum.BUYER_ORDER.getCode()) {
+                return error("已提交不能修改！");
+            }
+
+            String materiels = request.getParameter("materiels");
+            String opType = request.getParameter("opType");
+
+            //可为空
+            String remark = request.getParameter("remark");
+
+            if (StringUtil.isEmptyString(opType) || StringUtil.isEmptyString(materiels)) {
+                return error("缺少必填参数");
+            }
+
+            OrderOPerateTypeEnum orderOPerateTypeEnum = OrderOPerateTypeEnum.valueOf(opType);
+            if (orderOPerateTypeEnum == null) {
+                return error("操作类型有误");
+            }
+
+            subOrder.setRemark(remark);
+
+            List<MaterielOrder> materielOrderList = new ArrayList<>();
+
+            JSONArray materielsArray = JSONArray.parseArray(materiels);
+            for (int i = 0; i < materielsArray.size(); i++) {
+                JSONObject jsonObject = materielsArray.getJSONObject(i);
+
+                      /*materielOrderId:5,//物料订单ID.不传即为新增物料
+                        productId:"122",//产品ID
+                        supplierId:12,//供应商ID
+                        purchaseAmount:"18800.22",//产品总金额（外币），销售单价*数量
+                        purchaseFrontAmount:"1109.12",//预估产品采购总价(人民币),创建订单时写入
+                        remark:"毛皮要厚的"//生产要求备注*/
+
+                Long materielOrderId = jsonObject.getLong("materielOrderId");
+                Long productId = jsonObject.getLong("productId");
+                Long supplierId = jsonObject.getLong("supplierId");
+
+                String purchaseAmount = jsonObject.getString("purchaseAmount");
+                String purchaseFrontAmount = jsonObject.getString("purchaseFrontAmount");
+                String mRemark = jsonObject.getString("remark");
+
+
+                MaterielOrder materielOrder = null;
+                if (materielOrderId != null) {
+                    materielOrder = materielOrderService.selectMaterielOrderById(materielOrderId);
+                }
+                if (materielOrder == null) {
+                    materielOrder = new MaterielOrder();
+                }
+
+                if (productId == null || supplierId == null || StringUtil.isEmptyString(purchaseAmount) || StringUtil.isEmptyString(purchaseFrontAmount)) {
+                    return error("产品缺少必填参数");
+                }
+
+                Product product = productService.getProductById(productId);
+                ProductCategory productCategory = productCategoryService.getProductCategoryById(product.getProductCategoryId());
+
+                List<ProductPicture> productPictureList = productPictureService.listProductPictureByProductId(productId);
+
+                if (product == null || productCategory == null) {
+                    return error("产品参数异常");
+                }
+
+                Supplier supplier = supplierService.getSupplierById(supplierId);
+
+                if (orderOPerateTypeEnum == OrderOPerateTypeEnum.SUBMIT) {
+                    materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.SPR_BUYER_APV.getCode());
+                } else {
+                    materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.BUYER_ORDER.getCode());
+                }
+
+                if (!CollectionUtils.isEmpty(productPictureList)) {
+                    ProductPicture productPicture = productPictureList.get(0);
+                    materielOrder.setMiniPic(productPicture.getPicNo());
+                    materielOrder.setPic(productPicture.getPicNo());
+                }
+                materielOrder.setOrderNo(subOrder.getOrderNo());
+                materielOrder.setPayStatus(MaterielOrderPayStatusEnum.UN_PAY.getCode());
+                materielOrder.setProductCategory(productCategory.getCategoryName());
+
+                materielOrder.setProductCategoryId(productCategory.getId());
+                materielOrder.setProductId(product.getId());
+                materielOrder.setProductName(product.getProductName());
+                materielOrder.setPurchaseAmount(PriceUtil.convertToFen(purchaseAmount));
+                materielOrder.setPurchaseFrontAmount(PriceUtil.convertToFen(purchaseFrontAmount));
+                materielOrder.setSubOrderNo(subOrderNo);
+                materielOrder.setUpdatedTime(new Date());
+
+                if (materielOrder.getId() == null) {
+                    materielOrder.setCreatedTime(new Date());
+                }
+                materielOrder.setSupplierBankAccount(supplier.getBankAccount());
+                materielOrder.setSupplierBankName(supplier.getBankName());
+                materielOrder.setSupplierBankNo(supplier.getBankNo());
+                materielOrder.setSupplierCharge(supplier.getCharge());
+                materielOrder.setSupplierId(supplierId);
+                materielOrder.setSupplierMobile(supplier.getMobile1());
+                materielOrder.setSupplierName(supplier.getName());
+
+                materielOrder.setRemark(mRemark);
+                materielOrderList.add(materielOrder);
+            }
+
+            subOrderServiceProxy.saveMaterielOrder(order, subOrder, materielOrderList);
+            return success("success");
+        } catch (Exception ex) {
+            logger.error("保存物料订单异常", ex);
+            return error("保存物料订单异常");
+        }
+    }
 
 }
