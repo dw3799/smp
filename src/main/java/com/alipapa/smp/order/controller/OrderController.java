@@ -9,8 +9,10 @@ import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.controller.ConsumerController;
 import com.alipapa.smp.consumer.pojo.Consumer;
+import com.alipapa.smp.consumer.pojo.ConsumerFollowRecord;
 import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.pojo.UserConsumerRelation;
+import com.alipapa.smp.consumer.service.ConsumerFollowRecordService;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.consumer.service.UserConsumerRelationService;
@@ -37,10 +39,7 @@ import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.user.vo.FuzzyUserVo;
 import com.alipapa.smp.user.vo.GroupSelectVo;
-import com.alipapa.smp.utils.OrderNumberGenerator;
-import com.alipapa.smp.utils.PriceUtil;
-import com.alipapa.smp.utils.StringUtil;
-import com.alipapa.smp.utils.WebApiResponse;
+import com.alipapa.smp.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +78,9 @@ public class OrderController {
     @Autowired
     private RoleService roleService;
 
-
+    @Autowired
+    private ConsumerFollowRecordService consumerFollowRecordService;
+    
     @Autowired
     private ConsumerService consumerService;
 
@@ -367,7 +368,25 @@ public class OrderController {
 
             boolean flag = orderServiceProxy.createOrder(order, subOrderList);
             if (flag) {
+                consumer.setScope(ConsumerScopeEnum.Protected.getCodeName());
                 userConsumerRelationService.updateHasOrder(consumer.getId(), saler.getId());
+                consumer.setHasOrder("有订单");
+                consumerService.updateConsumer(consumer);
+
+
+                ConsumerFollowRecord consumerFollowRecord = new ConsumerFollowRecord();
+                consumerFollowRecord.setConsumerNo(consumer.getConsumerNo());
+                consumerFollowRecord.setConsumerId(consumer.getId());
+                consumerFollowRecord.setContent("创建订单：" + orderNo);
+                consumerFollowRecord.setFollowTime(DateUtil.formatToStr(new Date()));
+                consumerFollowRecord.setCreatedTime(new Date());
+                consumerFollowRecord.setUserId(userInfo.getUserId());
+                consumerFollowRecord.setUserNo(userInfo.getUserNo());
+                consumerFollowRecord.setUserName(userInfo.getUserName());
+                consumerFollowRecord.setUpdatedTime(new Date());
+                consumerFollowRecordService.insert(consumerFollowRecord);
+
+
                 return WebApiResponse.success("success");
             }
         } catch (Exception ex) {
