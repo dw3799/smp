@@ -259,8 +259,8 @@ public class OrderDetailController {
 
             }
         } catch (Exception ex) {
-            logger.error("获取订单产品信息异常", ex);
-            return WebApiResponse.error("获取订单产品信息异常");
+            logger.error("获取订单流转记录异常", ex);
+            return WebApiResponse.error("获取订单流转记录异常");
         }
 
         return WebApiResponse.success(orderWorkFlowVoList);

@@ -523,7 +523,7 @@
         </if>
 
         <if test="buyerUserNo != null and buyerUserNo != ''">
-            OR o.buyer_user_no = #{buyerUserNo}
+            and o.buyer_user_no = #{buyerUserNo}
         </if>
 
         ORDER BY s.created_time DESC

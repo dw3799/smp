@@ -4,6 +4,10 @@ public class OrderProductVo {
 
     private String subOrderNo;
 
+    private String subOrderStatus;
+
+    private String createdTime;
+
     private String orderNo;
 
     private Long productCategoryId;
@@ -45,6 +49,22 @@ public class OrderProductVo {
     private String totalVolume;
     private String totalWeight;
 
+
+    public String getSubOrderStatus() {
+        return subOrderStatus;
+    }
+
+    public void setSubOrderStatus(String subOrderStatus) {
+        this.subOrderStatus = subOrderStatus;
+    }
+
+    public String getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(String createdTime) {
+        this.createdTime = createdTime;
+    }
 
     public String getPicNo() {
         return picNo;

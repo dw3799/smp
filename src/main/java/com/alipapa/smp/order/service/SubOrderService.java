@@ -19,6 +19,8 @@ public class SubOrderService {
     @Autowired
     private SubOrderMapper subOrderMapper;
 
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private SelfOrderDetailMapper selfOrderDetailMapper;
@@ -165,6 +167,39 @@ public class SubOrderService {
                 SelfOrderDetail selfOrderDetail = this.getSelfOrderDetailBySubOrderNo(subOrderNo);
                 subOrder.setSelfOrderDetail(selfOrderDetail);
             } else if (orderTypeEnum == OrderTypeEnum.AGENT_ORDER) {
+                AgentOrderDetail agentOrderDetail = this.getAgentOrderDetailBySubOrderNo(subOrderNo);
+                subOrder.setAgentOrderDetail(agentOrderDetail);
+            }
+            return subOrder;
+        }
+        return null;
+    }
+
+
+    /**
+     * 获取产品订单
+     *
+     * @param subOrderNo
+     * @return
+     */
+    public SubOrder getSubOrderBySubOrderNo(String subOrderNo) {
+        if (StringUtil.isEmptyString(subOrderNo)) {
+            return null;
+        }
+
+        SubOrderExample example = new SubOrderExample();
+        SubOrderExample.Criteria criteria = example.createCriteria();
+        criteria.andSubOrderNoEqualTo(subOrderNo);
+        List<SubOrder> subOrderList = subOrderMapper.selectByExample(example);
+
+        if (!CollectionUtils.isEmpty(subOrderList)) {
+            SubOrder subOrder = subOrderList.get(0);
+
+            Order order = orderService.selectOrderByOrderNo(subOrder.getOrderNo());
+            if (OrderTypeEnum.valueOf(order.getOrderType()) == OrderTypeEnum.SELF_ORDER) {
+                SelfOrderDetail selfOrderDetail = this.getSelfOrderDetailBySubOrderNo(subOrderNo);
+                subOrder.setSelfOrderDetail(selfOrderDetail);
+            } else if (OrderTypeEnum.valueOf(order.getOrderType()) == OrderTypeEnum.AGENT_ORDER) {
                 AgentOrderDetail agentOrderDetail = this.getAgentOrderDetailBySubOrderNo(subOrderNo);
                 subOrder.setAgentOrderDetail(agentOrderDetail);
             }
