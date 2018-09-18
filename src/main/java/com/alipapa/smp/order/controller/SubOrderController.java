@@ -498,4 +498,91 @@ public class SubOrderController {
         }
     }
 
+
+    /**
+     * 采购主管审核采购订单
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/approve-order", method = RequestMethod.POST)
+    public WebApiResponse<String> approveOrder(@RequestParam(name = "subOrderNo") String subOrderNo,
+                                               @RequestParam(name = "result") String result,
+                                               @RequestParam(name = "remark", required = false) String remark) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(subOrderNo) || StringUtil.isEmptyString(result)) {
+                return error("缺少必传参数");
+            }
+
+            SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(subOrderNo);
+            if (subOrder == null) {
+                return WebApiResponse.error("采购单不存在");
+            }
+
+            if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+                if (!RoleEnum.superBuyer.getCodeName().equals(userInfo.getRoleName())) {
+                    return error("没有权限");
+                }
+            }
+
+            if (subOrder.getSubOrderStatus() != SubOrderStatusEnum.SPR_BUYER_APV.getCode()) {
+                return error("当前状态不能审核！");
+            }
+
+
+            User user = userService.getUserByUserNo(userInfo.getUserNo());
+
+            if ("N".equals(result)) {
+                subOrder.setSubOrderStatus(SubOrderStatusEnum.BUYER_ORDER.getCode());
+                
+                List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
+                for (MaterielOrder materielOrder : materielOrderList) {
+                    materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.DISCARDED.getCode());
+                    materielOrder.setRemark(materielOrder.getRemark() + "主管审核不通过，已废弃");
+                    materielOrderService.updateMaterielOrder(materielOrder);
+                }
+                subOrderService.updateSubOrder(subOrder);
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(subOrder.getSubOrderStatus());
+                orderWorkFlow.setOldOrderStatus(SubOrderStatusEnum.SPR_BUYER_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.superBuyer.getDec());
+                orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("审核不通过");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else if ("Y".equals(result)) {
+                subOrder.setSubOrderStatus(SubOrderStatusEnum.SUB_FIN_FRONT_APV.getCode());
+                subOrderService.updateSubOrder(subOrder);
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(subOrder.getSubOrderStatus());
+                orderWorkFlow.setOldOrderStatus(SubOrderStatusEnum.SPR_BUYER_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.supervisor.getDec());
+                orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("审核通过");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else {
+                return error("参数有误");
+            }
+        } catch (Exception ex) {
+            logger.error("采购主管审核采购订单异常", ex);
+            return error("采购主管审核采购订单异常");
+        }
+        return WebApiResponse.success("success");
+    }
 }
