@@ -534,4 +534,45 @@
         <include refid="listMySubOrderByParamSql"/>
         ) T
     </select>
+
+
+    <select id="listGroupSubOrderByParam" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        <include refid="listGroupSubOrderByParamSql"/>
+        <trim prefix="limit" prefixOverrides=",">
+            <if test="start != null and start != ''">
+                #{start}
+            </if>
+            <if test="size != null and size != ''">
+                , #{size}
+            </if>
+        </trim>
+    </select>
+
+    <sql id="listGroupSubOrderByParamSql">
+        SELECT s.*
+        FROM
+        `sub_order` s
+        LEFT JOIN `order` o ON o.order_no = s.order_no
+        LEFT JOIN `user` u ON o.buyer_user_no = u.user_no
+        WHERE 1 = 1
+        <if test="subOrderStatus != null">
+            and s.sub_order_status = #{subOrderStatus}
+        </if>
+
+        <if test="buyerUserNo != null and buyerUserNo != ''">
+            and o.buyer_user_no = #{buyerUserNo}
+        </if>
+
+        <if test="groupId != null">
+            and u.group_id = #{groupId}
+        </if>
+
+        ORDER BY s.created_time DESC
+    </sql>
+
+    <select id="listGroupSubOrderByParamCount" resultType="java.lang.Long" parameterType="java.util.HashMap">
+        select count(*) from (
+        <include refid="listGroupSubOrderByParamSql"/>
+        ) T
+    </select>
 </mapper>

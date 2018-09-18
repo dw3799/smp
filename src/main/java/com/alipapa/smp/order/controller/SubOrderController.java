@@ -13,9 +13,7 @@ import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.order.service.impl.SubOrderServiceProxy;
-import com.alipapa.smp.order.vo.OrderProductVo;
-import com.alipapa.smp.order.vo.OrderWorkFlowVo;
-import com.alipapa.smp.order.vo.SubOrderVo;
+import com.alipapa.smp.order.vo.*;
 import com.alipapa.smp.product.pojo.Product;
 import com.alipapa.smp.product.pojo.ProductCategory;
 import com.alipapa.smp.product.pojo.ProductPicture;
@@ -24,7 +22,11 @@ import com.alipapa.smp.product.service.ProductCategoryService;
 import com.alipapa.smp.product.service.ProductPictureService;
 import com.alipapa.smp.product.service.ProductService;
 import com.alipapa.smp.product.service.SupplierService;
+import com.alipapa.smp.user.pojo.Role;
 import com.alipapa.smp.user.pojo.User;
+import com.alipapa.smp.user.service.GroupService;
+import com.alipapa.smp.user.service.RoleService;
+import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
 import com.alipapa.smp.utils.StringUtil;
@@ -82,6 +84,16 @@ public class SubOrderController {
 
     @Autowired
     private SupplierService supplierService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private RoleService roleService;
+
 
     /**
      * 采购获取待提交采购单
@@ -282,6 +294,14 @@ public class SubOrderController {
 
             subOrder.setRemark(remark);
 
+            if (orderOPerateTypeEnum == OrderOPerateTypeEnum.SUBMIT) {
+                subOrder.setSubOrderStatus(SubOrderStatusEnum.SPR_BUYER_APV.getCode());
+            } else {
+                subOrder.setSubOrderStatus(SubOrderStatusEnum.BUYER_ORDER.getCode());
+            }
+
+            Long totalPurchaseAmount = 0L;
+
             List<MaterielOrder> materielOrderList = new ArrayList<>();
 
             JSONArray materielsArray = JSONArray.parseArray(materiels);
@@ -362,14 +382,119 @@ public class SubOrderController {
                 materielOrder.setSupplierName(supplier.getName());
 
                 materielOrder.setRemark(mRemark);
+                totalPurchaseAmount = totalPurchaseAmount + materielOrder.getPurchaseAmount();
+
                 materielOrderList.add(materielOrder);
             }
-
+            subOrder.setActualPurchaseAmount(totalPurchaseAmount);
             subOrderServiceProxy.saveMaterielOrder(order, subOrder, materielOrderList);
             return success("success");
         } catch (Exception ex) {
             logger.error("保存物料订单异常", ex);
             return error("保存物料订单异常");
+        }
+    }
+
+
+    /**
+     * 获取物料单
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listMaterielOrders", method = RequestMethod.GET)
+    public WebApiResponse<MaterielListVo> listMaterielOrders(@RequestParam("subOrderNo") String subOrderNo) {
+        if (StringUtil.isEmptyString(subOrderNo)) {
+            return WebApiResponse.error("参数不能为空");
+        }
+
+        SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(subOrderNo);
+        if (subOrder == null) {
+            return WebApiResponse.error("采购订单不存在");
+        }
+
+        Order order = orderService.selectOrderByOrderNo(subOrder.getOrderNo());
+        String currencyDec = orderService.getCurrencyDec(order);
+
+        OrderTypeEnum orderTypeEnum = OrderTypeEnum.valueOf(order.getOrderType());
+        if (orderTypeEnum == null) {
+            return error("订单类型有误");
+        }
+        try {
+            MaterielListVo materielListVo = new MaterielListVo();
+            List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
+
+            materielListVo.setSubOrderNo(subOrderNo);
+
+            if (!CollectionUtils.isEmpty(materielOrderList)) {
+                Long purchaseFrontAmount = 0L;
+                Long totalPurchaseAmount = 0L;
+                Long payedAmount = 0L;
+                for (MaterielOrder materielOrder : materielOrderList) {
+                    purchaseFrontAmount = materielOrder.getPurchaseFrontAmount();
+                    totalPurchaseAmount = totalPurchaseAmount + materielOrder.getPurchaseAmount();
+                    if (materielOrder.getPayStatus() > MaterielOrderPayStatusEnum.SUB_CASH_FRONT_APV.getCode()) {
+                        payedAmount = payedAmount + materielOrder.getPurchaseFrontAmount();
+                    }
+                }
+                materielListVo.setTotalPurchaseAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount) + currencyDec);
+                materielListVo.setPurchaseFrontAmount(PriceUtil.convertToYuanStr(purchaseFrontAmount) + currencyDec);
+                materielListVo.setMaterielOrders(materielOrderList);
+            }
+
+            return WebApiResponse.success(materielListVo);
+        } catch (Exception ex) {
+            logger.error("获取物料单异常", ex);
+            return error("获取物料单异常");
+        }
+    }
+
+
+    /**
+     * 主管获取待审核采购单
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listSuperApvSubOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<SubOrderVo>> listSuperApvSubOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                                 @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        try {
+            if (pageSize == null) {
+                pageSize = 30;
+            }
+
+            if (pageNum == null) {
+                pageNum = 1;
+            }
+
+            Integer start = (pageNum - 1) * pageSize;
+            Integer size = pageSize;
+
+            User user = userService.getUserById(userInfo.getUserId());
+            Role role = roleService.getRoleById(userInfo.getRoleId());
+            List<SubOrderVo> orderVoList = null;
+
+            if (userInfo.getRoleName().equals(RoleEnum.admin.getCodeName())) {
+                orderVoList = subOrderServiceProxy.listGroupSubOrder(SubOrderStatusEnum.SPR_BUYER_APV, null, start, size);
+            } else {
+                if (1 != user.getIsLeader() && !"1".equals(role.getRoleLevel())) { //组长且为主管有权限
+                    return error("没有权限");
+                }
+                orderVoList = subOrderServiceProxy.listGroupSubOrder(SubOrderStatusEnum.SPR_BUYER_APV, user.getGroupId(), start, size);
+            }
+
+            if (!CollectionUtils.isEmpty(orderVoList)) {
+                WebApiResponse response = WebApiResponse.success(orderVoList);
+                response.setTotalCount(orderVoList.get(0).getTotalCount());
+                return response;
+            }
+            return WebApiResponse.success(null);
+        } catch (Exception ex) {
+            logger.error("主管获取待审核采购单", ex);
+            return WebApiResponse.error("主管获取待审核采购单");
         }
     }
 

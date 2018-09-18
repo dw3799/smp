@@ -35,4 +35,10 @@ public interface SubOrderMapper {
     List<SubOrder> listMySubOrderByParam(Map<String, Object> params);
 
     long listMySubOrderByParamCount(Map<String, Object> params);
+
+
+    List<SubOrder> listGroupSubOrderByParam(Map<String, Object> params);
+
+    long listGroupSubOrderByParamCount(Map<String, Object> params);
+    
 }

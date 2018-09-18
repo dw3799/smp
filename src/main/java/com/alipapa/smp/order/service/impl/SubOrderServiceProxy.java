@@ -94,7 +94,7 @@ public class SubOrderServiceProxy {
         } else {
             orderWorkFlow.setOpUserRole(RoleEnum.agentBuyer.getDec());
         }
-        
+
         orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
         orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
         if (subOrder.getSubOrderStatus() == SubOrderStatusEnum.BUYER_ORDER.getCode()) {
@@ -137,6 +137,34 @@ public class SubOrderServiceProxy {
     }
 
 
+    /**
+     * 查询组内采购单
+     *
+     * @param subOrderStatusEnum
+     * @param groupId
+     */
+
+    public List<SubOrderVo> listGroupSubOrder(SubOrderStatusEnum subOrderStatusEnum, Long groupId, Integer start, Integer size) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("subOrderStatus", subOrderStatusEnum.getCode());
+        params.put("groupId", groupId);
+
+        Long totalCount = subOrderMapper.listMySubOrderByParamCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<SubOrder> subOrderList = subOrderMapper.listGroupSubOrderByParam(params);
+
+        List<SubOrderVo> orderVoList = this.convertSubOrderVo(subOrderList, totalCount);
+
+        return orderVoList;
+    }
+
+
     private List<SubOrderVo> convertSubOrderVo(List<SubOrder> subOrderList, Long totalCount) {
         if (CollectionUtils.isEmpty(subOrderList)) {
             return null;
@@ -166,3 +194,6 @@ public class SubOrderServiceProxy {
         return subOrderVoList;
     }
 }
+
+
+
