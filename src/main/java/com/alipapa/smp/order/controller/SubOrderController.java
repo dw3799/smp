@@ -535,7 +535,7 @@ public class SubOrderController {
 
             if ("N".equals(result)) {
                 subOrder.setSubOrderStatus(SubOrderStatusEnum.BUYER_ORDER.getCode());
-                
+
                 List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
                 for (MaterielOrder materielOrder : materielOrderList) {
                     materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.DISCARDED.getCode());
@@ -585,4 +585,90 @@ public class SubOrderController {
         }
         return WebApiResponse.success("success");
     }
+
+
+    /**
+     * 待财务审核采购单定金列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listFinFrontApvSubOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<SubOrderVo>> listFinFrontApvSubOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                                    @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+/*        if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+            if (userInfo.getRoleName().equals(RoleEnum.financial.getCodeName())) {
+                return error("没有权限");
+            }
+        }*/
+
+        try {
+            if (pageSize == null) {
+                pageSize = 30;
+            }
+
+            if (pageNum == null) {
+                pageNum = 1;
+            }
+
+            Integer start = (pageNum - 1) * pageSize;
+            Integer size = pageSize;
+
+            List<SubOrderVo> orderVoList = subOrderServiceProxy.listMySubOrder(SubOrderStatusEnum.SUB_FIN_FRONT_APV, null, start, size);
+            if (!CollectionUtils.isEmpty(orderVoList)) {
+                WebApiResponse response = WebApiResponse.success(orderVoList);
+                response.setTotalCount(orderVoList.get(0).getTotalCount());
+                return response;
+            }
+            return WebApiResponse.success(null);
+        } catch (Exception ex) {
+            logger.error("待财务审核采购单定金列表异常", ex);
+            return error("待财务审核采购单定金列表异常");
+        }
+    }
+
+
+    /**
+     * 待出纳支付采购单定金列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listCashFrontSubOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<SubOrderVo>> listCashFrontSubOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                                  @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+/*        if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+            if (userInfo.getRoleName().equals(RoleEnum.financial.getCodeName())) {
+                return error("没有权限");
+            }
+        }*/
+
+        try {
+            if (pageSize == null) {
+                pageSize = 30;
+            }
+
+            if (pageNum == null) {
+                pageNum = 1;
+            }
+
+            Integer start = (pageNum - 1) * pageSize;
+            Integer size = pageSize;
+
+            List<SubOrderVo> orderVoList = subOrderServiceProxy.listMySubOrder(SubOrderStatusEnum.SUB_CASH_FRONT_APV, null, start, size);
+            if (!CollectionUtils.isEmpty(orderVoList)) {
+                WebApiResponse response = WebApiResponse.success(orderVoList);
+                response.setTotalCount(orderVoList.get(0).getTotalCount());
+                return response;
+            }
+            return WebApiResponse.success(null);
+        } catch (Exception ex) {
+            logger.error("待出纳支付采购单定金列表异常", ex);
+            return error("待出纳支付采购单定金列表异常");
+        }
+    }
+
+
 }
