@@ -185,6 +185,7 @@ public class SubOrderServiceProxy {
             subOrderVo.setProductAmount(PriceUtil.convertToYuanStr(subOrder.getProductAmount()) + currencyDec);
             subOrderVo.setProductName(subOrder.getProductName());
             subOrderVo.setSalerName(order.getSalerUserName());
+            subOrderVo.setBuyerName(order.getBuyerUserName());
             subOrderVo.setSubOrderId(subOrder.getId());
             subOrderVo.setSubOrderNo(subOrder.getSubOrderNo());
             subOrderVo.setSubOrderStatus(SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
