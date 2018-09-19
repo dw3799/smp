@@ -1,7 +1,5 @@
 package com.alipapa.smp.order.vo;
 
-import java.util.Date;
-
 public class SubOrderVo {
     private Long subOrderId;
 
@@ -21,6 +19,8 @@ public class SubOrderVo {
 
     private String salerName;
 
+    private String buyerName;
+
     private String subOrderStatus;
 
     private String createdTime;
@@ -34,6 +34,15 @@ public class SubOrderVo {
     private String cashFrontTime;
 
     private Long totalCount;
+
+
+    public String getBuyerName() {
+        return buyerName;
+    }
+
+    public void setBuyerName(String buyerName) {
+        this.buyerName = buyerName;
+    }
 
     public String getSubmitTime() {
         return submitTime;
