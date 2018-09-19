@@ -45,6 +45,9 @@ public class DateUtil extends DateUtils {
     }
 
     public static String formatToStrTimeV1(Date date) {
+        if (date == null) {
+            return null;
+        }
         return DateFormatUtils.format(date, "yyyy-MM-dd HH:mm:ss");
     }
 

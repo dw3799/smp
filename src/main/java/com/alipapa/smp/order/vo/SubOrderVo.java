@@ -1,5 +1,7 @@
 package com.alipapa.smp.order.vo;
 
+import java.util.Date;
+
 public class SubOrderVo {
     private Long subOrderId;
 
@@ -23,8 +25,47 @@ public class SubOrderVo {
 
     private String createdTime;
 
+    private String submitTime;
+
+    private String superApvTime;
+
+    private String finFrontTime;
+
+    private String cashFrontTime;
+
     private Long totalCount;
 
+    public String getSubmitTime() {
+        return submitTime;
+    }
+
+    public void setSubmitTime(String submitTime) {
+        this.submitTime = submitTime;
+    }
+
+    public String getSuperApvTime() {
+        return superApvTime;
+    }
+
+    public void setSuperApvTime(String superApvTime) {
+        this.superApvTime = superApvTime;
+    }
+
+    public String getFinFrontTime() {
+        return finFrontTime;
+    }
+
+    public void setFinFrontTime(String finFrontTime) {
+        this.finFrontTime = finFrontTime;
+    }
+
+    public String getCashFrontTime() {
+        return cashFrontTime;
+    }
+
+    public void setCashFrontTime(String cashFrontTime) {
+        this.cashFrontTime = cashFrontTime;
+    }
 
     public Long getTotalCount() {
         return totalCount;

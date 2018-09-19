@@ -8,10 +8,7 @@ import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.order.pojo.*;
-import com.alipapa.smp.order.service.MaterielOrderService;
-import com.alipapa.smp.order.service.OrderService;
-import com.alipapa.smp.order.service.OrderWorkFlowService;
-import com.alipapa.smp.order.service.SubOrderService;
+import com.alipapa.smp.order.service.*;
 import com.alipapa.smp.order.service.impl.SubOrderServiceProxy;
 import com.alipapa.smp.order.vo.*;
 import com.alipapa.smp.product.pojo.Product;
@@ -89,7 +86,7 @@ public class SubOrderController {
     private UserService userService;
 
     @Autowired
-    private GroupService groupService;
+    private PurchaseOrderExtService purchaseOrderExtService;
 
     @Autowired
     private RoleService roleService;
@@ -301,6 +298,7 @@ public class SubOrderController {
             }
 
             Long totalPurchaseAmount = 0L;
+            Long totalPurchaseFrontAmount = 0L;
 
             List<MaterielOrder> materielOrderList = new ArrayList<>();
 
@@ -383,9 +381,18 @@ public class SubOrderController {
 
                 materielOrder.setRemark(mRemark);
                 totalPurchaseAmount = totalPurchaseAmount + materielOrder.getPurchaseAmount();
-
+                totalPurchaseFrontAmount = totalPurchaseFrontAmount + materielOrder.getPurchaseFrontAmount();
                 materielOrderList.add(materielOrder);
             }
+
+            PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+            if (purchaseOrderExt != null && orderOPerateTypeEnum == OrderOPerateTypeEnum.SUBMIT) {
+                purchaseOrderExt.setPurchaseFrontAmount(totalPurchaseFrontAmount);
+                purchaseOrderExt.setSubmitTime(new Date());
+                purchaseOrderExt.setUpdatedTime(new Date());
+                purchaseOrderExtService.updatePurchaseOrderExt(purchaseOrderExt);
+            }
+
             subOrder.setActualPurchaseAmount(totalPurchaseAmount);
             subOrderServiceProxy.saveMaterielOrder(order, subOrder, materielOrderList);
             return success("success");
@@ -555,12 +562,19 @@ public class SubOrderController {
                 orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
                 orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
                 orderWorkFlow.setRemark(remark);
-                orderWorkFlow.setResult("审核不通过");
+                orderWorkFlow.setResult("主管审核不通过");
                 orderWorkFlow.setUpdatedTime(new Date());
                 orderWorkFlowService.save(orderWorkFlow);
             } else if ("Y".equals(result)) {
                 subOrder.setSubOrderStatus(SubOrderStatusEnum.SUB_FIN_FRONT_APV.getCode());
                 subOrderService.updateSubOrder(subOrder);
+
+                PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+                if (purchaseOrderExt != null) {
+                    purchaseOrderExt.setSuperApvTime(new Date());
+                    purchaseOrderExt.setUpdatedTime(new Date());
+                    purchaseOrderExtService.updatePurchaseOrderExt(purchaseOrderExt);
+                }
 
                 //保存订单流转记录
                 OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
@@ -573,7 +587,7 @@ public class SubOrderController {
                 orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
                 orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
                 orderWorkFlow.setRemark(remark);
-                orderWorkFlow.setResult("审核通过");
+                orderWorkFlow.setResult("主管审核通过");
                 orderWorkFlow.setUpdatedTime(new Date());
                 orderWorkFlowService.save(orderWorkFlow);
             } else {
@@ -630,6 +644,100 @@ public class SubOrderController {
 
 
     /**
+     * 财务审核采购单定金信息异常
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/finApproveSubOrderFrontPay", method = RequestMethod.POST)
+    public WebApiResponse<String> finApproveSubOrderFrontPay(@RequestParam(name = "subOrderNo") String subOrderNo,
+                                                             @RequestParam(name = "result") String result,
+                                                             @RequestParam(name = "remark", required = false) String remark) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(subOrderNo) || StringUtil.isEmptyString(result)) {
+                return error("缺少必传参数");
+            }
+
+            SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(subOrderNo);
+            if (subOrder == null) {
+                return WebApiResponse.error("采购单不存在");
+            }
+
+            if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+                if (!RoleEnum.financial.getCodeName().equals(userInfo.getRoleName())) {
+                    return error("没有权限");
+                }
+            }
+
+            if (subOrder.getSubOrderStatus() != SubOrderStatusEnum.SUB_FIN_FRONT_APV.getCode()) {
+                return error("当前状态财务无法审核定金！");
+            }
+
+            User user = userService.getUserByUserNo(userInfo.getUserNo());
+
+            if ("N".equals(result)) {
+                subOrder.setSubOrderStatus(SubOrderStatusEnum.BUYER_ORDER.getCode());
+
+                List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
+                for (MaterielOrder materielOrder : materielOrderList) {
+                    materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.DISCARDED.getCode());
+                    materielOrder.setRemark(materielOrder.getRemark() + "财务审核不通过，已废弃");
+                    materielOrderService.updateMaterielOrder(materielOrder);
+                }
+                subOrderService.updateSubOrder(subOrder);
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(subOrder.getSubOrderStatus());
+                orderWorkFlow.setOldOrderStatus(SubOrderStatusEnum.SUB_FIN_FRONT_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.financial.getDec());
+                orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("财务审核不通过");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else if ("Y".equals(result)) {
+                subOrder.setSubOrderStatus(SubOrderStatusEnum.SUB_CASH_FRONT_APV.getCode());
+                subOrderService.updateSubOrder(subOrder);
+
+                PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+                if (purchaseOrderExt != null) {
+                    purchaseOrderExt.setFinFrontTime(new Date());
+                    purchaseOrderExt.setUpdatedTime(new Date());
+                    purchaseOrderExtService.updatePurchaseOrderExt(purchaseOrderExt);
+                }
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(subOrder.getSubOrderStatus());
+                orderWorkFlow.setOldOrderStatus(SubOrderStatusEnum.SPR_BUYER_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.financial.getDec());
+                orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("财务审核通过");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else {
+                return error("参数有误");
+            }
+
+        } catch (Exception ex) {
+            logger.error("财务审核采购单定金信息异常", ex);
+            return error("财务审核采购单定金信息异常");
+        }
+        return WebApiResponse.success("success");
+    }
+
+    /**
      * 待出纳支付采购单定金列表
      *
      * @param
@@ -671,4 +779,78 @@ public class SubOrderController {
     }
 
 
+    /**
+     * 出纳支付采购订单定金信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/cashApproveSubOrderFrontPay", method = RequestMethod.POST)
+    public WebApiResponse<String> cashApproveSubOrderFrontPay(@RequestParam(name = "subOrderNo") String subOrderNo,
+                                                              @RequestParam(name = "payNo") String payNo,
+                                                              @RequestParam(name = "payChannel") String payChannel,
+                                                              @RequestParam(name = "result") String result,
+                                                              @RequestParam(name = "remark", required = false) String remark) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(subOrderNo) || StringUtil.isEmptyString(result)) {
+                return error("缺少必传参数");
+            }
+
+            SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(subOrderNo);
+            if (subOrder == null) {
+                return WebApiResponse.error("采购单不存在");
+            }
+
+            if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+                if (!RoleEnum.financial.getCodeName().equals(userInfo.getRoleName())) {
+                    return error("没有权限");
+                }
+            }
+
+            if (subOrder.getSubOrderStatus() != SubOrderStatusEnum.SUB_CASH_FRONT_APV.getCode()) {
+                return error("当前状态出纳无法支付定金！");
+            }
+
+            User user = userService.getUserByUserNo(userInfo.getUserNo());
+
+            if ("N".equals(result)) {
+                return error("未支付");
+            } else if ("Y".equals(result)) {
+                subOrder.setSubOrderStatus(SubOrderStatusEnum.BUYER_FOLLOW_ORDER.getCode());
+                subOrderService.updateSubOrder(subOrder);
+
+                PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+                if (purchaseOrderExt != null) {
+                    purchaseOrderExt.setCashFrontTime(new Date());
+                    purchaseOrderExt.setPayNo(payNo);
+                    purchaseOrderExt.setPayChannel(payChannel);
+                    purchaseOrderExt.setUpdatedTime(new Date());
+                    purchaseOrderExtService.updatePurchaseOrderExt(purchaseOrderExt);
+                }
+
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(subOrder.getSubOrderStatus());
+                orderWorkFlow.setOldOrderStatus(SubOrderStatusEnum.SUB_CASH_FRONT_APV.getCode());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(RoleEnum.cashier.getDec());
+                orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("出纳已支付定金");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+            } else {
+                return error("参数有误");
+            }
+
+        } catch (Exception ex) {
+            logger.error("出纳支付采购订单定金信息异常", ex);
+            return error("出纳支付采购订单定金信息异常");
+        }
+        return WebApiResponse.success("success");
+    }
 }

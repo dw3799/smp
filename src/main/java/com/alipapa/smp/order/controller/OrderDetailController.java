@@ -11,10 +11,7 @@ import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.UserConsumerRelationService;
 import com.alipapa.smp.order.pojo.*;
-import com.alipapa.smp.order.service.ConsumerFrontPayService;
-import com.alipapa.smp.order.service.OrderService;
-import com.alipapa.smp.order.service.OrderWorkFlowService;
-import com.alipapa.smp.order.service.SubOrderService;
+import com.alipapa.smp.order.service.*;
 import com.alipapa.smp.order.service.impl.OrderServiceProxy;
 import com.alipapa.smp.order.vo.BasicOrderInfo;
 import com.alipapa.smp.order.vo.ConsumerFrontPayVo;
@@ -89,6 +86,9 @@ public class OrderDetailController {
 
     @Autowired
     private ConsumerFrontPayService consumerFrontPayService;
+
+    @Autowired
+    private PurchaseOrderExtService purchaseOrderExtService;
 
     /**
      * 订单基本信息
@@ -966,6 +966,15 @@ public class OrderDetailController {
                         subOrder.setSubPayStatus(SubOrderPayStatusEnum.UN_PAY.getCode());
                         subOrder.setCreatedTime(new Date());
                         subOrderService.updateSubOrder(subOrder);
+
+                        PurchaseOrderExt purchaseOrderExt = new PurchaseOrderExt();
+                        purchaseOrderExt.setIsDel(0);
+                        purchaseOrderExt.setCreatedTime(new Date());
+                        purchaseOrderExt.setOrderNo(orderNo);
+                        purchaseOrderExt.setSubmitTime(new Date());
+                        purchaseOrderExt.setSubOrderNo(subOrder.getSubOrderNo());
+                        purchaseOrderExt.setUpdatedTime(new Date());
+                        purchaseOrderExtService.savePurchaseOrderExt(purchaseOrderExt);
 
                         //保存采购单流转记录
                         OrderWorkFlow orderWorkFlow = new OrderWorkFlow();

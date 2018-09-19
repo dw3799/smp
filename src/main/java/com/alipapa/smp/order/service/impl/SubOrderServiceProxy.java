@@ -4,13 +4,11 @@ package com.alipapa.smp.order.service.impl;
 import com.alipapa.smp.common.Constant;
 import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.order.mapper.SubOrderMapper;
-import com.alipapa.smp.order.pojo.MaterielOrder;
-import com.alipapa.smp.order.pojo.Order;
-import com.alipapa.smp.order.pojo.OrderWorkFlow;
-import com.alipapa.smp.order.pojo.SubOrder;
+import com.alipapa.smp.order.pojo.*;
 import com.alipapa.smp.order.service.MaterielOrderService;
 import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.OrderWorkFlowService;
+import com.alipapa.smp.order.service.PurchaseOrderExtService;
 import com.alipapa.smp.order.vo.SubOrderVo;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 @Service
@@ -27,7 +26,7 @@ public class SubOrderServiceProxy {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
+    @Resource
     private SubOrderMapper subOrderMapper;
 
     @Autowired
@@ -36,6 +35,8 @@ public class SubOrderServiceProxy {
     @Autowired
     private MaterielOrderService materielOrderService;
 
+    @Autowired
+    private PurchaseOrderExtService purchaseOrderExtService;
 
     /**
      * 保存物料订单
@@ -187,6 +188,15 @@ public class SubOrderServiceProxy {
             subOrderVo.setSubOrderId(subOrder.getId());
             subOrderVo.setSubOrderNo(subOrder.getSubOrderNo());
             subOrderVo.setSubOrderStatus(SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
+
+            PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+            if (purchaseOrderExt != null) {
+                subOrderVo.setSubmitTime(DateUtil.formatToStrTimeV1(purchaseOrderExt.getSubmitTime()));
+                subOrderVo.setSuperApvTime(DateUtil.formatToStrTimeV1(purchaseOrderExt.getSuperApvTime()));
+                subOrderVo.setFinFrontTime(DateUtil.formatToStrTimeV1(purchaseOrderExt.getFinFrontTime()));
+                subOrderVo.setCashFrontTime(DateUtil.formatToStrTimeV1(purchaseOrderExt.getCashFrontTime()));
+            }
+
             subOrderVo.setTotalCount(totalCount);
             subOrderVoList.add(subOrderVo);
         }
