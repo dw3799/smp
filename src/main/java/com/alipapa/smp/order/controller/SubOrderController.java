@@ -330,56 +330,58 @@ public class SubOrderController {
                     materielOrder = new MaterielOrder();
                 }
 
-                if (productId == null || supplierId == null || StringUtil.isEmptyString(purchaseAmount) || StringUtil.isEmptyString(purchaseFrontAmount)) {
-                    return error("产品缺少必填参数");
-                }
+                if (isCanEdit(materielOrder)) {
+                    if (productId == null || supplierId == null || StringUtil.isEmptyString(purchaseAmount) || StringUtil.isEmptyString(purchaseFrontAmount)) {
+                        return error("产品缺少必填参数");
+                    }
 
-                Product product = productService.getProductById(productId);
-                ProductCategory productCategory = productCategoryService.getProductCategoryById(product.getProductCategoryId());
+                    Product product = productService.getProductById(productId);
+                    ProductCategory productCategory = productCategoryService.getProductCategoryById(product.getProductCategoryId());
 
-                List<ProductPicture> productPictureList = productPictureService.listProductPictureByProductId(productId);
+                    List<ProductPicture> productPictureList = productPictureService.listProductPictureByProductId(productId);
 
-                if (product == null || productCategory == null) {
-                    return error("产品参数异常");
-                }
+                    if (product == null || productCategory == null) {
+                        return error("产品参数异常");
+                    }
 
-                Supplier supplier = supplierService.getSupplierById(supplierId);
+                    Supplier supplier = supplierService.getSupplierById(supplierId);
 
-                if (orderOPerateTypeEnum == OrderOPerateTypeEnum.SUBMIT) {
-                    materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.SPR_BUYER_APV.getCode());
-                } else {
-                    materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.BUYER_ORDER.getCode());
-                }
+                    if (!CollectionUtils.isEmpty(productPictureList)) {
+                        ProductPicture productPicture = productPictureList.get(0);
+                        materielOrder.setMiniPic(productPicture.getPicNo());
+                        materielOrder.setPic(productPicture.getPicNo());
+                    }
+                    materielOrder.setOrderNo(subOrder.getOrderNo());
+                    materielOrder.setPayStatus(MaterielOrderPayStatusEnum.UN_PAY.getCode());
+                    materielOrder.setProductCategory(productCategory.getCategoryName());
 
-                if (!CollectionUtils.isEmpty(productPictureList)) {
-                    ProductPicture productPicture = productPictureList.get(0);
-                    materielOrder.setMiniPic(productPicture.getPicNo());
-                    materielOrder.setPic(productPicture.getPicNo());
-                }
-                materielOrder.setOrderNo(subOrder.getOrderNo());
-                materielOrder.setPayStatus(MaterielOrderPayStatusEnum.UN_PAY.getCode());
-                materielOrder.setProductCategory(productCategory.getCategoryName());
+                    materielOrder.setProductCategoryId(productCategory.getId());
+                    materielOrder.setProductId(product.getId());
+                    materielOrder.setProductName(product.getProductName());
+                    materielOrder.setPurchaseAmount(PriceUtil.convertToFen(purchaseAmount));
+                    materielOrder.setPurchaseFrontAmount(PriceUtil.convertToFen(purchaseFrontAmount));
+                    materielOrder.setSubOrderNo(subOrderNo);
+                    materielOrder.setUpdatedTime(new Date());
 
-                materielOrder.setProductCategoryId(productCategory.getId());
-                materielOrder.setProductId(product.getId());
-                materielOrder.setProductName(product.getProductName());
-                materielOrder.setPurchaseAmount(PriceUtil.convertToFen(purchaseAmount));
-                materielOrder.setPurchaseFrontAmount(PriceUtil.convertToFen(purchaseFrontAmount));
-                materielOrder.setSubOrderNo(subOrderNo);
-                materielOrder.setUpdatedTime(new Date());
-
-                if (materielOrder.getId() == null) {
                     materielOrder.setCreatedTime(new Date());
-                }
-                materielOrder.setSupplierBankAccount(supplier.getBankAccount());
-                materielOrder.setSupplierBankName(supplier.getBankName());
-                materielOrder.setSupplierBankNo(supplier.getBankNo());
-                materielOrder.setSupplierCharge(supplier.getCharge());
-                materielOrder.setSupplierId(supplierId);
-                materielOrder.setSupplierMobile(supplier.getMobile1());
-                materielOrder.setSupplierName(supplier.getName());
+                    if (orderOPerateTypeEnum == OrderOPerateTypeEnum.SUBMIT) {
+                        materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.SPR_BUYER_APV.getCode());
+                    } else {
+                        materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.BUYER_ORDER.getCode());
+                    }
 
-                materielOrder.setRemark(mRemark);
+                    materielOrder.setSupplierBankAccount(supplier.getBankAccount());
+                    materielOrder.setSupplierBankName(supplier.getBankName());
+                    materielOrder.setSupplierBankNo(supplier.getBankNo());
+                    materielOrder.setSupplierCharge(supplier.getCharge());
+                    materielOrder.setSupplierId(supplierId);
+                    materielOrder.setSupplierMobile(supplier.getMobile1());
+                    materielOrder.setSupplierName(supplier.getName());
+
+                    materielOrder.setRemark(mRemark);
+
+                }
+
                 totalPurchaseAmount = totalPurchaseAmount + materielOrder.getPurchaseAmount();
                 totalPurchaseFrontAmount = totalPurchaseFrontAmount + materielOrder.getPurchaseFrontAmount();
                 materielOrderList.add(materielOrder);
@@ -402,6 +404,28 @@ public class SubOrderController {
         }
     }
 
+    /**
+     * @param materielOrder
+     * @return
+     */
+    private boolean isCanEdit(MaterielOrder materielOrder) {
+
+        if (materielOrder.getId() == null) {
+            return true;
+        }
+
+        MaterielOrderStatusEnum materielOrderStatusEnum = MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus());
+
+        if (materielOrderStatusEnum == null) {
+            return true;
+        }
+
+        if (materielOrderStatusEnum == MaterielOrderStatusEnum.CREATE || materielOrderStatusEnum == MaterielOrderStatusEnum.BUYER_ORDER) {
+            return true;
+
+        }
+        return false;
+    }
 
     /**
      * 获取物料单
@@ -431,22 +455,46 @@ public class SubOrderController {
             MaterielListVo materielListVo = new MaterielListVo();
             List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
 
+
             materielListVo.setSubOrderNo(subOrderNo);
 
             if (!CollectionUtils.isEmpty(materielOrderList)) {
+                List<MaterielOrderVo> materielOrderVoList = new ArrayList<>();
+
                 Long purchaseFrontAmount = 0L;
                 Long totalPurchaseAmount = 0L;
                 Long payedAmount = 0L;
                 for (MaterielOrder materielOrder : materielOrderList) {
-                    purchaseFrontAmount = materielOrder.getPurchaseFrontAmount();
+                    MaterielOrderVo materielOrderVo = new MaterielOrderVo();
+                    materielOrderVo.setMaterielOrderId(materielOrder.getId());
+                    materielOrderVo.setMaterielOrderStatus(MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus()).getDec());
+                    materielOrderVo.setOrderNo(materielOrder.getOrderNo());
+                    materielOrderVo.setProductCategory(materielOrder.getProductCategory());
+                    materielOrderVo.setProductCategoryId(materielOrder.getProductCategoryId());
+                    materielOrderVo.setProductId(materielOrder.getProductId());
+                    materielOrderVo.setProductName(materielOrder.getProductName());
+                    materielOrderVo.setPurchaseAmount(PriceUtil.convertToYuanStr(materielOrder.getPurchaseAmount()));
+                    materielOrderVo.setPurchaseFrontAmount(PriceUtil.convertToYuanStr(materielOrder.getPurchaseFrontAmount()));
+                    materielOrderVo.setRemark(materielOrder.getRemark());
+                    materielOrderVo.setSubOrderNo(materielOrder.getSubOrderNo());
+                    materielOrderVo.setSupplierBankAccount(materielOrder.getSupplierBankAccount());
+                    materielOrderVo.setSupplierBankName(materielOrder.getSupplierBankName());
+                    materielOrderVo.setSupplierBankNo(materielOrder.getSupplierBankNo());
+                    materielOrderVo.setSupplierCharge(materielOrder.getSupplierCharge());
+                    materielOrderVo.setSupplierId(materielOrder.getSupplierId());
+                    materielOrderVo.setSupplierMobile(materielOrder.getSupplierMobile());
+                    materielOrderVo.setSupplierName(materielOrder.getSupplierName());
+
                     totalPurchaseAmount = totalPurchaseAmount + materielOrder.getPurchaseAmount();
                     if (materielOrder.getPayStatus() > MaterielOrderPayStatusEnum.SUB_CASH_FRONT_APV.getCode()) {
                         payedAmount = payedAmount + materielOrder.getPurchaseFrontAmount();
                     }
+                    purchaseFrontAmount = purchaseFrontAmount + materielOrder.getPurchaseFrontAmount();
+                    materielOrderVoList.add(materielOrderVo);
                 }
                 materielListVo.setTotalPurchaseAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount) + currencyDec);
                 materielListVo.setPurchaseFrontAmount(PriceUtil.convertToYuanStr(purchaseFrontAmount) + currencyDec);
-                materielListVo.setMaterielOrders(materielOrderList);
+                materielListVo.setMaterielOrders(materielOrderVoList);
             }
 
             return WebApiResponse.success(materielListVo);
@@ -574,6 +622,12 @@ public class SubOrderController {
                     purchaseOrderExt.setSuperApvTime(new Date());
                     purchaseOrderExt.setUpdatedTime(new Date());
                     purchaseOrderExtService.updatePurchaseOrderExt(purchaseOrderExt);
+                }
+
+                List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
+                for (MaterielOrder materielOrder : materielOrderList) {
+                    materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.SUB_FIN_FRONT_APV.getCode());
+                    materielOrderService.updateMaterielOrder(materielOrder);
                 }
 
                 //保存订单流转记录

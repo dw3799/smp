@@ -14,7 +14,7 @@ public class MaterielListVo {
 
     private String payedAmount;
 
-    private List<MaterielOrder> materielOrders;
+    private List<MaterielOrderVo> materielOrders;
 
 
     public String getSubOrderNo() {
@@ -49,11 +49,11 @@ public class MaterielListVo {
         this.payedAmount = payedAmount;
     }
 
-    public List<MaterielOrder> getMaterielOrders() {
+    public List<MaterielOrderVo> getMaterielOrders() {
         return materielOrders;
     }
 
-    public void setMaterielOrders(List<MaterielOrder> materielOrders) {
+    public void setMaterielOrders(List<MaterielOrderVo> materielOrders) {
         this.materielOrders = materielOrders;
     }
 }
