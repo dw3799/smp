@@ -33,8 +33,17 @@ public class SubOrderVo {
 
     private String cashFrontTime;
 
+    private String preFollowTime;
+
     private Long totalCount;
 
+    public String getPreFollowTime() {
+        return preFollowTime;
+    }
+
+    public void setPreFollowTime(String preFollowTime) {
+        this.preFollowTime = preFollowTime;
+    }
 
     public String getBuyerName() {
         return buyerName;

@@ -553,10 +553,21 @@
         FROM
         `sub_order` s
         LEFT JOIN `order` o ON o.order_no = s.order_no
+        LEFT JOIN `materiel_order` m ON m.sub_order_no = s.sub_order_no
         LEFT JOIN `user` u ON o.buyer_user_no = u.user_no
         WHERE 1 = 1
         <if test="subOrderStatus != null">
             and s.sub_order_status = #{subOrderStatus}
+        </if>
+
+
+        <if test="subOrderNo != null and subOrderNo != ''">
+            and s.sub_order_no = #{subOrderNo}
+        </if>
+
+
+        <if test="orderNo != null and orderNo != ''">
+            and s.order_no = #{orderNo}
         </if>
 
         <if test="buyerUserNo != null and buyerUserNo != ''">
@@ -567,6 +578,25 @@
             and u.group_id = #{groupId}
         </if>
 
+        <if test="consumerName != null and consumerName != ''">
+            and o.consumer_name LIKE CONCAT('%',#{consumerName},'%')
+        </if>
+
+        <if test="productName != null and productName != ''">
+            and s.product_name LIKE CONCAT('%',#{productName},'%')
+        </if>
+
+        <if test="consumerName != null and consumerName != ''">
+            and m.supplier_name LIKE CONCAT('%',#{supplierName},'%')
+        </if>
+
+        <if test="createTimeStart != null and  createTimeStart != '' ">
+            <![CDATA[ and s.created_time >= str_to_date(#{createTimeStart},'%Y/%m/%d %H:%i:%s')]]>
+        </if>
+
+        <if test="createTimeEnd != null and  createTimeEnd != '' ">
+            <![CDATA[ and s.created_time <= str_to_date(#{createTimeEnd},'%Y/%m/%d %H:%i:%s')]]>
+        </if>
         ORDER BY s.created_time DESC
     </sql>
 

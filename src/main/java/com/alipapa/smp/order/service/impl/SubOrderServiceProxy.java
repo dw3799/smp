@@ -166,6 +166,30 @@ public class SubOrderServiceProxy {
     }
 
 
+    /**
+     * 查询组内采购单
+     *
+     * @param params
+     */
+
+    public List<SubOrderVo> listGroupSubOrder(Map<String, Object> params, Integer start, Integer size) {
+
+        Long totalCount = subOrderMapper.listMySubOrderByParamCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<SubOrder> subOrderList = subOrderMapper.listGroupSubOrderByParam(params);
+
+        List<SubOrderVo> orderVoList = this.convertSubOrderVo(subOrderList, totalCount);
+
+        return orderVoList;
+    }
+
+
     private List<SubOrderVo> convertSubOrderVo(List<SubOrder> subOrderList, Long totalCount) {
         if (CollectionUtils.isEmpty(subOrderList)) {
             return null;

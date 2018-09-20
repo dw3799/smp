@@ -17,11 +17,19 @@ public enum SubOrderStatusEnum {
 
     BUYER_FOLLOW_ORDER(5, "BUYER_FOLLOW_ORDER", "待采购补充跟单状态"),
 
-    FACTORY(6, "FACTORY", "工厂生产中"),
+    QUALITY_CHECk(6, "QUALITY_CHECk", "待质检"),
 
-    COMPLETE(7, "COMPLETE", "订单完成"),
+    INVOICE_APPLY(7, "INVOICE_APPLY", "待提交发货申请"),
 
-    CLOSE(8, "CLOSE", "订单关闭");
+    FIN_INVOICE_APV(8, "FIN_INVOICE_APV", "待财务审核发货申请"),
+
+    INVOICE_DELIVER(9, "INVOICE_DELIVER", "待寻找运输渠道"),
+
+    READY_OUT(10, "READY_OUT", "待出库"),
+
+    COMPLETE(11, "COMPLETE", "订单完成"),
+
+    CLOSE(12, "CLOSE", "订单关闭");
 
     /*
 待采购下单

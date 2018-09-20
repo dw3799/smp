@@ -80,7 +80,7 @@ public class OrderController {
 
     @Autowired
     private ConsumerFollowRecordService consumerFollowRecordService;
-    
+
     @Autowired
     private ConsumerService consumerService;
 
@@ -112,8 +112,16 @@ public class OrderController {
             return WebApiResponse.error("参数有误！");
         }
         List<SysDictVo> sysDictVoList = new ArrayList<>();
-
-        if (OrderCategoryCode.OrderStatus == OrderCategoryCode.valueOf(categoryCode)) {
+        if (OrderCategoryCode.SubOrderStatus == OrderCategoryCode.valueOf(categoryCode)) {
+            for (SubOrderStatusEnum subOrderStatus : SubOrderStatusEnum.values()) {
+                SysDictVo sysDictVo = new SysDictVo();
+                sysDictVo.setId(Long.valueOf(subOrderStatus.getCode()));
+                sysDictVo.setCategoryCode(OrderCategoryCode.SubOrderStatus.getCodeName());
+                sysDictVo.setDictText(subOrderStatus.getDec());
+                sysDictVo.setDictValue(subOrderStatus.getCodeName());
+                sysDictVoList.add(sysDictVo);
+            }
+        } else if (OrderCategoryCode.OrderStatus == OrderCategoryCode.valueOf(categoryCode)) {
             for (OrderStatusEnum orderStatus : OrderStatusEnum.values()) {
                 SysDictVo sysDictVo = new SysDictVo();
                 sysDictVo.setId(Long.valueOf(orderStatus.getCode()));
