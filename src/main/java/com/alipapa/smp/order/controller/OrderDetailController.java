@@ -719,7 +719,7 @@ public class OrderDetailController {
             }
 
             //更新订单总金额
-            order.setOrderAmount(order.getProductAmount() + consumerFrontPay.getBankFee() + consumerFrontPay.getFreightAmount() + consumerFrontPay.getOthersFee() + consumerFrontPay.getRoyaltyAmount());
+            order.setOrderAmount(order.getOrderAmount() + consumerFrontPay.getBankFee() + consumerFrontPay.getFreightAmount() + consumerFrontPay.getOthersFee() + consumerFrontPay.getRoyaltyAmount());
 
             consumerFrontPayService.saveOrCreateConsumerFrontPay(order, consumerFrontPay);
             orderService.updateOrder(order);
@@ -788,13 +788,13 @@ public class OrderDetailController {
 
             consumerFrontPayVo.setExchangeRate(consumerFrontPay.getExchangeRate());
 
-            consumerFrontPayVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFrontAmount()));
+            consumerFrontPayVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFrontAmount()) + currencyDec);
             consumerFrontPayVo.setOrderNo(orderNo);
             consumerFrontPayVo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()));
             consumerFrontPayVo.setPayChannel(consumerFrontPay.getPayChannel());
             consumerFrontPayVo.setPayNo(consumerFrontPay.getPayNo());
             consumerFrontPayVo.setPayTime(DateUtil.formatToStrTimeV1(consumerFrontPay.getPayTime()));
-            consumerFrontPayVo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()));
+            consumerFrontPayVo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
             consumerFrontPayVo.setReceiptChannel(consumerFrontPay.getReceiptChannel());
             consumerFrontPayVo.setReceiptNo(consumerFrontPay.getReceiptNo());
 

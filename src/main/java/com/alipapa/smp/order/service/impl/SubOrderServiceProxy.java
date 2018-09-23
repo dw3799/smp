@@ -1,6 +1,7 @@
 package com.alipapa.smp.order.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.Constant;
 import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.order.mapper.SubOrderMapper;
@@ -301,6 +302,66 @@ public class SubOrderServiceProxy {
 
         return subOrderVoList;
     }
+
+
+    /**
+     * 查询待质检采购单
+     *
+     * @param subOrderStatusEnum
+     */
+
+    public List<JSONObject> listSubOrderByStatus(SubOrderStatusEnum subOrderStatusEnum, Integer start, Integer size) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("subOrderStatus", subOrderStatusEnum.getCode());
+
+        Long totalCount = subOrderMapper.listMySubOrderByParamCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<SubOrder> subOrderList = subOrderMapper.listMySubOrderByParam(params);
+
+        return convertJSONObjectVo(subOrderList, totalCount);
+    }
+
+
+    /**
+     * @param subOrderList
+     * @param totalCount
+     * @return
+     */
+    private List<JSONObject> convertJSONObjectVo(List<SubOrder> subOrderList, Long totalCount) {
+        if (CollectionUtils.isEmpty(subOrderList)) {
+            return null;
+        }
+
+        List<JSONObject> subOrderVoList = new ArrayList<>();
+        for (SubOrder subOrder : subOrderList) {
+            Order order = orderService.selectOrderByOrderNo(subOrder.getOrderNo());
+
+            JSONObject subOrderVo = new JSONObject();
+            subOrderVo.put("totalCount", totalCount);
+            subOrderVo.put("subOrderId", subOrder.getId());
+            subOrderVo.put("orderNo", subOrder.getOrderNo());
+            subOrderVo.put("subOrderNo", subOrder.getOrderNo());
+            subOrderVo.put("productName", subOrder.getProductName());
+            subOrderVo.put("salerUserName", order.getSalerUserName());
+            subOrderVo.put("buyerUserName", order.getBuyerUserName());
+
+
+            PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+            if (purchaseOrderExt != null) {
+                subOrderVo.put("qualityCheckTime", DateUtil.formatToStrTimeV1(purchaseOrderExt.getSubmitQualityCheckTime()));
+            }
+            subOrderVoList.add(subOrderVo);
+        }
+        return subOrderVoList;
+    }
+
+
 }
 
 

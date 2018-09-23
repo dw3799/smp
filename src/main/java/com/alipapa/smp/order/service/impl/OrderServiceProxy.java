@@ -280,7 +280,7 @@ public class OrderServiceProxy {
         if (order == null) {
             return false;
         }
-        if (salerUserNo.equals(order.getSalerUserNo())) {
+        if (!salerUserNo.equals(order.getSalerUserNo())) {
             throw new Exception("没有权限！");
         }
         order.setOrderStatus(OrderStatusEnum.CLOSE.getCode());

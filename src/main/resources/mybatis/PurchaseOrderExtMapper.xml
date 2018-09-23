@@ -19,6 +19,12 @@
     <result column="is_del" jdbcType="INTEGER" property="isDel" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="submit_quality_check_time" jdbcType="TIMESTAMP" property="submitQualityCheckTime" />
+    <result column="complete_quality_check_time" jdbcType="TIMESTAMP" property="completeQualityCheckTime" />
+    <result column="invoice_apply_time" jdbcType="TIMESTAMP" property="invoiceApplyTime" />
+    <result column="fin_invoice_apply_time" jdbcType="TIMESTAMP" property="finInvoiceApplyTime" />
+    <result column="doc_time" jdbcType="TIMESTAMP" property="docTime" />
+    <result column="out_time" jdbcType="TIMESTAMP" property="outTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -81,7 +87,8 @@
   <sql id="Base_Column_List">
     id, order_no, sub_order_no, purchase_front_amount, pay_channel, pay_no, submit_time, 
     super_apv_time, fin_front_time, cash_front_time, fin_tail_time, cash_tail_time, complete_time, 
-    remark, is_del, created_time, updated_time
+    remark, is_del, created_time, updated_time, submit_quality_check_time, complete_quality_check_time, 
+    invoice_apply_time, fin_invoice_apply_time, doc_time, out_time
   </sql>
   <select id="selectByExample" parameterType="com.alipapa.smp.order.pojo.PurchaseOrderExtExample" resultMap="BaseResultMap">
     select
@@ -119,13 +126,19 @@
       submit_time, super_apv_time, fin_front_time, 
       cash_front_time, fin_tail_time, cash_tail_time, 
       complete_time, remark, is_del, 
-      created_time, updated_time)
+      created_time, updated_time, submit_quality_check_time, 
+      complete_quality_check_time, invoice_apply_time, 
+      fin_invoice_apply_time, doc_time, out_time
+      )
     values (#{id,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{subOrderNo,jdbcType=VARCHAR}, 
       #{purchaseFrontAmount,jdbcType=BIGINT}, #{payChannel,jdbcType=VARCHAR}, #{payNo,jdbcType=VARCHAR}, 
       #{submitTime,jdbcType=TIMESTAMP}, #{superApvTime,jdbcType=TIMESTAMP}, #{finFrontTime,jdbcType=TIMESTAMP}, 
       #{cashFrontTime,jdbcType=TIMESTAMP}, #{finTailTime,jdbcType=TIMESTAMP}, #{cashTailTime,jdbcType=TIMESTAMP}, 
       #{completeTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, #{isDel,jdbcType=INTEGER}, 
-      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, #{submitQualityCheckTime,jdbcType=TIMESTAMP}, 
+      #{completeQualityCheckTime,jdbcType=TIMESTAMP}, #{invoiceApplyTime,jdbcType=TIMESTAMP}, 
+      #{finInvoiceApplyTime,jdbcType=TIMESTAMP}, #{docTime,jdbcType=TIMESTAMP}, #{outTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.alipapa.smp.order.pojo.PurchaseOrderExt">
     insert into purchase_order_ext
@@ -181,6 +194,24 @@
       <if test="updatedTime != null">
         updated_time,
       </if>
+      <if test="submitQualityCheckTime != null">
+        submit_quality_check_time,
+      </if>
+      <if test="completeQualityCheckTime != null">
+        complete_quality_check_time,
+      </if>
+      <if test="invoiceApplyTime != null">
+        invoice_apply_time,
+      </if>
+      <if test="finInvoiceApplyTime != null">
+        fin_invoice_apply_time,
+      </if>
+      <if test="docTime != null">
+        doc_time,
+      </if>
+      <if test="outTime != null">
+        out_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -233,6 +264,24 @@
       </if>
       <if test="updatedTime != null">
         #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitQualityCheckTime != null">
+        #{submitQualityCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="completeQualityCheckTime != null">
+        #{completeQualityCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invoiceApplyTime != null">
+        #{invoiceApplyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finInvoiceApplyTime != null">
+        #{finInvoiceApplyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="docTime != null">
+        #{docTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outTime != null">
+        #{outTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -296,6 +345,24 @@
       <if test="record.updatedTime != null">
         updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.submitQualityCheckTime != null">
+        submit_quality_check_time = #{record.submitQualityCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.completeQualityCheckTime != null">
+        complete_quality_check_time = #{record.completeQualityCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.invoiceApplyTime != null">
+        invoice_apply_time = #{record.invoiceApplyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.finInvoiceApplyTime != null">
+        fin_invoice_apply_time = #{record.finInvoiceApplyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.docTime != null">
+        doc_time = #{record.docTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.outTime != null">
+        out_time = #{record.outTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -319,7 +386,13 @@
       remark = #{record.remark,jdbcType=VARCHAR},
       is_del = #{record.isDel,jdbcType=INTEGER},
       created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
+      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+      submit_quality_check_time = #{record.submitQualityCheckTime,jdbcType=TIMESTAMP},
+      complete_quality_check_time = #{record.completeQualityCheckTime,jdbcType=TIMESTAMP},
+      invoice_apply_time = #{record.invoiceApplyTime,jdbcType=TIMESTAMP},
+      fin_invoice_apply_time = #{record.finInvoiceApplyTime,jdbcType=TIMESTAMP},
+      doc_time = #{record.docTime,jdbcType=TIMESTAMP},
+      out_time = #{record.outTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -375,6 +448,24 @@
       <if test="updatedTime != null">
         updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="submitQualityCheckTime != null">
+        submit_quality_check_time = #{submitQualityCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="completeQualityCheckTime != null">
+        complete_quality_check_time = #{completeQualityCheckTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invoiceApplyTime != null">
+        invoice_apply_time = #{invoiceApplyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finInvoiceApplyTime != null">
+        fin_invoice_apply_time = #{finInvoiceApplyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="docTime != null">
+        doc_time = #{docTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outTime != null">
+        out_time = #{outTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -395,7 +486,13 @@
       remark = #{remark,jdbcType=VARCHAR},
       is_del = #{isDel,jdbcType=INTEGER},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      submit_quality_check_time = #{submitQualityCheckTime,jdbcType=TIMESTAMP},
+      complete_quality_check_time = #{completeQualityCheckTime,jdbcType=TIMESTAMP},
+      invoice_apply_time = #{invoiceApplyTime,jdbcType=TIMESTAMP},
+      fin_invoice_apply_time = #{finInvoiceApplyTime,jdbcType=TIMESTAMP},
+      doc_time = #{docTime,jdbcType=TIMESTAMP},
+      out_time = #{outTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

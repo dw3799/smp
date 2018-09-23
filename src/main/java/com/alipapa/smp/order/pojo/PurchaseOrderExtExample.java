@@ -1174,6 +1174,366 @@ public class PurchaseOrderExtExample {
             addCriterion("updated_time not between", value1, value2, "updatedTime");
             return (Criteria) this;
         }
+
+        public Criteria andSubmitQualityCheckTimeIsNull() {
+            addCriterion("submit_quality_check_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeIsNotNull() {
+            addCriterion("submit_quality_check_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeEqualTo(Date value) {
+            addCriterion("submit_quality_check_time =", value, "submitQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeNotEqualTo(Date value) {
+            addCriterion("submit_quality_check_time <>", value, "submitQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeGreaterThan(Date value) {
+            addCriterion("submit_quality_check_time >", value, "submitQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("submit_quality_check_time >=", value, "submitQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeLessThan(Date value) {
+            addCriterion("submit_quality_check_time <", value, "submitQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeLessThanOrEqualTo(Date value) {
+            addCriterion("submit_quality_check_time <=", value, "submitQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeIn(List<Date> values) {
+            addCriterion("submit_quality_check_time in", values, "submitQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeNotIn(List<Date> values) {
+            addCriterion("submit_quality_check_time not in", values, "submitQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeBetween(Date value1, Date value2) {
+            addCriterion("submit_quality_check_time between", value1, value2, "submitQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubmitQualityCheckTimeNotBetween(Date value1, Date value2) {
+            addCriterion("submit_quality_check_time not between", value1, value2, "submitQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeIsNull() {
+            addCriterion("complete_quality_check_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeIsNotNull() {
+            addCriterion("complete_quality_check_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeEqualTo(Date value) {
+            addCriterion("complete_quality_check_time =", value, "completeQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeNotEqualTo(Date value) {
+            addCriterion("complete_quality_check_time <>", value, "completeQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeGreaterThan(Date value) {
+            addCriterion("complete_quality_check_time >", value, "completeQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("complete_quality_check_time >=", value, "completeQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeLessThan(Date value) {
+            addCriterion("complete_quality_check_time <", value, "completeQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeLessThanOrEqualTo(Date value) {
+            addCriterion("complete_quality_check_time <=", value, "completeQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeIn(List<Date> values) {
+            addCriterion("complete_quality_check_time in", values, "completeQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeNotIn(List<Date> values) {
+            addCriterion("complete_quality_check_time not in", values, "completeQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeBetween(Date value1, Date value2) {
+            addCriterion("complete_quality_check_time between", value1, value2, "completeQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompleteQualityCheckTimeNotBetween(Date value1, Date value2) {
+            addCriterion("complete_quality_check_time not between", value1, value2, "completeQualityCheckTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeIsNull() {
+            addCriterion("invoice_apply_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeIsNotNull() {
+            addCriterion("invoice_apply_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeEqualTo(Date value) {
+            addCriterion("invoice_apply_time =", value, "invoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeNotEqualTo(Date value) {
+            addCriterion("invoice_apply_time <>", value, "invoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeGreaterThan(Date value) {
+            addCriterion("invoice_apply_time >", value, "invoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("invoice_apply_time >=", value, "invoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeLessThan(Date value) {
+            addCriterion("invoice_apply_time <", value, "invoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeLessThanOrEqualTo(Date value) {
+            addCriterion("invoice_apply_time <=", value, "invoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeIn(List<Date> values) {
+            addCriterion("invoice_apply_time in", values, "invoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeNotIn(List<Date> values) {
+            addCriterion("invoice_apply_time not in", values, "invoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeBetween(Date value1, Date value2) {
+            addCriterion("invoice_apply_time between", value1, value2, "invoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceApplyTimeNotBetween(Date value1, Date value2) {
+            addCriterion("invoice_apply_time not between", value1, value2, "invoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeIsNull() {
+            addCriterion("fin_invoice_apply_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeIsNotNull() {
+            addCriterion("fin_invoice_apply_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeEqualTo(Date value) {
+            addCriterion("fin_invoice_apply_time =", value, "finInvoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeNotEqualTo(Date value) {
+            addCriterion("fin_invoice_apply_time <>", value, "finInvoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeGreaterThan(Date value) {
+            addCriterion("fin_invoice_apply_time >", value, "finInvoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("fin_invoice_apply_time >=", value, "finInvoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeLessThan(Date value) {
+            addCriterion("fin_invoice_apply_time <", value, "finInvoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeLessThanOrEqualTo(Date value) {
+            addCriterion("fin_invoice_apply_time <=", value, "finInvoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeIn(List<Date> values) {
+            addCriterion("fin_invoice_apply_time in", values, "finInvoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeNotIn(List<Date> values) {
+            addCriterion("fin_invoice_apply_time not in", values, "finInvoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeBetween(Date value1, Date value2) {
+            addCriterion("fin_invoice_apply_time between", value1, value2, "finInvoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinInvoiceApplyTimeNotBetween(Date value1, Date value2) {
+            addCriterion("fin_invoice_apply_time not between", value1, value2, "finInvoiceApplyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeIsNull() {
+            addCriterion("doc_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeIsNotNull() {
+            addCriterion("doc_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeEqualTo(Date value) {
+            addCriterion("doc_time =", value, "docTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeNotEqualTo(Date value) {
+            addCriterion("doc_time <>", value, "docTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeGreaterThan(Date value) {
+            addCriterion("doc_time >", value, "docTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("doc_time >=", value, "docTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeLessThan(Date value) {
+            addCriterion("doc_time <", value, "docTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeLessThanOrEqualTo(Date value) {
+            addCriterion("doc_time <=", value, "docTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeIn(List<Date> values) {
+            addCriterion("doc_time in", values, "docTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeNotIn(List<Date> values) {
+            addCriterion("doc_time not in", values, "docTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeBetween(Date value1, Date value2) {
+            addCriterion("doc_time between", value1, value2, "docTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDocTimeNotBetween(Date value1, Date value2) {
+            addCriterion("doc_time not between", value1, value2, "docTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeIsNull() {
+            addCriterion("out_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeIsNotNull() {
+            addCriterion("out_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeEqualTo(Date value) {
+            addCriterion("out_time =", value, "outTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeNotEqualTo(Date value) {
+            addCriterion("out_time <>", value, "outTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeGreaterThan(Date value) {
+            addCriterion("out_time >", value, "outTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("out_time >=", value, "outTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeLessThan(Date value) {
+            addCriterion("out_time <", value, "outTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeLessThanOrEqualTo(Date value) {
+            addCriterion("out_time <=", value, "outTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeIn(List<Date> values) {
+            addCriterion("out_time in", values, "outTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeNotIn(List<Date> values) {
+            addCriterion("out_time not in", values, "outTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeBetween(Date value1, Date value2) {
+            addCriterion("out_time between", value1, value2, "outTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutTimeNotBetween(Date value1, Date value2) {
+            addCriterion("out_time not between", value1, value2, "outTime");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

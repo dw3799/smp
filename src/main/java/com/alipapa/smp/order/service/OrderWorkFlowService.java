@@ -43,8 +43,6 @@ public class OrderWorkFlowService {
         criteria.andTypeEqualTo(type);
         example.setOrderByClause("created_time desc");
         return orderWorkFlowMapper.selectByExample(example);
-
-
     }
 
 

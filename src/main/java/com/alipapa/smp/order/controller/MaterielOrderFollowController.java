@@ -691,7 +691,7 @@ public class MaterielOrderFollowController {
      * @return
      */
     @RequestMapping(value = "/listQualityCheckSubOrder", method = RequestMethod.GET)
-    public WebApiResponse<List<SubOrderVo>> listQualityCheckSubOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+    public WebApiResponse<List<JSONObject>> listQualityCheckSubOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
                                                                      @RequestParam(name = "pageNum", required = false) Integer pageNum) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
@@ -707,10 +707,11 @@ public class MaterielOrderFollowController {
             Integer start = (pageNum - 1) * pageSize;
             Integer size = pageSize;
 
-            List<SubOrderVo> orderVoList = subOrderServiceProxy.listMySubOrder(SubOrderStatusEnum.QUALITY_CHECK, null, start, size);
-            if (!CollectionUtils.isEmpty(orderVoList)) {
-                WebApiResponse response = WebApiResponse.success(orderVoList);
-                response.setTotalCount(orderVoList.get(0).getTotalCount());
+            List<JSONObject> jsonObjectList = subOrderServiceProxy.listSubOrderByStatus(SubOrderStatusEnum.QUALITY_CHECK, start, size);
+
+            if (!CollectionUtils.isEmpty(jsonObjectList)) {
+                WebApiResponse response = WebApiResponse.success(jsonObjectList);
+                response.setTotalCount(jsonObjectList.get(0).getLong("totalCount"));
                 return response;
             }
             return WebApiResponse.success(null);

@@ -575,7 +575,7 @@ public class DateUtil extends DateUtils {
         return calendar.getTime();
     }
 
-    public static Date parseObjToDate(Object obj) throws ParseException {
+    public static Date parseObjToDate(String obj) throws ParseException {
         if (obj == null) {
             return null;
         }

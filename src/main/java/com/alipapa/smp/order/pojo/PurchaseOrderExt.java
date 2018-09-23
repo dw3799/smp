@@ -37,6 +37,18 @@ public class PurchaseOrderExt {
 
     private Date updatedTime;
 
+    private Date submitQualityCheckTime;
+
+    private Date completeQualityCheckTime;
+
+    private Date invoiceApplyTime;
+
+    private Date finInvoiceApplyTime;
+
+    private Date docTime;
+
+    private Date outTime;
+
     public Long getId() {
         return id;
     }
@@ -171,5 +183,53 @@ public class PurchaseOrderExt {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public Date getSubmitQualityCheckTime() {
+        return submitQualityCheckTime;
+    }
+
+    public void setSubmitQualityCheckTime(Date submitQualityCheckTime) {
+        this.submitQualityCheckTime = submitQualityCheckTime;
+    }
+
+    public Date getCompleteQualityCheckTime() {
+        return completeQualityCheckTime;
+    }
+
+    public void setCompleteQualityCheckTime(Date completeQualityCheckTime) {
+        this.completeQualityCheckTime = completeQualityCheckTime;
+    }
+
+    public Date getInvoiceApplyTime() {
+        return invoiceApplyTime;
+    }
+
+    public void setInvoiceApplyTime(Date invoiceApplyTime) {
+        this.invoiceApplyTime = invoiceApplyTime;
+    }
+
+    public Date getFinInvoiceApplyTime() {
+        return finInvoiceApplyTime;
+    }
+
+    public void setFinInvoiceApplyTime(Date finInvoiceApplyTime) {
+        this.finInvoiceApplyTime = finInvoiceApplyTime;
+    }
+
+    public Date getDocTime() {
+        return docTime;
+    }
+
+    public void setDocTime(Date docTime) {
+        this.docTime = docTime;
+    }
+
+    public Date getOutTime() {
+        return outTime;
+    }
+
+    public void setOutTime(Date outTime) {
+        this.outTime = outTime;
     }
 }
