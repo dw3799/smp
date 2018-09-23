@@ -17,7 +17,7 @@ public enum SubOrderStatusEnum {
 
     BUYER_FOLLOW_ORDER(5, "BUYER_FOLLOW_ORDER", "待采购补充跟单状态"),
 
-    QUALITY_CHECk(6, "QUALITY_CHECk", "待质检"),
+    QUALITY_CHECK(6, "QUALITY_CHECK", "待质检"),
 
     INVOICE_APPLY(7, "INVOICE_APPLY", "待提交发货申请"),
 

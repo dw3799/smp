@@ -6,6 +6,7 @@ import com.alipapa.smp.order.pojo.OrderWorkFlowExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -21,6 +22,9 @@ public class OrderWorkFlowService {
      * @return
      */
     public boolean save(OrderWorkFlow record) {
+        if (record.getUpdatedTime() == null) {
+            record.setUpdatedTime(new Date());
+        }
         orderWorkFlowMapper.insert(record);
         return true;
     }

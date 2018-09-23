@@ -16,6 +16,8 @@ public class MaterielOrderVo {
 
     private String productName;
 
+    private Integer materielOrderStatusCode;
+
     private String materielOrderStatus;
 
     private Long supplierId;
@@ -37,6 +39,15 @@ public class MaterielOrderVo {
     private String purchaseFrontAmount;
 
     private String remark;
+
+
+    public Integer getMaterielOrderStatusCode() {
+        return materielOrderStatusCode;
+    }
+
+    public void setMaterielOrderStatusCode(Integer materielOrderStatusCode) {
+        this.materielOrderStatusCode = materielOrderStatusCode;
+    }
 
     public Long getMaterielOrderId() {
         return materielOrderId;

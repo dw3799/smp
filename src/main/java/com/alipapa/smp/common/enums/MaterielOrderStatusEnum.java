@@ -19,13 +19,15 @@ public enum MaterielOrderStatusEnum {
 
     FACTORY_ORDERED(6, "FACTORY_ORDERED", "工厂生产中——已下单"),
 
-    FACTORY_MATERIEL(7, "FACTORY_MATERIEL", "工厂生产中——下料"),
+    FACTORY_MATERIEL(7, "FACTORY_MATERIEL", "工厂生产中——已下料"),
 
-    FACTORY_PRINTING(8, "FACTORY_PRINTING", "工厂生产中——印刷"),
+    FACTORY_PRINTING(8, "FACTORY_PRINTING", "工厂生产中——已印刷"),
 
-    FACTORY_INVOICE(9, "FACTORY_INVOICE", "工厂生产中——已发货"),
+    FACTORY_PACKAGE(9, "FACTORY_PACKAGE", "工厂生产中——已车缝"),
 
-    DISCARDED(10, "DISCARDED", "作废");
+    FACTORY_INVOICE(10, "FACTORY_INVOICE", "工厂生产中——已发货"),
+
+    DISCARDED(11, "DISCARDED", "作废");
 
     MaterielOrderStatusEnum(int code, String codeName, String dec) {
         this.code = code;

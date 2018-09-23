@@ -719,7 +719,7 @@ public class OrderDetailController {
             }
 
             //更新订单总金额
-            order.setOrderAmount(order.getOrderAmount() + consumerFrontPay.getBankFee() + consumerFrontPay.getFreightAmount() + consumerFrontPay.getOthersFee() + consumerFrontPay.getRoyaltyAmount());
+            order.setOrderAmount(order.getProductAmount() + consumerFrontPay.getBankFee() + consumerFrontPay.getFreightAmount() + consumerFrontPay.getOthersFee() + consumerFrontPay.getRoyaltyAmount());
 
             consumerFrontPayService.saveOrCreateConsumerFrontPay(order, consumerFrontPay);
             orderService.updateOrder(order);
@@ -758,27 +758,27 @@ public class OrderDetailController {
 
             String currencyDec = orderService.getCurrencyDec(order);
             if (consumerFrontPay.getActualAmount() != null) {
-                consumerFrontPayVo.setActualAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
+                consumerFrontPayVo.setActualAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()));
             }
             if (consumerFrontPay.getBankFee() > 0) {
-                consumerFrontPayVo.setBankFee(PriceUtil.convertToYuanStr(consumerFrontPay.getBankFee()) + currencyDec);
+                consumerFrontPayVo.setBankFee(PriceUtil.convertToYuanStr(consumerFrontPay.getBankFee()));
             }
 
             if (consumerFrontPay.getFreightAmount() > 0) {
-                consumerFrontPayVo.setFreightAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFreightAmount()) + currencyDec);
+                consumerFrontPayVo.setFreightAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFreightAmount()));
             }
 
             if (consumerFrontPay.getRoyaltyAmount() > 0) {
-                consumerFrontPayVo.setRoyaltyAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getRoyaltyAmount()) + currencyDec);
+                consumerFrontPayVo.setRoyaltyAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getRoyaltyAmount()));
             }
 
             if (consumerFrontPay.getOthersFee() > 0) {
-                consumerFrontPayVo.setOthersFee(PriceUtil.convertToYuanStr(consumerFrontPay.getOthersFee()) + currencyDec);
+                consumerFrontPayVo.setOthersFee(PriceUtil.convertToYuanStr(consumerFrontPay.getOthersFee()));
             }
 
 
             if (consumerFrontPay.getFreightAmount() > 0) {
-                consumerFrontPayVo.setFreightAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFreightAmount()) + currencyDec);
+                consumerFrontPayVo.setFreightAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFreightAmount()));
             }
 
 
@@ -788,13 +788,13 @@ public class OrderDetailController {
 
             consumerFrontPayVo.setExchangeRate(consumerFrontPay.getExchangeRate());
 
-            consumerFrontPayVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFrontAmount()) + currencyDec);
+            consumerFrontPayVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFrontAmount()));
             consumerFrontPayVo.setOrderNo(orderNo);
-            consumerFrontPayVo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
+            consumerFrontPayVo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()));
             consumerFrontPayVo.setPayChannel(consumerFrontPay.getPayChannel());
             consumerFrontPayVo.setPayNo(consumerFrontPay.getPayNo());
             consumerFrontPayVo.setPayTime(DateUtil.formatToStrTimeV1(consumerFrontPay.getPayTime()));
-            consumerFrontPayVo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
+            consumerFrontPayVo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()));
             consumerFrontPayVo.setReceiptChannel(consumerFrontPay.getReceiptChannel());
             consumerFrontPayVo.setReceiptNo(consumerFrontPay.getReceiptNo());
 
@@ -974,6 +974,7 @@ public class OrderDetailController {
                         purchaseOrderExt.setOrderNo(orderNo);
                         purchaseOrderExt.setSubmitTime(new Date());
                         purchaseOrderExt.setSubOrderNo(subOrder.getSubOrderNo());
+                        purchaseOrderExt.setPurchaseFrontAmount(0L);
                         purchaseOrderExt.setUpdatedTime(new Date());
                         purchaseOrderExtService.savePurchaseOrderExt(purchaseOrderExt);
 

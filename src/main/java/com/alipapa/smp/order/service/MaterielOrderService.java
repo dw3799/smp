@@ -79,4 +79,27 @@ public class MaterielOrderService {
     }
 
 
+    /**
+     * @param materielOrder
+     * @return
+     */
+    public boolean isCanEdit(MaterielOrder materielOrder) {
+
+        if (materielOrder.getId() == null) {
+            return true;
+        }
+
+        MaterielOrderStatusEnum materielOrderStatusEnum = MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus());
+
+        if (materielOrderStatusEnum == null) {
+            return true;
+        }
+
+        if (materielOrderStatusEnum == MaterielOrderStatusEnum.CREATE || materielOrderStatusEnum == MaterielOrderStatusEnum.BUYER_ORDER) {
+            return true;
+
+        }
+        return false;
+    }
+
 }

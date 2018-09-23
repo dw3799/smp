@@ -42,6 +42,7 @@ public class ConsumerTailPayService {
         orderWorkFlow.setOrderNo(order.getOrderNo());
         orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
         orderWorkFlow.setResult("提交成功");
+        orderWorkFlow.setUpdatedTime(new Date());
         consumerTailPayMapper.insert(consumerTailPay);
         orderWorkFlow.setRemark("提交订单尾款" + PriceUtil.convertToYuanStr(consumerTailPay.getTailAmount()));
         orderWorkFlowService.save(orderWorkFlow);

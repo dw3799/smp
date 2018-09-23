@@ -246,13 +246,13 @@ public class SubOrderController {
     }
 
     /**
-     * 物料订单明细（待提交采购订单页面）
+     * 保存物料订单明细（待提交采购订单页面）
      *
      * @param
      * @return
      */
-    @RequestMapping(value = "/saveSubOrder", method = RequestMethod.POST)
-    public WebApiResponse<String> saveSubOrder(HttpServletRequest request) {
+    @RequestMapping(value = "/saveMaterielOrder", method = RequestMethod.POST)
+    public WebApiResponse<String> saveMaterielOrder(HttpServletRequest request) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
         try {
@@ -330,7 +330,7 @@ public class SubOrderController {
                     materielOrder = new MaterielOrder();
                 }
 
-                if (isCanEdit(materielOrder)) {
+                if (materielOrderService.isCanEdit(materielOrder)) {
                     if (productId == null || supplierId == null || StringUtil.isEmptyString(purchaseAmount) || StringUtil.isEmptyString(purchaseFrontAmount)) {
                         return error("产品缺少必填参数");
                     }
@@ -405,29 +405,6 @@ public class SubOrderController {
     }
 
     /**
-     * @param materielOrder
-     * @return
-     */
-    private boolean isCanEdit(MaterielOrder materielOrder) {
-
-        if (materielOrder.getId() == null) {
-            return true;
-        }
-
-        MaterielOrderStatusEnum materielOrderStatusEnum = MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus());
-
-        if (materielOrderStatusEnum == null) {
-            return true;
-        }
-
-        if (materielOrderStatusEnum == MaterielOrderStatusEnum.CREATE || materielOrderStatusEnum == MaterielOrderStatusEnum.BUYER_ORDER) {
-            return true;
-
-        }
-        return false;
-    }
-
-    /**
      * 获取物料单
      *
      * @param
@@ -467,6 +444,7 @@ public class SubOrderController {
                 for (MaterielOrder materielOrder : materielOrderList) {
                     MaterielOrderVo materielOrderVo = new MaterielOrderVo();
                     materielOrderVo.setMaterielOrderId(materielOrder.getId());
+                    materielOrderVo.setMaterielOrderStatusCode(MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus()).getCode());
                     materielOrderVo.setMaterielOrderStatus(MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus()).getDec());
                     materielOrderVo.setOrderNo(materielOrder.getOrderNo());
                     materielOrderVo.setProductCategory(materielOrder.getProductCategory());

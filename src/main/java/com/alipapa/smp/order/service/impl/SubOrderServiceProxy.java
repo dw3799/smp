@@ -12,6 +12,7 @@ import com.alipapa.smp.order.service.PurchaseOrderExtService;
 import com.alipapa.smp.order.vo.SubOrderVo;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
+import com.alipapa.smp.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,6 +112,76 @@ public class SubOrderServiceProxy {
 
 
     /**
+     * 新增物料订单
+     *
+     * @param subOrder
+     * @param materielOrderList
+     * @return
+     */
+    @Transactional
+    public Boolean addMaterielOrder(Order order, SubOrder subOrder, List<MaterielOrder> materielOrderList) throws Exception {
+        if (CollectionUtils.isEmpty(materielOrderList)) {
+            throw new Exception("物料订单数据异常");
+        }
+
+        subOrderMapper.updateByPrimaryKey(subOrder);
+
+        List<MaterielOrder> oldMaterielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrder.getSubOrderNo());
+        HashMap<String, MaterielOrder> oldMaterielOrderOrderMap = new HashMap<>();
+
+        List<String> oldMaterielOrderNoList = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(oldMaterielOrderList)) {
+            for (MaterielOrder oldMaterielOrder : oldMaterielOrderList) {
+                oldMaterielOrderOrderMap.put(String.valueOf(oldMaterielOrder.getId()), oldMaterielOrder);
+                oldMaterielOrderNoList.add(String.valueOf(oldMaterielOrder.getId()));
+            }
+        }
+
+
+        for (MaterielOrder newMaterielOrder : materielOrderList) {
+            if (newMaterielOrder.getId() == null) { //新增产品订单
+                materielOrderService.saveMaterielOrder(newMaterielOrder);
+            } else if (oldMaterielOrderOrderMap.get(String.valueOf(newMaterielOrder.getId())) != null) {
+                materielOrderService.updateMaterielOrder(newMaterielOrder);
+                oldMaterielOrderNoList.remove(String.valueOf(newMaterielOrder.getId()));
+            }
+        }
+
+        //删除物料订单
+        if (!CollectionUtils.isEmpty(oldMaterielOrderNoList)) {
+            throw new Exception("不可以删除物料");
+        }
+
+        //保存订单流转记录
+        OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+        orderWorkFlow.setCreatedTime(new Date());
+        orderWorkFlow.setNewOrderStatus(subOrder.getSubOrderStatus());
+        orderWorkFlow.setOldOrderStatus(SubOrderStatusEnum.BUYER_FOLLOW_ORDER.getCode());
+        orderWorkFlow.setOpUserName(order.getBuyerUserName());
+        orderWorkFlow.setOpUserNo(order.getBuyerUserNo());
+
+        if (order.getOrderType() == OrderTypeEnum.SELF_ORDER.getCode()) {
+            orderWorkFlow.setOpUserRole(RoleEnum.selfBuyer.getDec());
+        } else {
+            orderWorkFlow.setOpUserRole(RoleEnum.agentBuyer.getDec());
+        }
+
+        orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+        orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+        if (subOrder.getSubOrderStatus() == SubOrderStatusEnum.BUYER_ORDER.getCode()) {
+            orderWorkFlow.setRemark("新增物料订单，重新审核");
+        } else if (subOrder.getSubOrderStatus() == SubOrderStatusEnum.SPR_BUYER_APV.getCode()) {
+            orderWorkFlow.setRemark("新增并提交物料订单，重新审核");
+        }
+        orderWorkFlow.setResult("成功");
+        orderWorkFlow.setUpdatedTime(new Date());
+        orderWorkFlowService.save(orderWorkFlow);
+        return true;
+    }
+
+
+    /**
      * 查询我的采购单
      *
      * @param subOrderStatusEnum
@@ -120,7 +191,9 @@ public class SubOrderServiceProxy {
     public List<SubOrderVo> listMySubOrder(SubOrderStatusEnum subOrderStatusEnum, String buyerUserNo, Integer start, Integer size) {
         Map<String, Object> params = new HashMap<>();
         params.put("subOrderStatus", subOrderStatusEnum.getCode());
-        params.put("buyerUserNo", buyerUserNo);
+        if (!StringUtil.isEmptyString(buyerUserNo)) {
+            params.put("buyerUserNo", buyerUserNo);
+        }
 
         Long totalCount = subOrderMapper.listMySubOrderByParamCount(params);
 

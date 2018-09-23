@@ -115,11 +115,13 @@ public class OrderTailPayController {
     public WebApiResponse<List<TailPayOrderVo>> listCasherTailPayApvOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
                                                                           @RequestParam(name = "pageNum", required = false) Integer pageNum) {
         UserInfo userInfo = UserStatus.getUserInfo();
-        if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+
+        logger.info(StringUtil.printParam(userInfo));
+/*        if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
             if (userInfo.getRoleName().equals(RoleEnum.cashier.getCodeName())) {
                 return error("没有权限");
             }
-        }
+        }*/
         if (pageSize == null) {
             pageSize = 30;
         }
