@@ -26,9 +26,19 @@ public class BasicOrderInfo {
 
     private String orderAmount;
 
+    private String receiptAmount;
+
     private String submitDateTime;
 
     private String createDateTime;
+
+    public String getReceiptAmount() {
+        return receiptAmount;
+    }
+
+    public void setReceiptAmount(String receiptAmount) {
+        this.receiptAmount = receiptAmount;
+    }
 
     public String getCurrency() {
         return currency;

@@ -230,8 +230,8 @@ public class OrderTailPayController {
             consumerTailPayService.saveConsumerTailPay(consumerTailPay, order);
             orderService.updateOrder(order);
         } catch (Exception ex) {
-            logger.error("业务员提交定金异常", ex);
-            return error("业务员提交定金异常");
+            logger.error("业务员提交尾款异常", ex);
+            return error("业务员提交尾款异常");
         }
         return WebApiResponse.success("success");
     }
@@ -276,8 +276,8 @@ public class OrderTailPayController {
             }
             return WebApiResponse.success(consumerTailPayVo);
         } catch (Exception ex) {
-            logger.error("获取定金信息异常", ex);
-            return error("获取定金信息异常");
+            logger.error("获取尾款信息异常", ex);
+            return error("获取尾款信息异常");
         }
     }
 

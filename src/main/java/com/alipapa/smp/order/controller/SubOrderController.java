@@ -99,7 +99,7 @@ public class SubOrderController {
      * @return
      */
     @RequestMapping(value = "/listUnSubmitSubOrder", method = RequestMethod.GET)
-    public WebApiResponse<List<SubOrderVo>> listFinFrontApvOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+    public WebApiResponse<List<SubOrderVo>> listUnSubmitSubOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
                                                                  @RequestParam(name = "pageNum", required = false) Integer pageNum) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
@@ -210,7 +210,7 @@ public class SubOrderController {
      * @return
      */
     @RequestMapping(value = "/listSubOrderWorkFlow", method = RequestMethod.GET)
-    public WebApiResponse<List<OrderWorkFlowVo>> listOrderWorkFlow(@RequestParam("subOrderNo") String subOrderNo) {
+    public WebApiResponse<List<OrderWorkFlowVo>> listSubOrderWorkFlow(@RequestParam("subOrderNo") String subOrderNo) {
 
         if (StringUtil.isEmptyString(subOrderNo)) {
             return WebApiResponse.error("参数不能为空");
@@ -615,7 +615,6 @@ public class SubOrderController {
                 orderWorkFlowService.save(orderWorkFlow);
             } else if ("Y".equals(result)) {
                 subOrder.setSubOrderStatus(SubOrderStatusEnum.SUB_FIN_FRONT_APV.getCode());
-                subOrderService.updateSubOrder(subOrder);
 
                 PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
                 if (purchaseOrderExt != null) {
@@ -626,9 +625,12 @@ public class SubOrderController {
 
                 List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
                 for (MaterielOrder materielOrder : materielOrderList) {
-                    materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.SUB_FIN_FRONT_APV.getCode());
+                    //未审核的物料订单，改状态
+                    if (materielOrder.getMaterielOrderStatus() < MaterielOrderStatusEnum.SUB_FIN_FRONT_APV.getCode())
+                        materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.SUB_FIN_FRONT_APV.getCode());
                     materielOrderService.updateMaterielOrder(materielOrder);
                 }
+                subOrderService.updateSubOrder(subOrder);
 
                 //保存订单流转记录
                 OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
@@ -757,7 +759,6 @@ public class SubOrderController {
                 orderWorkFlowService.save(orderWorkFlow);
             } else if ("Y".equals(result)) {
                 subOrder.setSubOrderStatus(SubOrderStatusEnum.SUB_CASH_FRONT_APV.getCode());
-                subOrderService.updateSubOrder(subOrder);
 
                 PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
                 if (purchaseOrderExt != null) {
@@ -765,6 +766,16 @@ public class SubOrderController {
                     purchaseOrderExt.setUpdatedTime(new Date());
                     purchaseOrderExtService.updatePurchaseOrderExt(purchaseOrderExt);
                 }
+
+
+                List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
+                for (MaterielOrder materielOrder : materielOrderList) {
+                    //未审核的物料订单，改状态
+                    if (materielOrder.getMaterielOrderStatus() < MaterielOrderStatusEnum.SUB_CASH_FRONT_APV.getCode())
+                        materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.SUB_CASH_FRONT_APV.getCode());
+                    materielOrderService.updateMaterielOrder(materielOrder);
+                }
+                subOrderService.updateSubOrder(subOrder);
 
                 //保存订单流转记录
                 OrderWorkFlow orderWorkFlow = new OrderWorkFlow();

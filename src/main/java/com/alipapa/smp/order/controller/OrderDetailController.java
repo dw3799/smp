@@ -135,6 +135,7 @@ public class OrderDetailController {
 
             basicOrderInfo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
             basicOrderInfo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
+            basicOrderInfo.setReceiptAmount(PriceUtil.convertToYuanStr(order.getReceiptAmount()) + currencyDec);
 
             return WebApiResponse.success(basicOrderInfo);
         } catch (Exception ex) {
