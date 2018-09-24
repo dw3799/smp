@@ -473,6 +473,7 @@ public class MaterielOrderFollowController {
             }
 
             subOrder.setActualPurchaseAmount(totalPurchaseAmount);
+            subOrder.setProductFrontAmount(totalPurchaseFrontAmount);
             subOrderServiceProxy.addMaterielOrder(order, subOrder, materielOrderList);
             return success("success");
         } catch (Exception ex) {

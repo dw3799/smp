@@ -56,7 +56,7 @@
                       enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                       selectByExampleQueryId="false"/>-->
 
-        <table schema="" tableName="purchase_order_ext"/>
+        <table schema="" tableName="materiel_order"/>
         <!--
                 <table schema="" tableName="consumer_tail_pay"></table>
         -->

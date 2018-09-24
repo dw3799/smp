@@ -136,7 +136,7 @@ public class OrderDetailController {
             basicOrderInfo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
             basicOrderInfo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
             basicOrderInfo.setReceiptAmount(PriceUtil.convertToYuanStr(order.getReceiptAmount()) + currencyDec);
-
+            basicOrderInfo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(order.getExpectPurchaseAmount()) + Constant.YMB);
             return WebApiResponse.success(basicOrderInfo);
         } catch (Exception ex) {
             logger.error("获取订单基本信息异常", ex);

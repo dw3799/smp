@@ -396,6 +396,7 @@ public class SubOrderController {
             }
 
             subOrder.setActualPurchaseAmount(totalPurchaseAmount);
+            subOrder.setProductFrontAmount(totalPurchaseFrontAmount);
             subOrderServiceProxy.saveMaterielOrder(order, subOrder, materielOrderList);
             return success("success");
         } catch (Exception ex) {
@@ -463,12 +464,11 @@ public class SubOrderController {
                     materielOrderVo.setSupplierMobile(materielOrder.getSupplierMobile());
                     materielOrderVo.setSupplierName(materielOrder.getSupplierName());
 
+                    materielOrderVo.setRestAmount(PriceUtil.convertToYuanStr(materielOrder.getPurchaseAmount() - materielOrder.getActualPurchaseAmount()));
+
+                    payedAmount = payedAmount + materielOrder.getActualPurchaseAmount();
 
                     totalPurchaseAmount = totalPurchaseAmount + materielOrder.getPurchaseAmount();
-                    if (materielOrder.getPayStatus() > MaterielOrderPayStatusEnum.SUB_CASH_FRONT_APV.getCode()) {
-                        materielOrderVo.setRestAmount(PriceUtil.convertToYuanStr(materielOrder.getPurchaseAmount() - materielOrder.getPurchaseFrontAmount()));
-                        payedAmount = payedAmount + materielOrder.getPurchaseFrontAmount();
-                    }
                     purchaseFrontAmount = purchaseFrontAmount + materielOrder.getPurchaseFrontAmount();
                     materielOrderVoList.add(materielOrderVo);
                 }
@@ -866,17 +866,22 @@ public class SubOrderController {
             } else if ("Y".equals(result)) {
                 subOrder.setSubOrderStatus(SubOrderStatusEnum.BUYER_FOLLOW_ORDER.getCode());
                 subOrder.setSubPayStatus(SubOrderPayStatusEnum.SUB_FRONT_PAY.getCode());
-                subOrder.setPayedAmount(subOrder.getProductFrontAmount());
+
+                Long payedAmount = 0L;
 
                 List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
                 for (MaterielOrder materielOrder : materielOrderList) {
                     if (materielOrder.getMaterielOrderStatus() < MaterielOrderStatusEnum.BUYER_FOLLOW_ORDER.getCode()) {
                         materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.BUYER_FOLLOW_ORDER.getCode());
                         materielOrder.setPayStatus(MaterielOrderPayStatusEnum.SUB_FRONT_PAY.getCode());
+                        materielOrder.setActualPurchaseAmount(materielOrder.getPurchaseFrontAmount());
                         materielOrderService.updateMaterielOrder(materielOrder);
                     }
+                    payedAmount = payedAmount + materielOrder.getActualPurchaseAmount();
                 }
 
+
+                subOrder.setPayedAmount(payedAmount);
                 subOrderService.updateSubOrder(subOrder);
 
                 PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());

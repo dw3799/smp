@@ -49,6 +49,10 @@ public class MaterielOrder {
 
     private Date updatedTime;
 
+    private Long actualPurchaseAmount;
+
+    private Long actualTailAmount;
+
     public Long getId() {
         return id;
     }
@@ -231,5 +235,21 @@ public class MaterielOrder {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public Long getActualPurchaseAmount() {
+        return actualPurchaseAmount;
+    }
+
+    public void setActualPurchaseAmount(Long actualPurchaseAmount) {
+        this.actualPurchaseAmount = actualPurchaseAmount;
+    }
+
+    public Long getActualTailAmount() {
+        return actualTailAmount;
+    }
+
+    public void setActualTailAmount(Long actualTailAmount) {
+        this.actualTailAmount = actualTailAmount;
     }
 }

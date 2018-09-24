@@ -1614,6 +1614,126 @@ public class MaterielOrderExample {
             addCriterion("updated_time not between", value1, value2, "updatedTime");
             return (Criteria) this;
         }
+
+        public Criteria andActualPurchaseAmountIsNull() {
+            addCriterion("actual_purchase_amount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountIsNotNull() {
+            addCriterion("actual_purchase_amount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountEqualTo(Long value) {
+            addCriterion("actual_purchase_amount =", value, "actualPurchaseAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountNotEqualTo(Long value) {
+            addCriterion("actual_purchase_amount <>", value, "actualPurchaseAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountGreaterThan(Long value) {
+            addCriterion("actual_purchase_amount >", value, "actualPurchaseAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountGreaterThanOrEqualTo(Long value) {
+            addCriterion("actual_purchase_amount >=", value, "actualPurchaseAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountLessThan(Long value) {
+            addCriterion("actual_purchase_amount <", value, "actualPurchaseAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountLessThanOrEqualTo(Long value) {
+            addCriterion("actual_purchase_amount <=", value, "actualPurchaseAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountIn(List<Long> values) {
+            addCriterion("actual_purchase_amount in", values, "actualPurchaseAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountNotIn(List<Long> values) {
+            addCriterion("actual_purchase_amount not in", values, "actualPurchaseAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountBetween(Long value1, Long value2) {
+            addCriterion("actual_purchase_amount between", value1, value2, "actualPurchaseAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualPurchaseAmountNotBetween(Long value1, Long value2) {
+            addCriterion("actual_purchase_amount not between", value1, value2, "actualPurchaseAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountIsNull() {
+            addCriterion("actual_tail_amount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountIsNotNull() {
+            addCriterion("actual_tail_amount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountEqualTo(Long value) {
+            addCriterion("actual_tail_amount =", value, "actualTailAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountNotEqualTo(Long value) {
+            addCriterion("actual_tail_amount <>", value, "actualTailAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountGreaterThan(Long value) {
+            addCriterion("actual_tail_amount >", value, "actualTailAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountGreaterThanOrEqualTo(Long value) {
+            addCriterion("actual_tail_amount >=", value, "actualTailAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountLessThan(Long value) {
+            addCriterion("actual_tail_amount <", value, "actualTailAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountLessThanOrEqualTo(Long value) {
+            addCriterion("actual_tail_amount <=", value, "actualTailAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountIn(List<Long> values) {
+            addCriterion("actual_tail_amount in", values, "actualTailAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountNotIn(List<Long> values) {
+            addCriterion("actual_tail_amount not in", values, "actualTailAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountBetween(Long value1, Long value2) {
+            addCriterion("actual_tail_amount between", value1, value2, "actualTailAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualTailAmountNotBetween(Long value1, Long value2) {
+            addCriterion("actual_tail_amount not between", value1, value2, "actualTailAmount");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

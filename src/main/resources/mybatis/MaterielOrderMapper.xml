@@ -25,6 +25,8 @@
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="actual_purchase_amount" jdbcType="BIGINT" property="actualPurchaseAmount" />
+    <result column="actual_tail_amount" jdbcType="BIGINT" property="actualTailAmount" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -88,7 +90,8 @@
     id, order_no, sub_order_no, product_category_id, product_category, product_id, product_name, 
     pic, mini_pic, materiel_order_status, pay_status, supplier_id, supplier_name, supplier_charge, 
     supplier_mobile, supplier_bank_name, supplier_bank_account, supplier_bank_no, purchase_amount, 
-    purchase_front_amount, remark, created_time, updated_time
+    purchase_front_amount, remark, created_time, updated_time, actual_purchase_amount, 
+    actual_tail_amount
   </sql>
   <select id="selectByExample" parameterType="com.alipapa.smp.order.pojo.MaterielOrderExample" resultMap="BaseResultMap">
     select
@@ -128,8 +131,8 @@
       supplier_name, supplier_charge, supplier_mobile, 
       supplier_bank_name, supplier_bank_account, 
       supplier_bank_no, purchase_amount, purchase_front_amount, 
-      remark, created_time, updated_time
-      )
+      remark, created_time, updated_time, 
+      actual_purchase_amount, actual_tail_amount)
     values (#{id,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{subOrderNo,jdbcType=VARCHAR}, 
       #{productCategoryId,jdbcType=BIGINT}, #{productCategory,jdbcType=VARCHAR}, #{productId,jdbcType=BIGINT}, 
       #{productName,jdbcType=VARCHAR}, #{pic,jdbcType=VARCHAR}, #{miniPic,jdbcType=VARCHAR}, 
@@ -137,8 +140,8 @@
       #{supplierName,jdbcType=VARCHAR}, #{supplierCharge,jdbcType=VARCHAR}, #{supplierMobile,jdbcType=VARCHAR}, 
       #{supplierBankName,jdbcType=VARCHAR}, #{supplierBankAccount,jdbcType=VARCHAR}, 
       #{supplierBankNo,jdbcType=VARCHAR}, #{purchaseAmount,jdbcType=BIGINT}, #{purchaseFrontAmount,jdbcType=BIGINT}, 
-      #{remark,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
-      )
+      #{remark,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, 
+      #{actualPurchaseAmount,jdbcType=BIGINT}, #{actualTailAmount,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.alipapa.smp.order.pojo.MaterielOrder">
     insert into materiel_order
@@ -212,6 +215,12 @@
       <if test="updatedTime != null">
         updated_time,
       </if>
+      <if test="actualPurchaseAmount != null">
+        actual_purchase_amount,
+      </if>
+      <if test="actualTailAmount != null">
+        actual_tail_amount,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -282,6 +291,12 @@
       </if>
       <if test="updatedTime != null">
         #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="actualPurchaseAmount != null">
+        #{actualPurchaseAmount,jdbcType=BIGINT},
+      </if>
+      <if test="actualTailAmount != null">
+        #{actualTailAmount,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -363,6 +378,12 @@
       <if test="record.updatedTime != null">
         updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.actualPurchaseAmount != null">
+        actual_purchase_amount = #{record.actualPurchaseAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.actualTailAmount != null">
+        actual_tail_amount = #{record.actualTailAmount,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -392,7 +413,9 @@
       purchase_front_amount = #{record.purchaseFrontAmount,jdbcType=BIGINT},
       remark = #{record.remark,jdbcType=VARCHAR},
       created_time = #{record.createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP}
+      updated_time = #{record.updatedTime,jdbcType=TIMESTAMP},
+      actual_purchase_amount = #{record.actualPurchaseAmount,jdbcType=BIGINT},
+      actual_tail_amount = #{record.actualTailAmount,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -466,6 +489,12 @@
       <if test="updatedTime != null">
         updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="actualPurchaseAmount != null">
+        actual_purchase_amount = #{actualPurchaseAmount,jdbcType=BIGINT},
+      </if>
+      <if test="actualTailAmount != null">
+        actual_tail_amount = #{actualTailAmount,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -492,7 +521,9 @@
       purchase_front_amount = #{purchaseFrontAmount,jdbcType=BIGINT},
       remark = #{remark,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      actual_purchase_amount = #{actualPurchaseAmount,jdbcType=BIGINT},
+      actual_tail_amount = #{actualTailAmount,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

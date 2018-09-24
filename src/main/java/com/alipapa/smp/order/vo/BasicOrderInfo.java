@@ -28,9 +28,20 @@ public class BasicOrderInfo {
 
     private String receiptAmount;
 
+    private String expectPurchaseAmount;
+
     private String submitDateTime;
 
     private String createDateTime;
+
+
+    public String getExpectPurchaseAmount() {
+        return expectPurchaseAmount;
+    }
+
+    public void setExpectPurchaseAmount(String expectPurchaseAmount) {
+        this.expectPurchaseAmount = expectPurchaseAmount;
+    }
 
     public String getReceiptAmount() {
         return receiptAmount;
