@@ -12,6 +12,7 @@ import com.alipapa.smp.consumer.vo.SysDictVo;
 import com.alipapa.smp.order.pojo.*;
 import com.alipapa.smp.order.service.*;
 import com.alipapa.smp.order.service.impl.SubOrderServiceProxy;
+import com.alipapa.smp.order.vo.OrderFollowRecordVo;
 import com.alipapa.smp.order.vo.OrderVo;
 import com.alipapa.smp.order.vo.SubOrderVo;
 import com.alipapa.smp.product.pojo.Product;
@@ -27,6 +28,7 @@ import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.service.GroupService;
 import com.alipapa.smp.user.service.RoleService;
 import com.alipapa.smp.user.service.UserService;
+import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
 import com.alipapa.smp.utils.StringUtil;
 import com.alipapa.smp.utils.WebApiResponse;
@@ -729,22 +731,46 @@ public class MaterielOrderFollowController {
      * @return
      */
     @RequestMapping(value = "/listSubOrderFollowDetails", method = RequestMethod.GET)
-    public WebApiResponse<List<JSONObject>> listSubOrderFollowDetails(@RequestParam(name = "subOrderNo") String subOrderNo) {
+    public WebApiResponse<List<OrderFollowRecordVo>> listSubOrderFollowDetails(@RequestParam(name = "subOrderNo") String subOrderNo) {
         UserInfo userInfo = UserStatus.getUserInfo();
 
         try {
             List<MaterielOrder> materielOrderList = materielOrderService.listAllMaterielOrderBySubOrderNo(subOrderNo);
 
-            List<JSONObject> jsonObjectList = new ArrayList<>();
+            List<OrderFollowRecordVo> orderFollowRecordVoArrayList = new ArrayList<>();
 
 
             for (MaterielOrder materielOrder : materielOrderList) {
+                OrderFollowRecordVo orderFollowRecordVo = new OrderFollowRecordVo();
+                orderFollowRecordVo.setMaterielOrderId(materielOrder.getId());
+                orderFollowRecordVo.setMaterielOrderStatus(MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus()).getDec());
+                orderFollowRecordVo.setMaterielName(materielOrder.getProductName());
+
+                OrderFollowRecord FACTORY_ORDERED_orderFollowRecord = orderFollowRecordService.getOrderFollowRecordBySort(materielOrder.getId(), MaterielOrderStatusEnum.FACTORY_ORDERED.getCode());
+                if (FACTORY_ORDERED_orderFollowRecord != null) {
+                    orderFollowRecordVo.setFactoryOrderedTime(DateUtil.formatToStrTimeV1(FACTORY_ORDERED_orderFollowRecord.getCreatedTime()));
+                }
+
+                OrderFollowRecord FACTORY_MATERIEL_orderFollowRecord = orderFollowRecordService.getOrderFollowRecordBySort(materielOrder.getId(), MaterielOrderStatusEnum.FACTORY_MATERIEL.getCode());
+                if (FACTORY_MATERIEL_orderFollowRecord != null) {
+                    orderFollowRecordVo.setFactoryMaterielTime(DateUtil.formatToStrTimeV1(FACTORY_MATERIEL_orderFollowRecord.getCreatedTime()));
+                }
+
+                OrderFollowRecord FACTORY_PRINTING_orderFollowRecord = orderFollowRecordService.getOrderFollowRecordBySort(materielOrder.getId(), MaterielOrderStatusEnum.FACTORY_PRINTING.getCode());
+                if (FACTORY_PRINTING_orderFollowRecord != null) {
+                    orderFollowRecordVo.setFactoryPrintingTime(DateUtil.formatToStrTimeV1(FACTORY_PRINTING_orderFollowRecord.getCreatedTime()));
+                }
 
 
+                OrderFollowRecord FACTORY_PACKAGE_orderFollowRecord = orderFollowRecordService.getOrderFollowRecordBySort(materielOrder.getId(), MaterielOrderStatusEnum.FACTORY_PACKAGE.getCode());
+                if (FACTORY_PACKAGE_orderFollowRecord != null) {
+                    orderFollowRecordVo.setFactoryPackageTime(DateUtil.formatToStrTimeV1(FACTORY_PACKAGE_orderFollowRecord.getCreatedTime()));
+                }
+                orderFollowRecordVoArrayList.add(orderFollowRecordVo);
             }
 
 
-            return WebApiResponse.success(null);
+            return WebApiResponse.success(orderFollowRecordVoArrayList);
         } catch (Exception ex) {
             logger.error("获取采购单生产跟单信息异常", ex);
             return WebApiResponse.error("获取采购单生产跟单信息异常");

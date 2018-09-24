@@ -42,6 +42,7 @@ public class MaterielOrderService {
         MaterielOrderExample example = new MaterielOrderExample();
         MaterielOrderExample.Criteria criteria = example.createCriteria();
         criteria.andSubOrderNoEqualTo(subOrderNo);
+        example.setOrderByClause("updated_time desc");
 
         List<MaterielOrder> materielOrderList = materielOrderMapper.selectByExample(example);
         return materielOrderList;
