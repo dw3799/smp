@@ -424,6 +424,79 @@ public class SubOrderServiceProxy {
         return subOrderVoList;
     }
 
+
+    /**
+     * 查询业务员的采购单
+     *
+     * @param subOrderStatusEnum
+     * @param salerUserNo
+     */
+
+    public List<JSONObject> listSubOrderBySaler(SubOrderStatusEnum subOrderStatusEnum, String salerUserNo, Integer start, Integer size) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("subOrderStatus", subOrderStatusEnum.getCode());
+        if (!StringUtil.isEmptyString(salerUserNo)) {
+            params.put("salerUserNo", salerUserNo);
+        }
+
+        Long totalCount = subOrderMapper.listMySubOrderByParamCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<SubOrder> subOrderList = subOrderMapper.listMySubOrderByParam(params);
+
+        List<JSONObject> jsonObjectList = this.convertBySalerJSONObjectVo(subOrderList, totalCount);
+
+        return jsonObjectList;
+    }
+
+
+    /**
+     * @param subOrderList
+     * @param totalCount
+     * @return
+     */
+    private List<JSONObject> convertBySalerJSONObjectVo(List<SubOrder> subOrderList, Long totalCount) {
+        if (CollectionUtils.isEmpty(subOrderList)) {
+            return null;
+        }
+
+        List<JSONObject> subOrderVoList = new ArrayList<>();
+        for (SubOrder subOrder : subOrderList) {
+            Order order = orderService.selectOrderByOrderNo(subOrder.getOrderNo());
+            String currencyDec = orderService.getCurrencyDec(order);
+
+            JSONObject subOrderVo = new JSONObject();
+            subOrderVo.put("totalCount", totalCount);
+            subOrderVo.put("subOrderId", subOrder.getId());
+            subOrderVo.put("orderNo", subOrder.getOrderNo());
+            subOrderVo.put("subOrderNo", subOrder.getOrderNo());
+            subOrderVo.put("subOrderStatus", SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
+            subOrderVo.put("productName", subOrder.getProductName());
+            subOrderVo.put("orderType", OrderTypeEnum.valueOf(order.getOrderType()).getDec());
+            subOrderVo.put("orderAmount", PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
+            subOrderVo.put("receiptAmount", PriceUtil.convertToYuanStr(order.getReceiptAmount()) + currencyDec);
+            subOrderVo.put("productAmount", PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
+
+
+            subOrderVo.put("consumerNo", order.getConsumerNo());
+            subOrderVo.put("consumerName", order.getConsumerName());
+            subOrderVo.put("consumerCountry", order.getConsumerCountry());
+
+            PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+            if (purchaseOrderExt != null) {
+                subOrderVo.put("checkInTime", DateUtil.formatToStrTimeV1(purchaseOrderExt.getCompleteQualityCheckTime()));
+            }
+            subOrderVoList.add(subOrderVo);
+        }
+        return subOrderVoList;
+    }
+
+
 }
 
 

@@ -530,6 +530,10 @@
             and o.buyer_user_no = #{buyerUserNo}
         </if>
 
+        <if test="salerUserNo != null and salerUserNo != ''">
+            and o.saler_user_no = #{salerUserNo}
+        </if>
+
         ORDER BY s.created_time DESC
     </sql>
 

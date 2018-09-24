@@ -118,7 +118,7 @@ public class OrderDetailController {
             } else {
                 basicOrderInfo.setConsumerCountry(order.getConsumerCountry());
                 basicOrderInfo.setConsumerName(order.getConsumerName());
-                basicOrderInfo.setConsumerNo(order.getOrderNo());
+                basicOrderInfo.setConsumerNo(order.getConsumerNo());
             }
 
             String currencyDec = orderService.getCurrencyDec(order);
@@ -133,10 +133,10 @@ public class OrderDetailController {
             basicOrderInfo.setBuyerUserName(order.getBuyerUserName());
             basicOrderInfo.setCurrency(currencyDec);
 
-            basicOrderInfo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
-            basicOrderInfo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
-            basicOrderInfo.setReceiptAmount(PriceUtil.convertToYuanStr(order.getReceiptAmount()) + currencyDec);
-            basicOrderInfo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(order.getExpectPurchaseAmount()) + Constant.YMB);
+            basicOrderInfo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()));
+            basicOrderInfo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()));
+            basicOrderInfo.setReceiptAmount(PriceUtil.convertToYuanStr(order.getReceiptAmount()));
+            basicOrderInfo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(order.getExpectPurchaseAmount()));
             return WebApiResponse.success(basicOrderInfo);
         } catch (Exception ex) {
             logger.error("获取订单基本信息异常", ex);
@@ -162,7 +162,7 @@ public class OrderDetailController {
             return WebApiResponse.error("订单不存在");
         }
 
-        String currencyDec = orderService.getCurrencyDec(order);
+        //String currencyDec = orderService.getCurrencyDec(order);
 
         OrderTypeEnum orderTypeEnum = OrderTypeEnum.valueOf(order.getOrderType());
         if (orderTypeEnum == null) {
@@ -180,14 +180,14 @@ public class OrderDetailController {
                     orderProductVo.setProductCategory(subOrder.getProductCategory());
                     orderProductVo.setProductId(subOrder.getProductId());
                     orderProductVo.setProductName(subOrder.getProductName());
-                    orderProductVo.setProductAmount(PriceUtil.convertToYuanStr(subOrder.getProductAmount()) + currencyDec);
-                    orderProductVo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(subOrder.getExpectPurchaseAmount()) + Constant.YMB);
+                    orderProductVo.setProductAmount(PriceUtil.convertToYuanStr(subOrder.getProductAmount()));
+                    orderProductVo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(subOrder.getExpectPurchaseAmount()));
                     orderProductVo.setProductRemark(subOrder.getProductRemark());
                     orderProductVo.setPicNo(subOrder.getPic());
                     if (OrderTypeEnum.SELF_ORDER == orderTypeEnum) {
                         SelfOrderDetail selfOrderDetail = subOrder.getSelfOrderDetail();
-                        orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(subOrder.getSaleAmount()) + currencyDec);
-                        orderProductVo.setFactoryAmount(PriceUtil.convertToYuanStr(subOrder.getFactoryAmount()) + Constant.YMB);
+                        orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(subOrder.getSaleAmount()));
+                        orderProductVo.setFactoryAmount(PriceUtil.convertToYuanStr(subOrder.getFactoryAmount()));
 
                         orderProductVo.setWeight(selfOrderDetail.getWeight());
                         orderProductVo.setMaterial(selfOrderDetail.getMaterial());
@@ -200,8 +200,8 @@ public class OrderDetailController {
                     } else {
                         AgentOrderDetail agentOrderDetail = subOrder.getAgentOrderDetail();
 
-                        orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(subOrder.getSaleAmount()) + currencyDec);
-                        orderProductVo.setFactoryAmount(PriceUtil.convertToYuanStr(subOrder.getFactoryAmount()) + Constant.YMB);
+                        orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(subOrder.getSaleAmount()));
+                        orderProductVo.setFactoryAmount(PriceUtil.convertToYuanStr(subOrder.getFactoryAmount()));
                         orderProductVo.setUnit(agentOrderDetail.getUnit());
                         orderProductVo.setSinglePackageCount(agentOrderDetail.getSinglePackageCount());
                         orderProductVo.setPackageNumber(agentOrderDetail.getPackageNumber());
