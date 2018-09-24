@@ -12,7 +12,7 @@ public enum MaterielFactoryStatusEnum {
 
     FACTORY_PACKAGE(9, "FACTORY_PACKAGE", "已车缝"),
 
-    FACTORY_INVOICE(10, "FACTORY_INVOICE", "已发货");
+    FACTORY_INVOICE(10, "FACTORY_INVOICE", "待质检");
 
     MaterielFactoryStatusEnum(int code, String codeName, String dec) {
         this.code = code;

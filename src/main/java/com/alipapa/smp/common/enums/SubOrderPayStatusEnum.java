@@ -9,7 +9,7 @@ public enum SubOrderPayStatusEnum {
 
     SUB_FRONT_PAY(1, "FRONT_PAY", "已支付定金"),
 
-    FIN_TAIL_APV(3, "FIN_TAIL_APV", "待财务审核采购尾款"),
+    FIN_TAIL_APV(2, "FIN_TAIL_APV", "待财务审核采购尾款"),
 
     CASH_TAIL_PAYING(3, "CASH_TAIL_PAYING", "待出纳支付采购尾款"),
 

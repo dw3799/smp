@@ -25,9 +25,11 @@ public enum MaterielOrderStatusEnum {
 
     FACTORY_PACKAGE(9, "FACTORY_PACKAGE", "工厂生产中——已车缝"),
 
-    FACTORY_INVOICE(10, "FACTORY_INVOICE", "工厂生产中——已发货"),
+    FACTORY_INVOICE(10, "FACTORY_INVOICE", "工厂生产中——待质检"),
 
-    DISCARDED(11, "DISCARDED", "作废");
+    FACTORY_COMPLETE(11, "FACTORY_COMPLETE", "工厂生产完成"),
+
+    DISCARDED(12, "DISCARDED", "作废");
 
     MaterielOrderStatusEnum(int code, String codeName, String dec) {
         this.code = code;

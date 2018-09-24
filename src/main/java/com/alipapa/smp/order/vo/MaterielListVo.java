@@ -14,6 +14,16 @@ public class MaterielListVo {
 
     private String payedAmount;
 
+    private String totalRestAmount;
+
+    public String getTotalRestAmount() {
+        return totalRestAmount;
+    }
+
+    public void setTotalRestAmount(String totalRestAmount) {
+        this.totalRestAmount = totalRestAmount;
+    }
+
     private List<MaterielOrderVo> materielOrders;
 
 

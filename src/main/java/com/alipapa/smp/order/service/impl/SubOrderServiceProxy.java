@@ -310,7 +310,7 @@ public class SubOrderServiceProxy {
      * @param subOrderStatusEnum
      */
 
-    public List<JSONObject> listSubOrderByStatus(SubOrderStatusEnum subOrderStatusEnum, Integer start, Integer size) {
+    public List<JSONObject> listQualityCheckSubOrderByStatus(SubOrderStatusEnum subOrderStatusEnum, Integer start, Integer size) {
         Map<String, Object> params = new HashMap<>();
         params.put("subOrderStatus", subOrderStatusEnum.getCode());
 
@@ -324,7 +324,7 @@ public class SubOrderServiceProxy {
 
         List<SubOrder> subOrderList = subOrderMapper.listMySubOrderByParam(params);
 
-        return convertJSONObjectVo(subOrderList, totalCount);
+        return convertQualityCheckJSONObjectVo(subOrderList, totalCount);
     }
 
 
@@ -333,7 +333,7 @@ public class SubOrderServiceProxy {
      * @param totalCount
      * @return
      */
-    private List<JSONObject> convertJSONObjectVo(List<SubOrder> subOrderList, Long totalCount) {
+    private List<JSONObject> convertQualityCheckJSONObjectVo(List<SubOrder> subOrderList, Long totalCount) {
         if (CollectionUtils.isEmpty(subOrderList)) {
             return null;
         }
@@ -361,6 +361,68 @@ public class SubOrderServiceProxy {
         return subOrderVoList;
     }
 
+
+    /**
+     * 查询尾款支付采购单
+     *
+     * @param subOrderPayStatusEnum
+     */
+
+    public List<JSONObject> listTailPaySubOrderByPayStatus(SubOrderPayStatusEnum subOrderPayStatusEnum, Integer start, Integer size) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("subPayStatus", subOrderPayStatusEnum.getCode());
+
+        Long totalCount = subOrderMapper.listMySubOrderByParamCount(params);
+
+        if (totalCount <= 0) {
+            return null;
+        }
+        params.put("start", start);
+        params.put("size", size);
+
+        List<SubOrder> subOrderList = subOrderMapper.listMySubOrderByParam(params);
+
+        return convertTailPayJSONObjectVo(subOrderList, totalCount);
+    }
+
+
+    /**
+     * @param subOrderList
+     * @param totalCount
+     * @return
+     */
+    private List<JSONObject> convertTailPayJSONObjectVo(List<SubOrder> subOrderList, Long totalCount) {
+        if (CollectionUtils.isEmpty(subOrderList)) {
+            return null;
+        }
+
+        List<JSONObject> subOrderVoList = new ArrayList<>();
+        for (SubOrder subOrder : subOrderList) {
+            Order order = orderService.selectOrderByOrderNo(subOrder.getOrderNo());
+
+            JSONObject subOrderVo = new JSONObject();
+            subOrderVo.put("totalCount", totalCount);
+            subOrderVo.put("subOrderId", subOrder.getId());
+            subOrderVo.put("orderNo", subOrder.getOrderNo());
+            subOrderVo.put("subOrderNo", subOrder.getOrderNo());
+            subOrderVo.put("subOrderStatus", SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
+            subOrderVo.put("productName", subOrder.getProductName());
+            subOrderVo.put("orderType", OrderTypeEnum.valueOf(order.getOrderType()).getDec());
+            subOrderVo.put("purchaseAmount", PriceUtil.convertToYuanStr(subOrder.getActualPurchaseAmount()) + Constant.YMB);
+            subOrderVo.put("payedAmount", PriceUtil.convertToYuanStr(subOrder.getPayedAmount()) + Constant.YMB);
+            subOrderVo.put("restAmount", PriceUtil.convertToYuanStr(subOrder.getActualPurchaseAmount() - subOrder.getPayedAmount()) + Constant.YMB);
+            subOrderVo.put("buyerUserName", order.getBuyerUserName());
+
+            PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+            if (purchaseOrderExt != null) {
+                subOrderVo.put("completeQualityCheckTime", DateUtil.formatToStrTimeV1(purchaseOrderExt.getCompleteQualityCheckTime()));
+                subOrderVo.put("finTailTime", DateUtil.formatToStrTimeV1(purchaseOrderExt.getFinTailTime()));
+
+            }
+            subOrderVoList.add(subOrderVo);
+        }
+        return subOrderVoList;
+    }
 
 }
 

@@ -707,7 +707,7 @@ public class MaterielOrderFollowController {
             Integer start = (pageNum - 1) * pageSize;
             Integer size = pageSize;
 
-            List<JSONObject> jsonObjectList = subOrderServiceProxy.listSubOrderByStatus(SubOrderStatusEnum.QUALITY_CHECK, start, size);
+            List<JSONObject> jsonObjectList = subOrderServiceProxy.listQualityCheckSubOrderByStatus(SubOrderStatusEnum.QUALITY_CHECK, start, size);
 
             if (!CollectionUtils.isEmpty(jsonObjectList)) {
                 WebApiResponse response = WebApiResponse.success(jsonObjectList);
@@ -722,4 +722,32 @@ public class MaterielOrderFollowController {
     }
 
 
+    /**
+     * 获取采购单生产跟单信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listSubOrderFollowDetails", method = RequestMethod.GET)
+    public WebApiResponse<List<JSONObject>> listSubOrderFollowDetails(@RequestParam(name = "subOrderNo") String subOrderNo) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        try {
+            List<MaterielOrder> materielOrderList = materielOrderService.listAllMaterielOrderBySubOrderNo(subOrderNo);
+
+            List<JSONObject> jsonObjectList = new ArrayList<>();
+
+
+            for (MaterielOrder materielOrder : materielOrderList) {
+
+
+            }
+
+
+            return WebApiResponse.success(null);
+        } catch (Exception ex) {
+            logger.error("获取采购单生产跟单信息异常", ex);
+            return WebApiResponse.error("获取采购单生产跟单信息异常");
+        }
+    }
 }

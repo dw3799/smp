@@ -522,6 +522,10 @@
             and s.sub_order_status = #{subOrderStatus}
         </if>
 
+        <if test="subPayStatus != null">
+            and s.sub_pay_status = #{subPayStatus}
+        </if>
+
         <if test="buyerUserNo != null and buyerUserNo != ''">
             and o.buyer_user_no = #{buyerUserNo}
         </if>

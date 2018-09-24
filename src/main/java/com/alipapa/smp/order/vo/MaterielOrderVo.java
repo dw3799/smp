@@ -38,8 +38,17 @@ public class MaterielOrderVo {
 
     private String purchaseFrontAmount;
 
+    private String restAmount;
+
     private String remark;
 
+    public String getRestAmount() {
+        return restAmount;
+    }
+
+    public void setRestAmount(String restAmount) {
+        this.restAmount = restAmount;
+    }
 
     public Integer getMaterielOrderStatusCode() {
         return materielOrderStatusCode;

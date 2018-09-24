@@ -11,13 +11,15 @@ public enum MaterielOrderPayStatusEnum {
 
     SUB_CASH_FRONT_APV(2, "SUB_CASH_FRONT_APV", "待出纳支付采购定金"),
 
-    FIN_TAIL_APV(3, "FIN_TAIL_APV", "待财务审核采购尾款"),
+    SUB_FRONT_PAY(3, "FRONT_PAY", "已支付定金"),
 
-    CASH_TAIL_PAYING(4, "CASH_TAIL_PAYING", "待出纳支付采购尾款"),
+    FIN_TAIL_APV(4, "FIN_TAIL_APV", "待财务审核采购尾款"),
 
-    SUB_TAIL_PAYED(5, "TAIL_PAYED", "尾款支付完成"),
+    CASH_TAIL_PAYING(5, "CASH_TAIL_PAYING", "待出纳支付采购尾款"),
 
-    SUCCESS(6, "SUCCESS", "支付成功");
+    SUB_TAIL_PAYED(6, "TAIL_PAYED", "尾款支付完成"),
+
+    SUCCESS(7, "SUCCESS", "支付成功");
 
 
     MaterielOrderPayStatusEnum(int code, String codeName, String dec) {

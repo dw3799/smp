@@ -7,15 +7,8 @@ import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.invoice.pojo.ProductQualityInfo;
 import com.alipapa.smp.invoice.service.ProductQualityInfoService;
 import com.alipapa.smp.invoice.vo.QualityCheckInfoVo;
-import com.alipapa.smp.order.pojo.MaterielOrder;
-import com.alipapa.smp.order.pojo.OrderWorkFlow;
-import com.alipapa.smp.order.pojo.PurchaseOrderExt;
-import com.alipapa.smp.order.pojo.SubOrder;
-import com.alipapa.smp.order.service.MaterielOrderService;
-import com.alipapa.smp.order.service.OrderWorkFlowService;
-import com.alipapa.smp.order.service.PurchaseOrderExtService;
-import com.alipapa.smp.order.service.SubOrderService;
-import com.alipapa.smp.user.service.UserService;
+import com.alipapa.smp.order.pojo.*;
+import com.alipapa.smp.order.service.*;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.StringUtil;
 import com.alipapa.smp.utils.WebApiResponse;
@@ -50,9 +43,6 @@ public class ProductQualityInfoController {
     private ProductQualityInfoService productQualityInfoService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private MaterielOrderService materielOrderService;
 
     @Autowired
@@ -60,6 +50,10 @@ public class ProductQualityInfoController {
 
     @Autowired
     private PurchaseOrderExtService purchaseOrderExtService;
+
+    @Autowired
+    private OrderFollowRecordService orderFollowRecordService;
+
 
     /**
      * 保存/提交采购单质检信息
@@ -147,9 +141,24 @@ public class ProductQualityInfoController {
 
                     List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
                     for (MaterielOrder materielOrder : materielOrderList) {
+                        //物料单跟单记录
+                        OrderFollowRecord orderFollowRecord = new OrderFollowRecord();
+                        orderFollowRecord.setUpdatedTime(new Date());
+                        orderFollowRecord.setTitle("跟单记录,采购单质检不通过");
+                        orderFollowRecord.setSubOrderNo(materielOrder.getSubOrderNo());
+                        orderFollowRecord.setRemark("物料单状态由" + MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus()).getDec() + "变为" + MaterielOrderStatusEnum.DISCARDED.getDec());
+                        orderFollowRecord.setSort(MaterielOrderStatusEnum.DISCARDED.getCode());
+                        orderFollowRecord.setOrderNo(materielOrder.getSubOrderNo());
+                        orderFollowRecord.setMaterielOrderNo(String.valueOf(materielOrder.getId()));
+                        orderFollowRecord.setOpUserName(userInfo.getUserName());
+                        orderFollowRecord.setOpUserNo(userInfo.getUserNo());
+                        orderFollowRecord.setCreatedTime(new Date());
+
                         materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.DISCARDED.getCode());
                         materielOrder.setRemark(materielOrder.getRemark() + "仓储质检不通过，已废弃");
+
                         materielOrderService.updateMaterielOrder(materielOrder);
+                        orderFollowRecordService.save(orderFollowRecord);
                     }
                     subOrderService.updateSubOrder(subOrder);
 
@@ -172,6 +181,29 @@ public class ProductQualityInfoController {
                     productQualityInfoService.saveProductQualityInfo(productQualityInfo);
 
                     subOrder.setSubOrderStatus(SubOrderStatusEnum.INVOICE_APPLY.getCode());
+                    subOrder.setSubPayStatus(SubOrderPayStatusEnum.FIN_TAIL_APV.getCode());
+
+                    List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
+                    for (MaterielOrder materielOrder : materielOrderList) {
+                        //物料单跟单记录
+                        OrderFollowRecord orderFollowRecord = new OrderFollowRecord();
+                        orderFollowRecord.setUpdatedTime(new Date());
+                        orderFollowRecord.setTitle("跟单记录,质检完成");
+                        orderFollowRecord.setSubOrderNo(materielOrder.getSubOrderNo());
+                        orderFollowRecord.setRemark("物料单状态由" + MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus()).getDec() + "变为" + MaterielOrderStatusEnum.FACTORY_COMPLETE.getDec());
+                        orderFollowRecord.setSort(MaterielOrderStatusEnum.FACTORY_COMPLETE.getCode());
+                        orderFollowRecord.setOrderNo(materielOrder.getSubOrderNo());
+                        orderFollowRecord.setMaterielOrderNo(String.valueOf(materielOrder.getId()));
+                        orderFollowRecord.setOpUserName(userInfo.getUserName());
+                        orderFollowRecord.setOpUserNo(userInfo.getUserNo());
+                        orderFollowRecord.setCreatedTime(new Date());
+
+                        materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.FACTORY_COMPLETE.getCode());
+                        materielOrder.setPayStatus(MaterielOrderPayStatusEnum.FIN_TAIL_APV.getCode());
+
+                        materielOrderService.updateMaterielOrder(materielOrder);
+                        orderFollowRecordService.save(orderFollowRecord);
+                    }
 
                     PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
                     if (purchaseOrderExt != null) {
@@ -287,7 +319,7 @@ public class ProductQualityInfoController {
             }
             qualityCheckInfoVo.setSubOrderNo(subOrderNo);
             qualityCheckInfoVo.setSuturingQuality(productQualityInfo.getSuturingQuality());
-            
+
             return WebApiResponse.success(qualityCheckInfoVo);
         } catch (Exception ex) {
             logger.error("获取采购单质检信息异常", ex);

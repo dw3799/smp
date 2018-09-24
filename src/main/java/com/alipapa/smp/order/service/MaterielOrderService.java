@@ -33,6 +33,22 @@ public class MaterielOrderService {
 
 
     /**
+     * 获取所有物料订单（包含已作废）
+     *
+     * @param subOrderNo
+     * @return
+     */
+    public List<MaterielOrder> listAllMaterielOrderBySubOrderNo(String subOrderNo) {
+        MaterielOrderExample example = new MaterielOrderExample();
+        MaterielOrderExample.Criteria criteria = example.createCriteria();
+        criteria.andSubOrderNoEqualTo(subOrderNo);
+
+        List<MaterielOrder> materielOrderList = materielOrderMapper.selectByExample(example);
+        return materielOrderList;
+    }
+
+
+    /**
      * 更新物料订单
      *
      * @param materielOrder
