@@ -330,10 +330,8 @@ public class InvoiceOrderController {
      * @return
      */
     @RequestMapping(value = "/listFinApvInvoiceOrder", method = RequestMethod.GET)
-    public WebApiResponse<List<SubOrderVo>> listFinApvInvoiceOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
-                                                                   @RequestParam(name = "pageNum", required = false) Integer pageNum) {
-        UserInfo userInfo = UserStatus.getUserInfo();
-
+    public WebApiResponse<List<InvoiceOrderVo>> listFinApvInvoiceOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                                       @RequestParam(name = "pageNum", required = false) Integer pageNum) {
         try {
             if (pageSize == null) {
                 pageSize = 30;
@@ -346,12 +344,19 @@ public class InvoiceOrderController {
             Integer start = (pageNum - 1) * pageSize;
             Integer size = pageSize;
 
-            List<SubOrderVo> orderVoList = subOrderServiceProxy.listMySubOrder(SubOrderStatusEnum.SUB_FIN_FRONT_APV, null, start, size);
-            if (!CollectionUtils.isEmpty(orderVoList)) {
-                WebApiResponse response = WebApiResponse.success(orderVoList);
-                response.setTotalCount(orderVoList.get(0).getTotalCount());
+
+            Map<String, Object> params = new HashMap<>();
+
+            params.put("invoiceOrderStatus", InvoiceOrderStatusEnum.FIN_APV.getCode());
+
+
+            List<InvoiceOrderVo> invoiceOrderVos = invoiceOrderServiceProxy.listMyInvoiceOrderByParams(params, start, size);
+            if (!CollectionUtils.isEmpty(invoiceOrderVos)) {
+                WebApiResponse response = WebApiResponse.success(invoiceOrderVos);
+                response.setTotalCount(invoiceOrderVos.get(0).getTotalCount());
                 return response;
             }
+            
             return WebApiResponse.success(null);
         } catch (Exception ex) {
             logger.error("待财务审核发货单列表异常", ex);

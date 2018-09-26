@@ -1,7 +1,5 @@
 package com.alipapa.smp.invoice.vo;
 
-import java.util.Date;
-
 public class InvoiceOrderVo {
 
 
@@ -31,6 +29,66 @@ public class InvoiceOrderVo {
 
     private String createdTime;
 
+
+    private String storageUserNo;
+
+    private String storageUserName;
+
+    private String submitTime;
+
+    private String finApvTime;
+
+    private String docTime;
+
+    private String checkOutTime;
+
+    public String getStorageUserNo() {
+        return storageUserNo;
+    }
+
+    public void setStorageUserNo(String storageUserNo) {
+        this.storageUserNo = storageUserNo;
+    }
+
+    public String getStorageUserName() {
+        return storageUserName;
+    }
+
+    public void setStorageUserName(String storageUserName) {
+        this.storageUserName = storageUserName;
+    }
+
+    public String getSubmitTime() {
+        return submitTime;
+    }
+
+    public void setSubmitTime(String submitTime) {
+        this.submitTime = submitTime;
+    }
+
+    public String getFinApvTime() {
+        return finApvTime;
+    }
+
+    public void setFinApvTime(String finApvTime) {
+        this.finApvTime = finApvTime;
+    }
+
+    public String getDocTime() {
+        return docTime;
+    }
+
+    public void setDocTime(String docTime) {
+        this.docTime = docTime;
+    }
+
+    public String getCheckOutTime() {
+        return checkOutTime;
+    }
+
+    public void setCheckOutTime(String checkOutTime) {
+        this.checkOutTime = checkOutTime;
+    }
 
     public Long getId() {
         return id;

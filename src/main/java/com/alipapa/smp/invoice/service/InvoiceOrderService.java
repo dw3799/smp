@@ -7,6 +7,7 @@ import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.invoice.mapper.InvoiceOrderMapper;
 import com.alipapa.smp.invoice.mapper.InvoiceProductMapper;
 import com.alipapa.smp.invoice.pojo.InvoiceOrder;
+import com.alipapa.smp.invoice.pojo.InvoiceOrderExt;
 import com.alipapa.smp.invoice.pojo.InvoiceProduct;
 import com.alipapa.smp.order.pojo.Order;
 import com.alipapa.smp.order.pojo.OrderWorkFlow;
@@ -30,12 +31,14 @@ public class InvoiceOrderService {
     @Resource
     private InvoiceProductMapper invoiceProductMapper;
 
-
     @Autowired
     private SubOrderService subOrderService;
 
     @Autowired
     private OrderWorkFlowService orderWorkFlowService;
+
+    @Autowired
+    private InvoiceOrderExtService invoiceOrderExtService;
 
 
     /**
@@ -47,7 +50,15 @@ public class InvoiceOrderService {
      */
     @Transactional
     public boolean saveInvoiceOrder(Order order, InvoiceOrder invoiceOrder, List<SubOrder> subOrderList, UserInfo userInfo) {
+        InvoiceOrderExt invoiceOrderExt = new InvoiceOrderExt();
+        invoiceOrderExt.setOrderNo(invoiceOrder.getOrderNo());
+        invoiceOrderExt.setInvoiceOrderNo(invoiceOrder.getInvoiceNo());
+        invoiceOrderExt.setSubmitTime(new Date());
+        invoiceOrderExt.setCreatedTime(new Date());
+        invoiceOrderExt.setUpdatedTime(new Date());
+
         invoiceOrderMapper.insert(invoiceOrder);
+        invoiceOrderExtService.saveInvoiceOrderExt(invoiceOrderExt);
 
         String remarkString = null;
         for (SubOrder subOrder : subOrderList) {

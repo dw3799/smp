@@ -3,8 +3,11 @@ package com.alipapa.smp.invoice.service.impl;
 import com.alipapa.smp.common.enums.InvoiceOrderStatusEnum;
 import com.alipapa.smp.invoice.mapper.InvoiceOrderMapper;
 import com.alipapa.smp.invoice.pojo.InvoiceOrder;
+import com.alipapa.smp.invoice.pojo.InvoiceOrderExt;
+import com.alipapa.smp.invoice.service.InvoiceOrderExtService;
 import com.alipapa.smp.invoice.vo.InvoiceOrderVo;
 import com.alipapa.smp.utils.DateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -19,6 +22,8 @@ public class InvoiceOrderServiceProxy {
     @Resource
     private InvoiceOrderMapper invoiceOrderMapper;
 
+    @Autowired
+    private InvoiceOrderExtService invoiceOrderExtService;
 
     /**
      * 我的订单列表
@@ -66,6 +71,18 @@ public class InvoiceOrderServiceProxy {
                 orderVo.setOrderNo(invoiceOrder.getOrderNo());
                 orderVo.setSalerUserName(invoiceOrder.getSalerUserName());
                 orderVo.setSalerUserNo(invoiceOrder.getSalerUserNo());
+
+
+                InvoiceOrderExt invoiceOrderExt = invoiceOrderExtService.getInvoiceOrderExtBySubOrderNo(invoiceOrder.getInvoiceNo());
+                if (invoiceOrderExt != null) {
+                    orderVo.setCheckOutTime(DateUtil.formatToStrTimeV1(invoiceOrderExt.getCheckOutTime()));
+                    orderVo.setDocTime(DateUtil.formatToStrTimeV1(invoiceOrderExt.getDocTime()));
+                    orderVo.setFinApvTime(DateUtil.formatToStrTimeV1(invoiceOrderExt.getFinApvTime()));
+                    orderVo.setSubmitTime(DateUtil.formatToStrTimeV1(invoiceOrderExt.getSubmitTime()));
+                    orderVo.setStorageUserName(invoiceOrderExt.getStorageUserName());
+                    orderVo.setStorageUserNo(invoiceOrderExt.getStorageUserNo());
+                }
+
                 orderVoList.add(orderVo);
             }
         }
