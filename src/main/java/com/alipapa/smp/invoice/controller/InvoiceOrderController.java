@@ -1,32 +1,21 @@
 package com.alipapa.smp.invoice.controller;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alipapa.smp.common.Constant;
 import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
-import com.alipapa.smp.consumer.pojo.Consumer;
-import com.alipapa.smp.consumer.pojo.ConsumerFollowRecord;
+import com.alipapa.smp.consumer.vo.SysDictVo;
 import com.alipapa.smp.invoice.pojo.InvoiceOrder;
 import com.alipapa.smp.invoice.service.InvoiceOrderService;
 import com.alipapa.smp.invoice.service.impl.InvoiceOrderServiceProxy;
 import com.alipapa.smp.invoice.vo.InvoiceOrderVo;
-import com.alipapa.smp.order.controller.SubOrderController;
-import com.alipapa.smp.order.pojo.AgentOrderDetail;
 import com.alipapa.smp.order.pojo.Order;
-import com.alipapa.smp.order.pojo.SelfOrderDetail;
 import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.order.service.impl.SubOrderServiceProxy;
-import com.alipapa.smp.order.vo.OrderVo;
 import com.alipapa.smp.order.vo.SubOrderVo;
-import com.alipapa.smp.product.pojo.Product;
-import com.alipapa.smp.product.pojo.ProductCategory;
-import com.alipapa.smp.product.pojo.ProductPicture;
-import com.alipapa.smp.user.pojo.Group;
 import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.*;
@@ -77,6 +66,28 @@ public class InvoiceOrderController {
 
     @Autowired
     private InvoiceOrderService invoiceOrderService;
+
+
+    /**
+     * 发货单状态列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/invoiceStatusSelect", method = RequestMethod.GET)
+    public WebApiResponse<List<SysDictVo>> followStatus() {
+        List<SysDictVo> sysDictVoList = new ArrayList<>();
+        for (InvoiceOrderStatusEnum invoiceOrderStatusEnum : InvoiceOrderStatusEnum.values()) {
+            SysDictVo sysDictVo = new SysDictVo();
+            sysDictVo.setId(Long.valueOf(invoiceOrderStatusEnum.getCode()));
+            sysDictVo.setCategoryCode("发货单状态");
+            sysDictVo.setDictText(invoiceOrderStatusEnum.getDec());
+            sysDictVo.setDictValue(invoiceOrderStatusEnum.getCodeName());
+            sysDictVoList.add(sysDictVo);
+        }
+
+        return WebApiResponse.success(sysDictVoList);
+    }
 
 
     /**
@@ -217,7 +228,7 @@ public class InvoiceOrderController {
             invoiceOrder.setSalerUserName(order.getSalerUserName());
             invoiceOrder.setSalerUserNo(order.getSalerUserNo());
             invoiceOrder.setUpdatedTime(new Date());
-            invoiceOrderService.saveInvoiceOrder(invoiceOrder, subOrderList, userInfo);
+            invoiceOrderService.saveInvoiceOrder(order, invoiceOrder, subOrderList, userInfo);
         } catch (Exception ex) {
             logger.error("", ex);
             return error("保存或提交发货单");
@@ -309,6 +320,43 @@ public class InvoiceOrderController {
         }
 
         return WebApiResponse.success(null);
+    }
+
+
+    /**
+     * 待财务审核发货单列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listFinApvInvoiceOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<SubOrderVo>> listFinApvInvoiceOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                                   @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        try {
+            if (pageSize == null) {
+                pageSize = 30;
+            }
+
+            if (pageNum == null) {
+                pageNum = 1;
+            }
+
+            Integer start = (pageNum - 1) * pageSize;
+            Integer size = pageSize;
+
+            List<SubOrderVo> orderVoList = subOrderServiceProxy.listMySubOrder(SubOrderStatusEnum.SUB_FIN_FRONT_APV, null, start, size);
+            if (!CollectionUtils.isEmpty(orderVoList)) {
+                WebApiResponse response = WebApiResponse.success(orderVoList);
+                response.setTotalCount(orderVoList.get(0).getTotalCount());
+                return response;
+            }
+            return WebApiResponse.success(null);
+        } catch (Exception ex) {
+            logger.error("待财务审核发货单列表异常", ex);
+            return error("待财务审核发货单列表异常");
+        }
     }
 
 
