@@ -1,9 +1,12 @@
 package com.alipapa.smp.invoice.service.impl;
 
+import com.alipapa.smp.common.enums.DeliverTypeEnum;
 import com.alipapa.smp.common.enums.InvoiceOrderStatusEnum;
 import com.alipapa.smp.invoice.mapper.InvoiceOrderMapper;
+import com.alipapa.smp.invoice.pojo.InvoiceCostInfo;
 import com.alipapa.smp.invoice.pojo.InvoiceOrder;
 import com.alipapa.smp.invoice.pojo.InvoiceOrderExt;
+import com.alipapa.smp.invoice.service.InvoiceCostInfoService;
 import com.alipapa.smp.invoice.service.InvoiceOrderExtService;
 import com.alipapa.smp.invoice.vo.InvoiceOrderVo;
 import com.alipapa.smp.utils.DateUtil;
@@ -24,6 +27,11 @@ public class InvoiceOrderServiceProxy {
 
     @Autowired
     private InvoiceOrderExtService invoiceOrderExtService;
+
+
+    @Autowired
+    private InvoiceCostInfoService invoiceCostInfoService;
+
 
     /**
      * 我的订单列表
@@ -82,7 +90,13 @@ public class InvoiceOrderServiceProxy {
                     orderVo.setStorageUserName(invoiceOrderExt.getStorageUserName());
                     orderVo.setStorageUserNo(invoiceOrderExt.getStorageUserNo());
                 }
+                orderVo.setDeliverType(DeliverTypeEnum.valueOf(invoiceOrder.getDeliverType()).getDec());
 
+
+                InvoiceCostInfo invoiceCostInfo = invoiceCostInfoService.getInvoiceCostInfoBySubOrderNo(invoiceOrder.getInvoiceNo());
+                if (invoiceCostInfo != null) {
+                    orderVo.setTransportChannel(invoiceCostInfo.getTransportChannel());
+                }
                 orderVoList.add(orderVo);
             }
         }

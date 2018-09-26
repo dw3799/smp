@@ -356,11 +356,95 @@ public class InvoiceOrderController {
                 response.setTotalCount(invoiceOrderVos.get(0).getTotalCount());
                 return response;
             }
-            
+
             return WebApiResponse.success(null);
         } catch (Exception ex) {
             logger.error("待财务审核发货单列表异常", ex);
             return error("待财务审核发货单列表异常");
+        }
+    }
+
+
+    /**
+     * 待单证补充发货信息发货单列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listDocApvInvoiceOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<InvoiceOrderVo>> listDocApvInvoiceOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                                       @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        try {
+            if (pageSize == null) {
+                pageSize = 30;
+            }
+
+            if (pageNum == null) {
+                pageNum = 1;
+            }
+
+            Integer start = (pageNum - 1) * pageSize;
+            Integer size = pageSize;
+
+
+            Map<String, Object> params = new HashMap<>();
+
+            params.put("invoiceOrderStatus", InvoiceOrderStatusEnum.DOC_DELIVER_INFO.getCode());
+
+
+            List<InvoiceOrderVo> invoiceOrderVos = invoiceOrderServiceProxy.listMyInvoiceOrderByParams(params, start, size);
+            if (!CollectionUtils.isEmpty(invoiceOrderVos)) {
+                WebApiResponse response = WebApiResponse.success(invoiceOrderVos);
+                response.setTotalCount(invoiceOrderVos.get(0).getTotalCount());
+                return response;
+            }
+
+            return WebApiResponse.success(null);
+        } catch (Exception ex) {
+            logger.error("待单证补充发货信息发货单列表异常", ex);
+            return error("待单证补充发货信息发货单列表异常");
+        }
+    }
+
+
+    /**
+     * 待出库发货单列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listOutReadyInvoiceOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<InvoiceOrderVo>> listOutReadyInvoiceOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                                         @RequestParam(name = "pageNum", required = false) Integer pageNum) {
+        try {
+            if (pageSize == null) {
+                pageSize = 30;
+            }
+
+            if (pageNum == null) {
+                pageNum = 1;
+            }
+
+            Integer start = (pageNum - 1) * pageSize;
+            Integer size = pageSize;
+
+
+            Map<String, Object> params = new HashMap<>();
+
+            params.put("invoiceOrderStatus", InvoiceOrderStatusEnum.OUT_READY.getCode());
+
+
+            List<InvoiceOrderVo> invoiceOrderVos = invoiceOrderServiceProxy.listMyInvoiceOrderByParams(params, start, size);
+            if (!CollectionUtils.isEmpty(invoiceOrderVos)) {
+                WebApiResponse response = WebApiResponse.success(invoiceOrderVos);
+                response.setTotalCount(invoiceOrderVos.get(0).getTotalCount());
+                return response;
+            }
+
+            return WebApiResponse.success(null);
+        } catch (Exception ex) {
+            logger.error("待出库发货单列表异常", ex);
+            return error("待出库发货单列表异常");
         }
     }
 

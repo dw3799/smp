@@ -42,6 +42,27 @@ public class InvoiceOrderVo {
 
     private String checkOutTime;
 
+    private String deliverType;
+
+    private String transportChannel;
+
+
+    public String getTransportChannel() {
+        return transportChannel;
+    }
+
+    public void setTransportChannel(String transportChannel) {
+        this.transportChannel = transportChannel;
+    }
+
+    public String getDeliverType() {
+        return deliverType;
+    }
+
+    public void setDeliverType(String deliverType) {
+        this.deliverType = deliverType;
+    }
+
     public String getStorageUserNo() {
         return storageUserNo;
     }
