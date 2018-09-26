@@ -625,7 +625,7 @@
             <![CDATA[ and o.submit_time >= str_to_date(#{submitTimeStart},'%Y/%m/%d %H:%i:%s')]]>
         </if>
         <if test="submitTimeEnd != null and  submitTimeEnd != '' ">
-            <![CDATA[ and o.submitTimeEnd <= str_to_date(#{submitTimeEnd},'%Y/%m/%d %H:%i:%s')]]>
+            <![CDATA[ and o.submit_time <= str_to_date(#{submitTimeEnd},'%Y/%m/%d %H:%i:%s')]]>
         </if>
 
         <if test="salerUserNo != null and salerUserNo != ''">

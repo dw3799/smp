@@ -2,7 +2,11 @@ package com.alipapa.smp.invoice.mapper;
 
 import com.alipapa.smp.invoice.pojo.InvoiceOrder;
 import com.alipapa.smp.invoice.pojo.InvoiceOrderExample;
+
 import java.util.List;
+import java.util.Map;
+
+import com.alipapa.smp.order.pojo.Order;
 import org.apache.ibatis.annotations.Param;
 
 public interface InvoiceOrderMapper {
@@ -27,4 +31,9 @@ public interface InvoiceOrderMapper {
     int updateByPrimaryKeySelective(InvoiceOrder record);
 
     int updateByPrimaryKey(InvoiceOrder record);
+
+    List<InvoiceOrder> listMyInvoiceOrderByParam(Map<String, Object> params);
+
+    long listMyInvoiceOrderByParamCount(Map<String, Object> params);
+
 }

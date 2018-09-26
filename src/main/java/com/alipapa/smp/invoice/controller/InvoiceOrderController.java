@@ -11,6 +11,8 @@ import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.ConsumerFollowRecord;
 import com.alipapa.smp.invoice.pojo.InvoiceOrder;
 import com.alipapa.smp.invoice.service.InvoiceOrderService;
+import com.alipapa.smp.invoice.service.impl.InvoiceOrderServiceProxy;
+import com.alipapa.smp.invoice.vo.InvoiceOrderVo;
 import com.alipapa.smp.order.controller.SubOrderController;
 import com.alipapa.smp.order.pojo.AgentOrderDetail;
 import com.alipapa.smp.order.pojo.Order;
@@ -19,11 +21,14 @@ import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.order.service.impl.SubOrderServiceProxy;
+import com.alipapa.smp.order.vo.OrderVo;
 import com.alipapa.smp.order.vo.SubOrderVo;
 import com.alipapa.smp.product.pojo.Product;
 import com.alipapa.smp.product.pojo.ProductCategory;
 import com.alipapa.smp.product.pojo.ProductPicture;
+import com.alipapa.smp.user.pojo.Group;
 import com.alipapa.smp.user.pojo.User;
+import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +37,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.alipapa.smp.utils.WebApiResponse.error;
 
@@ -57,11 +60,19 @@ public class InvoiceOrderController {
 
 
     @Autowired
+    private InvoiceOrderServiceProxy invoiceOrderServiceProxy;
+
+
+    @Autowired
     private SubOrderService subOrderService;
 
 
     @Autowired
     private OrderService orderService;
+
+
+    @Autowired
+    private UserService userService;
 
 
     @Autowired
@@ -212,6 +223,92 @@ public class InvoiceOrderController {
             return error("保存或提交发货单");
         }
         return WebApiResponse.error("保存或提交发货单");
+    }
+
+
+    /**
+     * 我的采购单查询
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listMyInvoiceOrder", method = RequestMethod.GET)
+    public WebApiResponse<List<InvoiceOrderVo>> listMyInvoiceOrder(@RequestParam(name = "pageSize", required = false) Integer pageSize,
+                                                                   @RequestParam(name = "pageNum", required = false) Integer pageNum,
+                                                                   @RequestParam(name = "invoiceOrderNo", required = false) String invoiceOrderNo,
+                                                                   @RequestParam(name = "orderNo", required = false) String orderNo,
+                                                                   @RequestParam(name = "consumerName", required = false) String consumerName,
+                                                                   @RequestParam(name = "salerUserId", required = false) Long salerUserId,
+                                                                   @RequestParam(name = "invoiceOrderStatus", required = false) String invoiceOrderStatus,
+                                                                   @RequestParam(name = "createdTimeStart", required = false) String createdTimeStart, //YYYY-MM-DD HH:MM SS
+                                                                   @RequestParam(name = "createdTimeEnd", required = false) String createdTimeEnd) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        Map<String, Object> params = new HashMap<>();
+
+        if (StringUtil.isNotEmptyString(invoiceOrderNo)) {
+            params.put("invoiceOrderNo", invoiceOrderNo);
+        }
+
+        if (StringUtil.isNotEmptyString(orderNo)) {
+            params.put("orderNo", orderNo);
+        }
+
+        if (StringUtil.isNotEmptyString(consumerName)) {
+            params.put("consumerName", consumerName);
+        }
+
+        if (StringUtil.isNotEmptyString(invoiceOrderStatus)) {
+            params.put("invoiceOrderStatus", InvoiceOrderStatusEnum.valueOf(invoiceOrderStatus).getCode());
+        }
+
+        //创建时间开始
+        if (!StringUtil.isNotEmptyString(createdTimeStart)) {
+            logger.info("createdTimeStart:" + createdTimeStart);
+            params.put("createdTimeStart", createdTimeStart);
+        }
+
+        //创建时间结束
+        if (!StringUtil.isNotEmptyString(createdTimeEnd)) {
+            logger.info("createdTimeEnd:" + createdTimeEnd);
+            params.put("createdTimeEnd", createdTimeEnd);
+        }
+
+        User user = userService.getUserByUserNo(userInfo.getUserNo());
+
+        if (userInfo.getRoleName().equals(RoleEnum.saler.getCodeName())) {
+            params.put("salerUserNo", user.getUserNo());
+        } else if (userInfo.getRoleName().equals(RoleEnum.supervisor.getCodeName())) {
+            params.put("groupId", user.getGroupId());
+        } else if (userInfo.getRoleName().equals(RoleEnum.agentBuyer.getCodeName()) || userInfo.getRoleName().equals(RoleEnum.selfBuyer.getCodeName())) {
+            params.put("buyerUserNo", user.getUserNo());
+        } else if (userInfo.getRoleName().equals(RoleEnum.superBuyer.getCodeName())) {
+            params.put("buyerGroupId", user.getGroupId());
+        } else {
+            if (salerUserId != null && salerUserId > 0) {
+                User selectedUser = userService.getUserById(salerUserId);
+                params.put("salerUserNo", selectedUser.getUserNo());
+            }
+        }
+
+        if (pageSize == null) {
+            pageSize = 30;
+        }
+
+        if (pageNum == null) {
+            pageNum = 1;
+        }
+
+        Integer start = (pageNum - 1) * pageSize;
+        Integer size = pageSize;
+
+        List<InvoiceOrderVo> invoiceOrderVos = invoiceOrderServiceProxy.listMyInvoiceOrderByParams(params, start, size);
+        if (!CollectionUtils.isEmpty(invoiceOrderVos)) {
+            WebApiResponse response = WebApiResponse.success(invoiceOrderVos);
+            response.setTotalCount(invoiceOrderVos.get(0).getTotalCount());
+            return response;
+        }
+
+        return WebApiResponse.success(null);
     }
 
 

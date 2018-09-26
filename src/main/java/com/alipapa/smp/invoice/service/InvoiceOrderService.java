@@ -79,7 +79,6 @@ public class InvoiceOrderService {
             orderWorkFlow.setUpdatedTime(new Date());
             orderWorkFlowService.save(orderWorkFlow);
         }
-
         return true;
     }
 
