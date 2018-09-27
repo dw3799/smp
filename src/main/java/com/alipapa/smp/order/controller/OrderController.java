@@ -488,7 +488,8 @@ public class OrderController {
      * @return
      */
     @RequestMapping(value = "/close-order", method = RequestMethod.POST)
-    public WebApiResponse<String> closeOrder(@RequestParam(name = "orderNos") String orderNos) {
+    public WebApiResponse<String> closeOrder(@RequestParam(name = "orderNos") String orderNos,
+                                             @RequestParam(name = "remark") String remark) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {
             if (StringUtil.isEmptyString(orderNos)) {
@@ -498,7 +499,7 @@ public class OrderController {
             String[] orderNoArray = orderNos.split(";");
 
             for (String orderNo : orderNoArray) {
-                orderServiceProxy.closeOrder(orderNo, userInfo.getUserNo());
+                orderServiceProxy.closeOrder(orderNo, userInfo.getUserNo(),remark);
             }
         } catch (Exception ex) {
             logger.error("", ex);

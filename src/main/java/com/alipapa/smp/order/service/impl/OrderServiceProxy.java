@@ -275,7 +275,7 @@ public class OrderServiceProxy {
      * @param orderNo
      * @return
      */
-    public boolean closeOrder(String orderNo, String salerUserNo) throws Exception {
+    public boolean closeOrder(String orderNo, String salerUserNo, String remark) throws Exception {
         Order order = orderService.selectOrderByOrderNo(orderNo);
         if (order == null) {
             return false;
@@ -283,8 +283,28 @@ public class OrderServiceProxy {
         if (!salerUserNo.equals(order.getSalerUserNo())) {
             throw new Exception("没有权限！");
         }
+
+
+        //保存订单流转记录
+        OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+        orderWorkFlow.setCreatedTime(new Date());
+        orderWorkFlow.setNewOrderStatus(OrderStatusEnum.CLOSE.getCode());
+        orderWorkFlow.setOldOrderStatus(order.getOrderStatus());
+        orderWorkFlow.setOpUserName(order.getSalerUserName());
+        orderWorkFlow.setOpUserNo(order.getSalerUserNo());
+        orderWorkFlow.setOpUserRole(RoleEnum.saler.getDec());
+        orderWorkFlow.setOrderNo(order.getOrderNo());
+        orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
+        orderWorkFlow.setRemark(remark);
+        orderWorkFlow.setResult("关闭订单成功");
+        orderWorkFlow.setUpdatedTime(new Date());
+
         order.setOrderStatus(OrderStatusEnum.CLOSE.getCode());
-        return orderService.updateOrder(order);
+        orderService.updateOrder(order);
+
+        orderWorkFlowService.save(orderWorkFlow);
+        return true;
+
     }
 
 
