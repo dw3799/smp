@@ -6,17 +6,13 @@ import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.vo.SysDictVo;
-import com.alipapa.smp.invoice.pojo.InvoiceOrder;
-import com.alipapa.smp.invoice.pojo.InvoiceProduct;
-import com.alipapa.smp.invoice.service.InvoiceOrderService;
-import com.alipapa.smp.invoice.service.InvoiceProductService;
+import com.alipapa.smp.invoice.pojo.*;
+import com.alipapa.smp.invoice.service.*;
 import com.alipapa.smp.invoice.service.impl.InvoiceOrderServiceProxy;
 import com.alipapa.smp.invoice.vo.BasicInvoiceOrderInfo;
 import com.alipapa.smp.invoice.vo.InvoiceAdressVo;
 import com.alipapa.smp.invoice.vo.InvoiceOrderVo;
-import com.alipapa.smp.order.pojo.Order;
-import com.alipapa.smp.order.pojo.OrderWorkFlow;
-import com.alipapa.smp.order.pojo.SubOrder;
+import com.alipapa.smp.order.pojo.*;
 import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.SubOrderService;
@@ -76,11 +72,22 @@ public class InvoiceOrderController {
 
 
     @Autowired
+    private InvoiceCostInfoService invoiceCostInfoService;
+
+
+    @Autowired
     private InvoiceProductService invoiceProductService;
 
 
     @Autowired
     private OrderWorkFlowService orderWorkFlowService;
+
+    @Autowired
+    private InvoiceOrderExtService invoiceOrderExtService;
+
+
+    @Autowired
+    private InvoiceDeliverInfoService invoiceDeliverInfoService;
 
 
     /**
@@ -357,7 +364,7 @@ public class InvoiceOrderController {
             return WebApiResponse.error("发货单不存在");
         }
 
-        List<InvoiceProduct> invoiceProductList = invoiceProductService.listInvoiceProductBySubOrderNo(invoiceOrderNo);
+        List<InvoiceProduct> invoiceProductList = invoiceProductService.listInvoiceProductByInvoiceOrderNo(invoiceOrderNo);
 
         if (CollectionUtils.isEmpty(invoiceProductList)) {
             return WebApiResponse.error("发货单产品不存在");
@@ -517,6 +524,140 @@ public class InvoiceOrderController {
 
 
     /**
+     * 财务审核发货单
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/finApproveInvoiceOrder", method = RequestMethod.POST)
+    public WebApiResponse<String> finApproveInvoiceOrder(@RequestParam(name = "invoiceOrderNo") String invoiceOrderNo,
+                                                         @RequestParam(name = "result") String result,
+                                                         @RequestParam(name = "remark", required = false) String remark) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(invoiceOrderNo) || StringUtil.isEmptyString(result)) {
+                return error("缺少必传参数");
+            }
+
+            InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceOrderNo);
+            if (invoiceOrder == null) {
+                return WebApiResponse.error("发货单不存在");
+            }
+
+            if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+                if (!RoleEnum.financial.getCodeName().equals(userInfo.getRoleName())) {
+                    return error("没有权限");
+                }
+            }
+
+            if (invoiceOrder.getInvoiceStatus() != InvoiceOrderStatusEnum.FIN_APV.getCode()) {
+                return error("当前状态财务无法审核发货单！");
+            }
+
+            User user = userService.getUserByUserNo(userInfo.getUserNo());
+
+            if ("N".equals(result)) {
+                //保存发货单流转记录
+                OrderWorkFlow invoiceOrderWorkFlow = new OrderWorkFlow();
+                invoiceOrderWorkFlow.setCreatedTime(new Date());
+                invoiceOrderWorkFlow.setNewOrderStatus(InvoiceOrderStatusEnum.DISCARD.getCode());
+                invoiceOrderWorkFlow.setOldOrderStatus(invoiceOrder.getInvoiceStatus());
+                invoiceOrderWorkFlow.setOpUserName(userInfo.getUserName());
+                invoiceOrderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                invoiceOrderWorkFlow.setOpUserRole(userInfo.getRoleName());
+                invoiceOrderWorkFlow.setOrderNo(invoiceOrder.getInvoiceNo());
+                invoiceOrderWorkFlow.setType(OrderWorkFlowTypeEnum.IV_ORDER.getCodeName());
+                invoiceOrderWorkFlow.setRemark(remark);
+                invoiceOrderWorkFlow.setResult("财务审核发货单不通过");
+                invoiceOrderWorkFlow.setUpdatedTime(new Date());
+
+                invoiceOrder.setInvoiceStatus(InvoiceOrderStatusEnum.DISCARD.getCode());
+                invoiceOrder.setRemark(invoiceOrder.getRemark() + "财务审核发货单不通过");
+                invoiceOrderService.updateInvoiceOrder(invoiceOrder);
+                orderWorkFlowService.save(invoiceOrderWorkFlow);
+
+
+                List<InvoiceProduct> invoiceProductList = invoiceProductService.listInvoiceProductByInvoiceOrderNo(invoiceOrderNo);
+                for (InvoiceProduct invoiceProduct : invoiceProductList) {
+                    SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(invoiceProduct.getSubOrderNo());
+                    //保存采购单流转记录
+                    OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                    orderWorkFlow.setCreatedTime(new Date());
+                    orderWorkFlow.setNewOrderStatus(SubOrderStatusEnum.INVOICE_APPLY.getCode());
+                    orderWorkFlow.setOldOrderStatus(subOrder.getSubOrderStatus());
+                    orderWorkFlow.setOpUserName(user.getName());
+                    orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                    orderWorkFlow.setOpUserRole(RoleEnum.financial.getDec());
+                    orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+                    orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+                    orderWorkFlow.setRemark(remark);
+                    orderWorkFlow.setResult("财务审核发货单不通过");
+                    orderWorkFlow.setUpdatedTime(new Date());
+
+                    subOrder.setSubOrderStatus(SubOrderStatusEnum.INVOICE_APPLY.getCode());
+                    subOrderService.updateSubOrder(subOrder);
+                    orderWorkFlowService.save(orderWorkFlow);
+                }
+            } else if ("Y".equals(result)) {
+                //保存发货单流转记录
+                OrderWorkFlow invoiceOrderWorkFlow = new OrderWorkFlow();
+                invoiceOrderWorkFlow.setCreatedTime(new Date());
+                invoiceOrderWorkFlow.setNewOrderStatus(InvoiceOrderStatusEnum.DOC_DELIVER_INFO.getCode());
+                invoiceOrderWorkFlow.setOldOrderStatus(invoiceOrder.getInvoiceStatus());
+                invoiceOrderWorkFlow.setOpUserName(userInfo.getUserName());
+                invoiceOrderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                invoiceOrderWorkFlow.setOpUserRole(userInfo.getRoleName());
+                invoiceOrderWorkFlow.setOrderNo(invoiceOrder.getInvoiceNo());
+                invoiceOrderWorkFlow.setType(OrderWorkFlowTypeEnum.IV_ORDER.getCodeName());
+                invoiceOrderWorkFlow.setRemark(remark);
+                invoiceOrderWorkFlow.setResult("财务审核发货单通过");
+                invoiceOrderWorkFlow.setUpdatedTime(new Date());
+
+                invoiceOrder.setInvoiceStatus(InvoiceOrderStatusEnum.DOC_DELIVER_INFO.getCode());
+                invoiceOrderService.updateInvoiceOrder(invoiceOrder);
+                orderWorkFlowService.save(invoiceOrderWorkFlow);
+
+
+                InvoiceOrderExt invoiceOrderExt = invoiceOrderExtService.getInvoiceOrderExtBySubOrderNo(invoiceOrder.getInvoiceNo());
+                if (invoiceOrderExt != null) {
+                    invoiceOrderExt.setFinApvTime(new Date());
+                    invoiceOrderExtService.updateInvoiceOrderExt(invoiceOrderExt);
+                }
+
+                List<InvoiceProduct> invoiceProductList = invoiceProductService.listInvoiceProductByInvoiceOrderNo(invoiceOrderNo);
+                for (InvoiceProduct invoiceProduct : invoiceProductList) {
+                    SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(invoiceProduct.getSubOrderNo());
+                    //保存采购单流转记录
+                    OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                    orderWorkFlow.setCreatedTime(new Date());
+                    orderWorkFlow.setNewOrderStatus(SubOrderStatusEnum.INVOICE_DELIVER.getCode());
+                    orderWorkFlow.setOldOrderStatus(subOrder.getSubOrderStatus());
+                    orderWorkFlow.setOpUserName(user.getName());
+                    orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                    orderWorkFlow.setOpUserRole(userInfo.getRoleName());
+                    orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+                    orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+                    orderWorkFlow.setRemark(remark);
+                    orderWorkFlow.setResult("财务审核发货单通过");
+                    orderWorkFlow.setUpdatedTime(new Date());
+
+                    subOrder.setSubOrderStatus(SubOrderStatusEnum.INVOICE_DELIVER.getCode());
+                    subOrderService.updateSubOrder(subOrder);
+                    orderWorkFlowService.save(orderWorkFlow);
+                }
+            } else {
+                return error("参数有误");
+            }
+
+        } catch (Exception ex) {
+            logger.error("财务审核发货单信息异常", ex);
+            return error("财务审核发货单信息异常");
+        }
+        return WebApiResponse.success("success");
+    }
+
+
+    /**
      * 待单证补充发货信息发货单列表
      *
      * @param
@@ -554,6 +695,145 @@ public class InvoiceOrderController {
         } catch (Exception ex) {
             logger.error("待单证补充发货信息发货单列表异常", ex);
             return error("待单证补充发货信息发货单列表异常");
+        }
+    }
+
+
+    /**
+     * 单证补充发货信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/addDocDeliverInfo", method = RequestMethod.POST)
+    public WebApiResponse<String> addDocDeliverInfo(@RequestParam(name = "invoiceOrderNo") String invoiceOrderNo,
+                                                    @RequestParam(name = "transportChannel") String transportChannel,
+                                                    @RequestParam(name = "transportCost") String transportCost,
+                                                    @RequestParam(name = "remark", required = false) String remark) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(invoiceOrderNo) || StringUtil.isEmptyString(transportCost) || StringUtil.isEmptyString(transportChannel)) {
+                return error("缺少必传参数");
+            }
+
+            InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceOrderNo);
+            if (invoiceOrder == null) {
+                return WebApiResponse.error("发货单不存在");
+            }
+
+            if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+                if (!RoleEnum.documentation.getCodeName().equals(userInfo.getRoleName())) {
+                    return error("没有权限");
+                }
+            }
+
+            if (invoiceOrder.getInvoiceStatus() != InvoiceOrderStatusEnum.DOC_DELIVER_INFO.getCode()) {
+                return error("当前状态单证无法补充发货费用！");
+            }
+
+            User user = userService.getUserByUserNo(userInfo.getUserNo());
+
+            //保存发货单流转记录
+            OrderWorkFlow invoiceOrderWorkFlow = new OrderWorkFlow();
+            invoiceOrderWorkFlow.setCreatedTime(new Date());
+            invoiceOrderWorkFlow.setNewOrderStatus(InvoiceOrderStatusEnum.OUT_READY.getCode());
+            invoiceOrderWorkFlow.setOldOrderStatus(invoiceOrder.getInvoiceStatus());
+            invoiceOrderWorkFlow.setOpUserName(userInfo.getUserName());
+            invoiceOrderWorkFlow.setOpUserNo(userInfo.getUserNo());
+            invoiceOrderWorkFlow.setOpUserRole(userInfo.getRoleName());
+            invoiceOrderWorkFlow.setOrderNo(invoiceOrder.getInvoiceNo());
+            invoiceOrderWorkFlow.setType(OrderWorkFlowTypeEnum.IV_ORDER.getCodeName());
+            invoiceOrderWorkFlow.setRemark(remark);
+            invoiceOrderWorkFlow.setResult("单证补充发货费用");
+            invoiceOrderWorkFlow.setUpdatedTime(new Date());
+
+            invoiceOrder.setInvoiceStatus(InvoiceOrderStatusEnum.OUT_READY.getCode());
+            invoiceOrderService.updateInvoiceOrder(invoiceOrder);
+            orderWorkFlowService.save(invoiceOrderWorkFlow);
+
+
+            InvoiceCostInfo invoiceCostInfo = new InvoiceCostInfo();
+            invoiceCostInfo.setCreatedTime(new Date());
+            invoiceCostInfo.setInvoiceNo(invoiceOrder.getInvoiceNo());
+            invoiceCostInfo.setOpUserName(userInfo.getUserName());
+            invoiceCostInfo.setOpUserNo(userInfo.getUserNo());
+            invoiceCostInfo.setOrderNo(invoiceOrder.getOrderNo());
+            invoiceCostInfo.setRemark(remark);
+            invoiceCostInfo.setTransportChannel(transportChannel);
+            invoiceCostInfo.setTransportCost(transportCost);
+            invoiceCostInfo.setUpdatedTime(new Date());
+            invoiceCostInfoService.saveInvoiceCostInfo(invoiceCostInfo);
+
+
+            InvoiceOrderExt invoiceOrderExt = invoiceOrderExtService.getInvoiceOrderExtBySubOrderNo(invoiceOrder.getInvoiceNo());
+            if (invoiceOrderExt != null) {
+                invoiceOrderExt.setDocTime(new Date());
+                invoiceOrderExtService.updateInvoiceOrderExt(invoiceOrderExt);
+            }
+
+            //采购单更新
+            List<InvoiceProduct> invoiceProductList = invoiceProductService.listInvoiceProductByInvoiceOrderNo(invoiceOrderNo);
+            for (InvoiceProduct invoiceProduct : invoiceProductList) {
+                SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(invoiceProduct.getSubOrderNo());
+                //保存采购单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(SubOrderStatusEnum.READY_OUT.getCode());
+                orderWorkFlow.setOldOrderStatus(subOrder.getSubOrderStatus());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(userInfo.getRoleName());
+                orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("单证补充发货信息");
+                orderWorkFlow.setUpdatedTime(new Date());
+
+                subOrder.setSubOrderStatus(SubOrderStatusEnum.READY_OUT.getCode());
+                subOrderService.updateSubOrder(subOrder);
+                orderWorkFlowService.save(orderWorkFlow);
+            }
+
+        } catch (Exception ex) {
+            logger.error("单证补充发货信息异常", ex);
+            return error("单证补充发货信息异常");
+        }
+        return WebApiResponse.success("success");
+    }
+
+
+    /**
+     * 获取发货费用信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/getDocDeliverInfo", method = RequestMethod.POST)
+    public WebApiResponse<JSONObject> getDocDeliverInfo(@RequestParam(name = "invoiceOrderNo") String invoiceOrderNo) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(invoiceOrderNo)) {
+                return error("缺少必传参数");
+            }
+
+            InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceOrderNo);
+            if (invoiceOrder == null) {
+                return WebApiResponse.error("发货单不存在");
+            }
+
+            InvoiceCostInfo invoiceCostInfo = invoiceCostInfoService.getInvoiceCostInfoBySubOrderNo(invoiceOrderNo);
+            if (invoiceCostInfo == null) {
+                return WebApiResponse.success(null);
+            }
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("transportChannel", invoiceCostInfo.getTransportChannel());
+            jsonObject.put("transportCost", invoiceCostInfo.getTransportCost());
+
+            return WebApiResponse.success(jsonObject);
+        } catch (Exception ex) {
+            logger.error("获取发货费用信息异常", ex);
+            return error("获取发货费用信息异常");
         }
     }
 
@@ -599,5 +879,188 @@ public class InvoiceOrderController {
         }
     }
 
+
+    /**
+     * 仓储发货单出库
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/checkOut", method = RequestMethod.POST)
+    public WebApiResponse<String> checkOut(@RequestParam(name = "invoiceOrderNo") String invoiceOrderNo,
+                                           @RequestParam(name = "logisticsNo") String logisticsNo,
+                                           @RequestParam(name = "actaulDeliverTime") String actaulDeliverTime,
+                                           @RequestParam(name = "remark", required = false) String remark) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+        try {
+            if (StringUtil.isEmptyString(invoiceOrderNo) || StringUtil.isEmptyString(logisticsNo) || StringUtil.isEmptyString(actaulDeliverTime)) {
+                return error("缺少必传参数");
+            }
+
+            InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceOrderNo);
+            if (invoiceOrder == null) {
+                return WebApiResponse.error("发货单不存在");
+            }
+
+            if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
+                if (!RoleEnum.storage.getCodeName().equals(userInfo.getRoleName())) {
+                    return error("没有权限");
+                }
+            }
+
+            if (invoiceOrder.getInvoiceStatus() != InvoiceOrderStatusEnum.OUT_READY.getCode()) {
+                return error("当前状态仓储无法出库！");
+            }
+
+            User user = userService.getUserByUserNo(userInfo.getUserNo());
+            //保存发货单流转记录
+            OrderWorkFlow invoiceOrderWorkFlow = new OrderWorkFlow();
+            invoiceOrderWorkFlow.setCreatedTime(new Date());
+            invoiceOrderWorkFlow.setNewOrderStatus(InvoiceOrderStatusEnum.COMPLETE.getCode());
+            invoiceOrderWorkFlow.setOldOrderStatus(invoiceOrder.getInvoiceStatus());
+            invoiceOrderWorkFlow.setOpUserName(userInfo.getUserName());
+            invoiceOrderWorkFlow.setOpUserNo(userInfo.getUserNo());
+            invoiceOrderWorkFlow.setOpUserRole(userInfo.getRoleName());
+            invoiceOrderWorkFlow.setOrderNo(invoiceOrder.getInvoiceNo());
+            invoiceOrderWorkFlow.setType(OrderWorkFlowTypeEnum.IV_ORDER.getCodeName());
+            invoiceOrderWorkFlow.setRemark(remark);
+            invoiceOrderWorkFlow.setResult("仓储出库完成");
+            invoiceOrderWorkFlow.setUpdatedTime(new Date());
+
+            invoiceOrder.setInvoiceStatus(InvoiceOrderStatusEnum.COMPLETE.getCode());
+            invoiceOrderService.updateInvoiceOrder(invoiceOrder);
+            orderWorkFlowService.save(invoiceOrderWorkFlow);
+
+            InvoiceDeliverInfo invoiceDeliverInfo = new InvoiceDeliverInfo();
+            invoiceDeliverInfo.setCreatedTime(new Date());
+            invoiceDeliverInfo.setInvoiceNo(invoiceOrder.getInvoiceNo());
+            invoiceDeliverInfo.setOpUserName(userInfo.getUserName());
+            invoiceDeliverInfo.setOpUserNo(userInfo.getUserNo());
+            invoiceDeliverInfo.setOrderNo(invoiceOrder.getOrderNo());
+            invoiceDeliverInfo.setRemark(remark);
+            invoiceDeliverInfo.setActaulDeliverTime(DateUtil.parseObjToDate(actaulDeliverTime));
+            invoiceDeliverInfo.setLogisticsNo(logisticsNo);
+            invoiceDeliverInfo.setUpdatedTime(new Date());
+            invoiceDeliverInfoService.saveInvoiceDeliverInfo(invoiceDeliverInfo);
+
+            InvoiceOrderExt invoiceOrderExt = invoiceOrderExtService.getInvoiceOrderExtBySubOrderNo(invoiceOrder.getInvoiceNo());
+            if (invoiceOrderExt != null) {
+                invoiceOrderExt.setCheckOutTime(new Date());
+                invoiceOrderExt.setStorageUserName(userInfo.getUserName());
+                invoiceOrderExt.setStorageUserNo(userInfo.getUserNo());
+                invoiceOrderExtService.updateInvoiceOrderExt(invoiceOrderExt);
+            }
+
+            //采购单更新
+            List<InvoiceProduct> invoiceProductList = invoiceProductService.listInvoiceProductByInvoiceOrderNo(invoiceOrderNo);
+            for (InvoiceProduct invoiceProduct : invoiceProductList) {
+                SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(invoiceProduct.getSubOrderNo());
+                //保存采购单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(SubOrderStatusEnum.COMPLETE.getCode());
+                orderWorkFlow.setOldOrderStatus(subOrder.getSubOrderStatus());
+                orderWorkFlow.setOpUserName(user.getName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(userInfo.getRoleName());
+                orderWorkFlow.setOrderNo(subOrder.getSubOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.SUB_ORDER.getCodeName());
+                orderWorkFlow.setRemark(remark);
+                orderWorkFlow.setResult("仓储出库完成");
+                orderWorkFlow.setUpdatedTime(new Date());
+
+                subOrder.setSubOrderStatus(SubOrderStatusEnum.COMPLETE.getCode());
+                subOrderService.updateSubOrder(subOrder);
+                orderWorkFlowService.save(orderWorkFlow);
+            }
+
+
+            boolean isAllCompelte = true;
+            List<SubOrder> subOrderList = subOrderService.listSubOrderByOrderNoWithOutDetail(invoiceOrder.getOrderNo());
+
+            for (SubOrder subOrder : subOrderList) {
+                if (subOrder.getSubOrderStatus() != SubOrderStatusEnum.COMPLETE.getCode()) {
+                    isAllCompelte = false;
+                }
+            }
+
+            if (isAllCompelte) {
+                Order order = orderService.selectOrderByOrderNo(invoiceOrder.getOrderNo());
+                order.setOrderStatus(OrderStatusEnum.COMPLETE.getCode());
+                //保存订单流转记录
+                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+                orderWorkFlow.setCreatedTime(new Date());
+                orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
+                orderWorkFlow.setOldOrderStatus(OrderStatusEnum.DELIVERY.getCode());
+                orderWorkFlow.setOpUserName(userInfo.getUserName());
+                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+                orderWorkFlow.setOpUserRole(userInfo.getRoleName());
+                orderWorkFlow.setOrderNo(order.getOrderNo());
+                orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
+                orderWorkFlow.setRemark("产品已全部发货");
+                orderWorkFlow.setResult("已完成");
+                orderWorkFlow.setUpdatedTime(new Date());
+                orderWorkFlowService.save(orderWorkFlow);
+                orderService.updateOrder(order);
+            }
+        } catch (Exception ex) {
+            logger.error("仓储发货单出库异常", ex);
+            return error("仓储发货单出库异常");
+        }
+        return WebApiResponse.success("success");
+    }
+
+
+    /**
+     * 获取产品采购与发货情况
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listSubOrderDeliverInfo", method = RequestMethod.GET)
+    public WebApiResponse<List<JSONObject>> listSubOrderDeliverInfo(@RequestParam(name = "orderNo") String orderNo) {
+        try {
+            if (StringUtil.isEmptyString(orderNo)) {
+                return error("缺少必传参数");
+            }
+
+            Order order = orderService.selectOrderByOrderNo(orderNo);
+            if (order == null) {
+                return WebApiResponse.error("订单不存在");
+            }
+            List<JSONObject> jsonObjectList = new ArrayList<>();
+
+            List<SubOrder> subOrderList = subOrderService.listSubOrderByOrderNoWithOutDetail(orderNo);
+            for (SubOrder subOrder : subOrderList) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("productName", subOrder.getProductName());
+                jsonObject.put("productCategory", subOrder.getProductCategory());
+                jsonObject.put("subOrderNo", subOrder.getSubOrderNo());
+                jsonObject.put("subOrderStatus", SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
+
+                if (subOrder.getSubOrderStatus() == SubOrderStatusEnum.INVOICE_APPLY.getCode()) {
+                    jsonObject.put("isDeliver", "是");
+                } else {
+                    jsonObject.put("isDeliver", "否");
+                }
+
+                InvoiceProduct invoiceProduct = invoiceProductService.getInvoiceProductByParam(orderNo, subOrder.getSubOrderNo());
+                if (invoiceProduct != null) {
+                    InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceProduct.getInvoiceNo());
+                    if (invoiceOrder != null && invoiceOrder.getInvoiceStatus() != InvoiceOrderStatusEnum.DISCARD.getCode()) {
+                        jsonObject.put("invoiceOrderNo", invoiceOrder.getInvoiceNo());
+                        jsonObject.put("invoiceStatus", InvoiceOrderStatusEnum.valueOf(invoiceOrder.getInvoiceStatus()).getDec());
+                        jsonObject.put("isDeliver", "已发货");
+                    }
+                }
+                jsonObjectList.add(jsonObject);
+            }
+
+            return WebApiResponse.success(jsonObjectList);
+        } catch (Exception ex) {
+            logger.error("获取产品采购与发货情况异常", ex);
+            return error("获取产品采购与发货情况异常");
+        }
+    }
 
 }

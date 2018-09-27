@@ -17,6 +17,10 @@ public class InvoiceCostInfoService {
     @Resource
     private InvoiceCostInfoMapper invoiceCostInfoMapper;
 
+    public boolean saveInvoiceCostInfo(InvoiceCostInfo invoiceCostInfo) {
+        invoiceCostInfoMapper.insert(invoiceCostInfo);
+        return true;
+    }
 
     /**
      * 获取采购单费用

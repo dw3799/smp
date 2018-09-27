@@ -128,6 +128,12 @@ public class InvoiceOrderService {
     }
 
 
+    public boolean updateInvoiceOrder(InvoiceOrder invoiceOrder) {
+        invoiceOrderMapper.updateByPrimaryKey(invoiceOrder);
+        return true;
+    }
+
+
     public InvoiceOrder selectInvoiceOrderByInvoiceOrderNo(String invoiceOrderNo) {
         InvoiceOrderExample example = new InvoiceOrderExample();
         InvoiceOrderExample.Criteria criteria = example.createCriteria();

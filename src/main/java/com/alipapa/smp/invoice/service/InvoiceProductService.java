@@ -22,7 +22,7 @@ public class InvoiceProductService {
      * @param invoiceOrderNo
      * @return
      */
-    public List<InvoiceProduct> listInvoiceProductBySubOrderNo(String invoiceOrderNo) {
+    public List<InvoiceProduct> listInvoiceProductByInvoiceOrderNo(String invoiceOrderNo) {
         InvoiceProductExample example = new InvoiceProductExample();
         InvoiceProductExample.Criteria criteria = example.createCriteria();
         criteria.andInvoiceNoEqualTo(invoiceOrderNo);
@@ -32,6 +32,27 @@ public class InvoiceProductService {
             return null;
         }
         return invoiceProductList;
+    }
+
+
+    /**
+     * 获取发货单产品
+     *
+     * @param orderNo
+     * @return
+     */
+    public InvoiceProduct getInvoiceProductByParam(String orderNo, String subOrderNo) {
+        InvoiceProductExample example = new InvoiceProductExample();
+        InvoiceProductExample.Criteria criteria = example.createCriteria();
+        criteria.andOrderNoEqualTo(orderNo);
+        criteria.andSubOrderNoEqualTo(subOrderNo);
+
+        List<InvoiceProduct> invoiceProductList = invoiceProductMapper.selectByExample(example);
+
+        if (CollectionUtils.isEmpty(invoiceProductList)) {
+            return null;
+        }
+        return invoiceProductList.get(0);
     }
 
 

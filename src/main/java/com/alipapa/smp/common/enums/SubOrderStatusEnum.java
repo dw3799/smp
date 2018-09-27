@@ -27,7 +27,7 @@ public enum SubOrderStatusEnum {
 
     READY_OUT(10, "READY_OUT", "待出库"),
 
-    COMPLETE(11, "COMPLETE", "订单完成"),
+    COMPLETE(11, "COMPLETE", "采购单完成"),
 
     CLOSE(12, "CLOSE", "订单关闭");
 

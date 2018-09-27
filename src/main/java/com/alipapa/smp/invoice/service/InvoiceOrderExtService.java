@@ -23,6 +23,12 @@ public class InvoiceOrderExtService {
     }
 
 
+    public boolean updateInvoiceOrderExt(InvoiceOrderExt invoiceOrderExt) {
+        invoiceOrderExtMapper.updateByPrimaryKey(invoiceOrderExt);
+        return true;
+    }
+
+
     /**
      * 获取采购单信息
      *
