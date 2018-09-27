@@ -788,7 +788,7 @@ public class OrderDetailController {
 
             consumerFrontPayVo.setExchangeRate(consumerFrontPay.getExchangeRate());
 
-            consumerFrontPayVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFrontAmount()) + currencyDec);
+            consumerFrontPayVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFrontAmount()));
             consumerFrontPayVo.setOrderNo(orderNo);
             consumerFrontPayVo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()));
             consumerFrontPayVo.setPayChannel(consumerFrontPay.getPayChannel());

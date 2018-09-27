@@ -9,7 +9,7 @@ public class InvoiceOrderVo {
 
     private String orderNo;
 
-    private String invoiceNo;
+    private String invoiceOrderNo;
 
     private String invoiceStatus;
 
@@ -127,12 +127,12 @@ public class InvoiceOrderVo {
         this.orderNo = orderNo;
     }
 
-    public String getInvoiceNo() {
-        return invoiceNo;
+    public String getInvoiceOrderNo() {
+        return invoiceOrderNo;
     }
 
-    public void setInvoiceNo(String invoiceNo) {
-        this.invoiceNo = invoiceNo;
+    public void setInvoiceOrderNo(String invoiceOrderNo) {
+        this.invoiceOrderNo = invoiceOrderNo;
     }
 
     public String getInvoiceStatus() {

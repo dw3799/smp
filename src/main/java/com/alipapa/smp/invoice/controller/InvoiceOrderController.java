@@ -7,14 +7,21 @@ import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
 import com.alipapa.smp.consumer.vo.SysDictVo;
 import com.alipapa.smp.invoice.pojo.InvoiceOrder;
+import com.alipapa.smp.invoice.pojo.InvoiceProduct;
 import com.alipapa.smp.invoice.service.InvoiceOrderService;
+import com.alipapa.smp.invoice.service.InvoiceProductService;
 import com.alipapa.smp.invoice.service.impl.InvoiceOrderServiceProxy;
+import com.alipapa.smp.invoice.vo.BasicInvoiceOrderInfo;
+import com.alipapa.smp.invoice.vo.InvoiceAdressVo;
 import com.alipapa.smp.invoice.vo.InvoiceOrderVo;
 import com.alipapa.smp.order.pojo.Order;
+import com.alipapa.smp.order.pojo.OrderWorkFlow;
 import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.service.OrderService;
+import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.SubOrderService;
 import com.alipapa.smp.order.service.impl.SubOrderServiceProxy;
+import com.alipapa.smp.order.vo.OrderWorkFlowVo;
 import com.alipapa.smp.order.vo.SubOrderVo;
 import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.service.UserService;
@@ -66,6 +73,14 @@ public class InvoiceOrderController {
 
     @Autowired
     private InvoiceOrderService invoiceOrderService;
+
+
+    @Autowired
+    private InvoiceProductService invoiceProductService;
+
+
+    @Autowired
+    private OrderWorkFlowService orderWorkFlowService;
 
 
     /**
@@ -320,6 +335,142 @@ public class InvoiceOrderController {
         }
 
         return WebApiResponse.success(null);
+    }
+
+
+    /**
+     * 发货订单基本信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/getInvoiceOrderBasicInfo", method = RequestMethod.GET)
+    public WebApiResponse<BasicInvoiceOrderInfo> getBasicOrderInfo(@RequestParam("invoiceOrderNo") String invoiceOrderNo) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        if (StringUtil.isEmptyString(invoiceOrderNo)) {
+            return WebApiResponse.error("参数不能为空");
+        }
+
+        InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceOrderNo);
+        if (invoiceOrder == null) {
+            return WebApiResponse.error("发货单不存在");
+        }
+
+        List<InvoiceProduct> invoiceProductList = invoiceProductService.listInvoiceProductBySubOrderNo(invoiceOrderNo);
+
+        if (CollectionUtils.isEmpty(invoiceProductList)) {
+            return WebApiResponse.error("发货单产品不存在");
+        }
+        try {
+            BasicInvoiceOrderInfo basicInvoiceOrderInfo = new BasicInvoiceOrderInfo();
+            basicInvoiceOrderInfo.setCreatedTime(DateUtil.formatToStrTimeV1(invoiceOrder.getCreatedTime()));
+            basicInvoiceOrderInfo.setId(invoiceOrder.getId());
+            basicInvoiceOrderInfo.setInvoiceOrderNo(invoiceOrder.getInvoiceNo());
+            basicInvoiceOrderInfo.setInvoiceStatus(InvoiceOrderStatusEnum.valueOf(invoiceOrder.getInvoiceStatus()).getDec());
+            basicInvoiceOrderInfo.setOrderNo(invoiceOrder.getOrderNo());
+
+            List<JSONObject> invoiceProducts = new ArrayList<>();
+            for (InvoiceProduct invoiceProduct : invoiceProductList) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", invoiceProduct.getId());
+                jsonObject.put("invoiceNo", invoiceProduct.getInvoiceNo());
+                jsonObject.put("productCategoryId", invoiceProduct.getProductCategoryId());
+                jsonObject.put("productCategory", invoiceProduct.getProductCategory());
+                jsonObject.put("productId", invoiceProduct.getProductId());
+                jsonObject.put("productName", invoiceProduct.getProductName());
+                jsonObject.put("subOrderNo", invoiceProduct.getSubOrderNo());
+                SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(invoiceProduct.getSubOrderNo());
+                jsonObject.put("subOrderStatus", SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
+                invoiceProducts.add(jsonObject);
+            }
+
+            basicInvoiceOrderInfo.setInvoiceProducts(invoiceProducts);
+            return WebApiResponse.success(basicInvoiceOrderInfo);
+        } catch (Exception ex) {
+            logger.error("获取发货订单基本信息异常", ex);
+            return WebApiResponse.error("获取发货订单基本信息异常");
+        }
+    }
+
+
+    /**
+     * 获取发货单发货信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/getInvoiceAddressInfo", method = RequestMethod.GET)
+    public WebApiResponse<InvoiceAdressVo> getInvoiceAddressInfo(@RequestParam("invoiceOrderNo") String invoiceOrderNo) {
+        UserInfo userInfo = UserStatus.getUserInfo();
+
+        if (StringUtil.isEmptyString(invoiceOrderNo)) {
+            return WebApiResponse.error("参数不能为空");
+        }
+
+        InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceOrderNo);
+        if (invoiceOrder == null) {
+            return WebApiResponse.error("发货单不存在");
+        }
+
+        try {
+            InvoiceAdressVo invoiceAdressVo = new InvoiceAdressVo();
+            invoiceAdressVo.setAddress(invoiceOrder.getAddress());
+            invoiceAdressVo.setConsignee(invoiceOrder.getConsignee());
+            invoiceAdressVo.setDeliverTime(DateUtil.formatToStrTimeV1(invoiceOrder.getCreatedTime()));
+            invoiceAdressVo.setDeliverType(DeliverTypeEnum.valueOf(invoiceOrder.getDeliverType()).getDec());
+            invoiceAdressVo.setId(invoiceOrder.getId());
+            invoiceAdressVo.setInvoiceOrderNo(invoiceOrder.getInvoiceNo());
+            invoiceAdressVo.setMobile(invoiceOrder.getMobile());
+            invoiceAdressVo.setOrderNo(invoiceOrder.getOrderNo());
+            invoiceAdressVo.setPostalCode(invoiceOrder.getPostalCode());
+            return WebApiResponse.success(invoiceAdressVo);
+        } catch (Exception ex) {
+            logger.error("获取发货单发货信息异常", ex);
+            return WebApiResponse.error("获取获取发货单发货信息异常");
+        }
+    }
+
+
+    /**
+     * 获取发货单流转记录
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listInvoiceOrderWorkFlow", method = RequestMethod.GET)
+    public WebApiResponse<List<OrderWorkFlowVo>> listInvoiceOrderWorkFlow(@RequestParam("invoiceOrderNo") String invoiceOrderNo) {
+
+        if (StringUtil.isEmptyString(invoiceOrderNo)) {
+            return WebApiResponse.error("参数不能为空");
+        }
+
+        InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceOrderNo);
+        if (invoiceOrder == null) {
+            return WebApiResponse.error("发货单不存在");
+        }
+
+        List<OrderWorkFlowVo> orderWorkFlowVoList = new ArrayList<>();
+        try {
+            List<OrderWorkFlow> orderWorkFlowList = orderWorkFlowService.listOrderWorkFlowByParams(invoiceOrderNo, OrderWorkFlowTypeEnum.IV_ORDER.getCodeName());
+            if (!CollectionUtils.isEmpty(orderWorkFlowList)) {
+                for (OrderWorkFlow orderWorkFlow : orderWorkFlowList) {
+                    OrderWorkFlowVo orderWorkFlowVo = new OrderWorkFlowVo();
+                    orderWorkFlowVo.setCreatedTime(DateUtil.formatToStrTimeV1(orderWorkFlow.getCreatedTime()));
+                    orderWorkFlowVo.setOpUserRole(orderWorkFlow.getOpUserRole());
+                    orderWorkFlowVo.setOrderNo(invoiceOrderNo);
+                    orderWorkFlowVo.setOpUserName(orderWorkFlow.getOpUserName());
+                    orderWorkFlowVo.setRemark(orderWorkFlow.getRemark());
+                    orderWorkFlowVo.setResult(orderWorkFlow.getResult());
+                    orderWorkFlowVoList.add(orderWorkFlowVo);
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("获取发货单流转记录异常", ex);
+            return WebApiResponse.error("获取发货单流转记录异常");
+        }
+
+        return WebApiResponse.success(orderWorkFlowVoList);
     }
 
 

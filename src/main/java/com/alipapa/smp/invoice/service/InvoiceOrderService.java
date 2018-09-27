@@ -6,9 +6,7 @@ import com.alipapa.smp.common.enums.SubOrderStatusEnum;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.invoice.mapper.InvoiceOrderMapper;
 import com.alipapa.smp.invoice.mapper.InvoiceProductMapper;
-import com.alipapa.smp.invoice.pojo.InvoiceOrder;
-import com.alipapa.smp.invoice.pojo.InvoiceOrderExt;
-import com.alipapa.smp.invoice.pojo.InvoiceProduct;
+import com.alipapa.smp.invoice.pojo.*;
 import com.alipapa.smp.order.pojo.Order;
 import com.alipapa.smp.order.pojo.OrderWorkFlow;
 import com.alipapa.smp.order.pojo.SubOrder;
@@ -17,6 +15,7 @@ import com.alipapa.smp.order.service.SubOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -57,6 +56,21 @@ public class InvoiceOrderService {
         invoiceOrderExt.setCreatedTime(new Date());
         invoiceOrderExt.setUpdatedTime(new Date());
 
+        //保存发货单流转记录
+        OrderWorkFlow invoiceOrderWorkFlow = new OrderWorkFlow();
+        invoiceOrderWorkFlow.setCreatedTime(new Date());
+        invoiceOrderWorkFlow.setNewOrderStatus(invoiceOrder.getInvoiceStatus());
+        invoiceOrderWorkFlow.setOldOrderStatus(invoiceOrder.getInvoiceStatus());
+        invoiceOrderWorkFlow.setOpUserName(userInfo.getUserName());
+        invoiceOrderWorkFlow.setOpUserNo(userInfo.getUserNo());
+        invoiceOrderWorkFlow.setOpUserRole(userInfo.getRoleName());
+        invoiceOrderWorkFlow.setOrderNo(invoiceOrder.getInvoiceNo());
+        invoiceOrderWorkFlow.setType(OrderWorkFlowTypeEnum.IV_ORDER.getCodeName());
+        invoiceOrderWorkFlow.setRemark("已提交发货单");
+        invoiceOrderWorkFlow.setResult("发货单创建成功");
+        invoiceOrderWorkFlow.setUpdatedTime(new Date());
+        orderWorkFlowService.save(invoiceOrderWorkFlow);
+
         invoiceOrderMapper.insert(invoiceOrder);
         invoiceOrderExtService.saveInvoiceOrderExt(invoiceOrderExt);
 
@@ -96,7 +110,7 @@ public class InvoiceOrderService {
             remarkString = remarkString + subOrder.getProductName() + "、";
         }
 
-        //保存采购单流转记录
+        //保存订单流转记录
         OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
         orderWorkFlow.setCreatedTime(new Date());
         orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
@@ -110,9 +124,19 @@ public class InvoiceOrderService {
         orderWorkFlow.setResult("提交发货单成功");
         orderWorkFlow.setUpdatedTime(new Date());
         orderWorkFlowService.save(orderWorkFlow);
-
         return true;
     }
 
+
+    public InvoiceOrder selectInvoiceOrderByInvoiceOrderNo(String invoiceOrderNo) {
+        InvoiceOrderExample example = new InvoiceOrderExample();
+        InvoiceOrderExample.Criteria criteria = example.createCriteria();
+        criteria.andInvoiceNoEqualTo(invoiceOrderNo);
+        List<InvoiceOrder> invoiceOrderList = invoiceOrderMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(invoiceOrderList)) {
+            return null;
+        }
+        return invoiceOrderList.get(0);
+    }
 
 }

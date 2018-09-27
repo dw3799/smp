@@ -74,7 +74,7 @@ public class InvoiceOrderServiceProxy {
                 orderVo.setConsumerNo(invoiceOrder.getConsumerNo());
                 orderVo.setCreatedTime(DateUtil.formatToStrTimeV1(invoiceOrder.getCreatedTime()));
                 orderVo.setId(invoiceOrder.getId());
-                orderVo.setInvoiceNo(invoiceOrder.getInvoiceNo());
+                orderVo.setInvoiceOrderNo(invoiceOrder.getInvoiceNo());
                 orderVo.setInvoiceStatus(InvoiceOrderStatusEnum.valueOf(invoiceOrder.getInvoiceStatus()).getDec());
                 orderVo.setOrderNo(invoiceOrder.getOrderNo());
                 orderVo.setSalerUserName(invoiceOrder.getSalerUserName());

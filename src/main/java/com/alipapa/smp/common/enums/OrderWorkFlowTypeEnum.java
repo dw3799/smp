@@ -7,7 +7,9 @@ public enum OrderWorkFlowTypeEnum {
 
     M_ORDER(1, "M_ORDER", "主订单"),
 
-    SUB_ORDER(2, "SUB_ORDER", "产品订单");
+    SUB_ORDER(2, "SUB_ORDER", "产品订单"),
+
+    IV_ORDER(3, "IV_ORDER", "发货单");
 
     OrderWorkFlowTypeEnum(int code, String codeName, String dec) {
         this.code = code;
