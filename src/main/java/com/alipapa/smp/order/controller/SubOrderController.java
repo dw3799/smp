@@ -351,6 +351,8 @@ public class SubOrderController {
                         materielOrder.setMiniPic(productPicture.getPicNo());
                         materielOrder.setPic(productPicture.getPicNo());
                     }
+                    materielOrder.setActualPurchaseAmount(0L);
+                    materielOrder.setActualTailAmount(0L);
                     materielOrder.setOrderNo(subOrder.getOrderNo());
                     materielOrder.setPayStatus(MaterielOrderPayStatusEnum.UN_PAY.getCode());
                     materielOrder.setProductCategory(productCategory.getCategoryName());

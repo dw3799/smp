@@ -419,7 +419,8 @@ public class MaterielOrderFollowController {
                     }
 
                     Supplier supplier = supplierService.getSupplierById(supplierId);
-
+                    materielOrder.setActualPurchaseAmount(0L);
+                    materielOrder.setActualTailAmount(0L);
                     if (!CollectionUtils.isEmpty(productPictureList)) {
                         ProductPicture productPicture = productPictureList.get(0);
                         materielOrder.setMiniPic(productPicture.getPicNo());
