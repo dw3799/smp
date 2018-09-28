@@ -506,6 +506,8 @@ public class MaterielOrderFollowController {
                 return error("采购单不存在");
             }
 
+            String remark = request.getParameter("remark");
+
             boolean flag = false;
 
             String materiels = request.getParameter("materiels");
@@ -539,9 +541,9 @@ public class MaterielOrderFollowController {
                 //物料单跟单记录
                 OrderFollowRecord orderFollowRecord = new OrderFollowRecord();
                 orderFollowRecord.setUpdatedTime(new Date());
-                orderFollowRecord.setTitle("跟单记录");
+                orderFollowRecord.setTitle("物料单状态由" + MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus()).getDec() + "变为" + materielOrderStatusEnum.getDec());
                 orderFollowRecord.setSubOrderNo(materielOrder.getSubOrderNo());
-                orderFollowRecord.setRemark("物料单状态由" + MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus()).getDec() + "变为" + materielOrderStatusEnum.getDec());
+                orderFollowRecord.setRemark(remark);
                 orderFollowRecord.setSort(materielOrderStatusEnum.getCode());
                 orderFollowRecord.setOrderNo(materielOrder.getSubOrderNo());
                 orderFollowRecord.setMaterielOrderNo(String.valueOf(materielOrder.getId()));
@@ -601,6 +603,9 @@ public class MaterielOrderFollowController {
                 return error("采购单不存在");
             }
 
+            String remark = request.getParameter("remark");
+
+
             boolean flag = false;
 
             String materiels = request.getParameter("materiels");
@@ -638,9 +643,9 @@ public class MaterielOrderFollowController {
                 //物料单跟单记录
                 OrderFollowRecord orderFollowRecord = new OrderFollowRecord();
                 orderFollowRecord.setUpdatedTime(new Date());
-                orderFollowRecord.setTitle("跟单记录");
+                orderFollowRecord.setTitle("物料单状态由" + MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus()).getDec() + "变为" + materielOrderStatusEnum.getDec());
                 orderFollowRecord.setSubOrderNo(materielOrder.getSubOrderNo());
-                orderFollowRecord.setRemark("物料单状态由" + MaterielOrderStatusEnum.valueOf(materielOrder.getMaterielOrderStatus()).getDec() + "变为" + materielOrderStatusEnum.getDec());
+                orderFollowRecord.setRemark(remark);
                 orderFollowRecord.setSort(materielOrderStatusEnum.getCode());
                 orderFollowRecord.setOrderNo(materielOrder.getSubOrderNo());
                 orderFollowRecord.setMaterielOrderNo(String.valueOf(materielOrder.getId()));
@@ -649,6 +654,7 @@ public class MaterielOrderFollowController {
                 orderFollowRecord.setCreatedTime(new Date());
 
                 materielOrder.setMaterielOrderStatus(materielOrderStatusEnum.getCode());
+                materielOrderService.updateMaterielOrder(materielOrder);
                 orderFollowRecordService.save(orderFollowRecord);
             }
 
@@ -663,6 +669,15 @@ public class MaterielOrderFollowController {
 
             subOrder.setSubOrderStatus(SubOrderStatusEnum.QUALITY_CHECK.getCode());
             subOrderService.updateSubOrder(subOrder);
+
+
+            PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+            if (purchaseOrderExt != null) {
+                purchaseOrderExt.setSubmitQualityCheckTime(new Date());
+                purchaseOrderExt.setUpdatedTime(new Date());
+                purchaseOrderExtService.updatePurchaseOrderExt(purchaseOrderExt);
+            }
+
 
             //保存订单流转记录
             OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
