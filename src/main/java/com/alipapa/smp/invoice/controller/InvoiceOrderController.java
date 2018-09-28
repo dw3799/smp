@@ -209,7 +209,7 @@ public class InvoiceOrderController {
                     orderNo = subOrder.getOrderNo();
                 }
 
-                if (subOrder.getSubOrderStatus() == SubOrderStatusEnum.INVOICE_APPLY.getCode()) {
+                if (subOrder.getSubOrderStatus() != SubOrderStatusEnum.INVOICE_APPLY.getCode()) {
                     return error("当前采购单状态无法提交发货单");
                 }
 
@@ -229,7 +229,6 @@ public class InvoiceOrderController {
 
             String invoiceOrderNo = "IV" + OrderNumberGenerator.get();
 
-
             invoiceOrder.setAddress(address);
             invoiceOrder.setActaulDeliverTime(null);
             invoiceOrder.setOrderNo(orderNo);
@@ -243,7 +242,7 @@ public class InvoiceOrderController {
             invoiceOrder.setDeliverTime(DateUtil.parseObjToDate(deliverTime));
             invoiceOrder.setDeliverType(DeliverTypeEnum.valueOf(deliverType).getCode());
             invoiceOrder.setInvoiceNo(invoiceOrderNo);
-            invoiceOrder.setInvoiceStatus(InvoiceOrderStatusEnum.UN_SUBMIT.getCode());
+            invoiceOrder.setInvoiceStatus(InvoiceOrderStatusEnum.FIN_APV.getCode());
             invoiceOrder.setMobile(mobile);
             invoiceOrder.setPostalCode(postalCode);
             invoiceOrder.setRemark(remark);
@@ -251,11 +250,11 @@ public class InvoiceOrderController {
             invoiceOrder.setSalerUserNo(order.getSalerUserNo());
             invoiceOrder.setUpdatedTime(new Date());
             invoiceOrderService.saveInvoiceOrder(order, invoiceOrder, subOrderList, userInfo);
+            return WebApiResponse.success("success");
         } catch (Exception ex) {
-            logger.error("", ex);
-            return error("保存或提交发货单");
+            logger.error("提交发货单异常", ex);
+            return error("提交发货单异常");
         }
-        return WebApiResponse.error("保存或提交发货单");
     }
 
 
@@ -808,7 +807,7 @@ public class InvoiceOrderController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/getDocDeliverInfo", method = RequestMethod.POST)
+    @RequestMapping(value = "/getDocDeliverInfo", method = RequestMethod.GET)
     public WebApiResponse<JSONObject> getDocDeliverInfo(@RequestParam(name = "invoiceOrderNo") String invoiceOrderNo) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {

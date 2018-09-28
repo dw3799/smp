@@ -486,14 +486,13 @@
         FROM
         `invoice_order` o
         LEFT JOIN `user` u ON o.saler_user_no = u.user_no
-        LEFT JOIN `user` s ON o.buyer_user_no = s.user_no¬
-        WHERE
-        1 = 1
+        LEFT JOIN `user` s ON o.buyer_user_no = s.user_no
+        WHERE 1 = 1 and o.invoice_status != 6
         <if test="consumerName != null and consumerName != ''">
             and o.consumer_name LIKE CONCAT('%',#{consumerName},'%')
         </if>
         <if test="invoiceOrderStatus != null">
-            and o.invoiceOrderStatus = #{invoiceOrderStatus}
+            and o.invoice_status = #{invoiceOrderStatus}
         </if>
 
         <if test="orderNo != null and orderNo != ''">
@@ -501,7 +500,7 @@
         </if>
 
         <if test="invoiceOrderNo != null and invoiceOrderNo != ''">
-            and o.invoiceOrderNo = #{invoiceOrderNo}
+            and o.invoice_no = #{invoiceOrderNo}
         </if>
 
         <if test="createdTimeStart != null and  createdTimeStart != '' ">

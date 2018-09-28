@@ -1,9 +1,11 @@
 package com.alipapa.smp.invoice.service;
 
+import com.alipapa.smp.common.enums.InvoiceOrderStatusEnum;
 import com.alipapa.smp.common.enums.OrderStatusEnum;
 import com.alipapa.smp.common.enums.OrderWorkFlowTypeEnum;
 import com.alipapa.smp.common.enums.SubOrderStatusEnum;
 import com.alipapa.smp.common.request.UserInfo;
+import com.alipapa.smp.invoice.controller.InvoiceOrderController;
 import com.alipapa.smp.invoice.mapper.InvoiceOrderMapper;
 import com.alipapa.smp.invoice.mapper.InvoiceProductMapper;
 import com.alipapa.smp.invoice.pojo.*;
@@ -12,6 +14,8 @@ import com.alipapa.smp.order.pojo.OrderWorkFlow;
 import com.alipapa.smp.order.pojo.SubOrder;
 import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.SubOrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +27,7 @@ import java.util.List;
 
 @Service
 public class InvoiceOrderService {
+    private static Logger logger = LoggerFactory.getLogger(InvoiceOrderService.class);
 
     @Resource
     private InvoiceOrderMapper invoiceOrderMapper;
@@ -72,6 +77,7 @@ public class InvoiceOrderService {
         orderWorkFlowService.save(invoiceOrderWorkFlow);
 
         invoiceOrderMapper.insert(invoiceOrder);
+
         invoiceOrderExtService.saveInvoiceOrderExt(invoiceOrderExt);
 
         String remarkString = null;
@@ -135,9 +141,12 @@ public class InvoiceOrderService {
 
 
     public InvoiceOrder selectInvoiceOrderByInvoiceOrderNo(String invoiceOrderNo) {
+        logger.info("invoiceOrderNo=" + invoiceOrderNo);
         InvoiceOrderExample example = new InvoiceOrderExample();
         InvoiceOrderExample.Criteria criteria = example.createCriteria();
         criteria.andInvoiceNoEqualTo(invoiceOrderNo);
+        criteria.andInvoiceStatusNotEqualTo(InvoiceOrderStatusEnum.DISCARD.getCode());
+
         List<InvoiceOrder> invoiceOrderList = invoiceOrderMapper.selectByExample(example);
         if (CollectionUtils.isEmpty(invoiceOrderList)) {
             return null;

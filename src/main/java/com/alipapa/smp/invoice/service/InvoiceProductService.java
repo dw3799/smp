@@ -1,6 +1,8 @@
 package com.alipapa.smp.invoice.service;
 
+import com.alipapa.smp.common.enums.InvoiceOrderStatusEnum;
 import com.alipapa.smp.invoice.mapper.InvoiceProductMapper;
+import com.alipapa.smp.invoice.pojo.InvoiceOrder;
 import com.alipapa.smp.invoice.pojo.InvoiceProduct;
 import com.alipapa.smp.invoice.pojo.InvoiceProductExample;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,9 @@ public class InvoiceProductService {
 
     @Resource
     private InvoiceProductMapper invoiceProductMapper;
+
+    @Resource
+    private InvoiceOrderService invoiceOrderService;
 
 
     /**
@@ -52,7 +57,15 @@ public class InvoiceProductService {
         if (CollectionUtils.isEmpty(invoiceProductList)) {
             return null;
         }
-        return invoiceProductList.get(0);
+
+        for (InvoiceProduct invoiceProduct : invoiceProductList) {
+            InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceProduct.getInvoiceNo());
+            if (invoiceOrder != null && invoiceOrder.getInvoiceStatus() != InvoiceOrderStatusEnum.DISCARD.getCode()) {
+                return invoiceProduct;
+            }
+        }
+
+        return null;
     }
 
 
