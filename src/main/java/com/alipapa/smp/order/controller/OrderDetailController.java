@@ -963,7 +963,7 @@ public class OrderDetailController {
                 List<SubOrder> subOrderList = subOrderService.listSubOrderByOrderNoWithOutDetail(order.getOrderNo());
                 if (!CollectionUtils.isEmpty(subOrderList)) {
                     for (SubOrder subOrder : subOrderList) {
-                        subOrder.setSubOrderStatus(SubOrderStatusEnum.SPR_BUYER_APV.getCode());
+                        subOrder.setSubOrderStatus(SubOrderStatusEnum.BUYER_ORDER.getCode());
                         subOrder.setSubPayStatus(SubOrderPayStatusEnum.UN_PAY.getCode());
                         subOrder.setCreatedTime(new Date());
                         subOrderService.updateSubOrder(subOrder);
