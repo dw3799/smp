@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
+import com.alipapa.smp.consumer.pojo.SysDict;
+import com.alipapa.smp.consumer.service.SysDictService;
 import com.alipapa.smp.consumer.vo.SysDictVo;
 import com.alipapa.smp.invoice.pojo.*;
 import com.alipapa.smp.invoice.service.*;
@@ -88,6 +90,35 @@ public class InvoiceOrderController {
 
     @Autowired
     private InvoiceDeliverInfoService invoiceDeliverInfoService;
+
+
+    @Autowired
+    private SysDictService sysDictService;
+
+    /**
+     * 运输渠道下拉列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/transChannelSelect", method = RequestMethod.GET)
+    public WebApiResponse<List<SysDictVo>> orderSelect() {
+        List<SysDictVo> sysDictVoList = new ArrayList<>();
+
+        List<SysDict> sysDictList = sysDictService.listSysDictLikeText(SysDictManageEnum.TransPort.getCodeName(), null);
+        if (!CollectionUtils.isEmpty(sysDictList)) {
+            for (SysDict sysDict : sysDictList) {
+                SysDictVo sysDictVo = new SysDictVo();
+                sysDictVo.setId(sysDict.getId());
+                sysDictVo.setCategoryCode(sysDict.getCategoryCode());
+                sysDictVo.setDictText(sysDict.getDictText());
+                sysDictVo.setDictValue(sysDict.getDictValue());
+                sysDictVoList.add(sysDictVo);
+            }
+        }
+
+        return WebApiResponse.success(sysDictVoList);
+    }
 
 
     /**

@@ -6,7 +6,7 @@ public enum SysDictManageEnum {
 
     PayChannel(2, "PayChannel", "支付渠道"),
 
-    TransPort(3, "TransPort", "运输方式"),
+    TransPort(3, "TransPort", "运输渠道"),
 
     ConsumerSource(4, "ConsumerSource", "客户来源"),
 
