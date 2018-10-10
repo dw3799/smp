@@ -719,7 +719,7 @@ public class OrderDetailController {
             }
 
             //更新订单总金额
-            order.setOrderAmount(order.getOrderAmount() + consumerFrontPay.getBankFee() + consumerFrontPay.getFreightAmount() + consumerFrontPay.getOthersFee() + consumerFrontPay.getRoyaltyAmount());
+            order.setOrderAmount(order.getProductAmount() + consumerFrontPay.getBankFee() + consumerFrontPay.getFreightAmount() + consumerFrontPay.getOthersFee() + consumerFrontPay.getRoyaltyAmount());
 
             consumerFrontPayService.saveOrCreateConsumerFrontPay(order, consumerFrontPay);
             orderService.updateOrder(order);
