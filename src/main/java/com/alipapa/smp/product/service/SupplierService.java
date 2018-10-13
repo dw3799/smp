@@ -161,6 +161,7 @@ public class SupplierService {
             for (Supplier supplier : supplierList) {
                 SupplierVo supplierVo = new SupplierVo();
                 supplierVo.setId(supplier.getId());
+                supplierVo.setName(supplier.getName());
                 supplierVo.setCharge(supplier.getCharge());
                 supplierVo.setCity(supplier.getCity());
                 supplierVo.setMobile(supplier.getMobile1());

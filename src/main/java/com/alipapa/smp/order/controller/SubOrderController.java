@@ -166,6 +166,7 @@ public class SubOrderController {
             orderProductVo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(subOrder.getExpectPurchaseAmount()) + Constant.YMB);
             orderProductVo.setProductRemark(subOrder.getProductRemark());
             orderProductVo.setPicNo(subOrder.getPic());
+            orderProductVo.setOrderType(OrderTypeEnum.valueOf(order.getOrderType()).getDec());
             if (OrderTypeEnum.SELF_ORDER == orderTypeEnum) {
                 SelfOrderDetail selfOrderDetail = subOrder.getSelfOrderDetail();
                 orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(subOrder.getSaleAmount()) + currencyDec);
@@ -277,6 +278,9 @@ public class SubOrderController {
             String materiels = request.getParameter("materiels");
             String opType = request.getParameter("opType");
 
+            logger.info("opType:" + opType);
+            logger.info("materiels:" + materiels);
+
             //可为空
             String remark = request.getParameter("remark");
 
@@ -323,7 +327,7 @@ public class SubOrderController {
 
 
                 MaterielOrder materielOrder = null;
-                if (materielOrderId != null) {
+                if (materielOrderId != null && materielOrderId > 0) {
                     materielOrder = materielOrderService.selectMaterielOrderById(materielOrderId);
                 }
                 if (materielOrder == null) {

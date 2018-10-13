@@ -287,7 +287,8 @@ public class SubOrderServiceProxy {
             subOrderVo.setSubOrderId(subOrder.getId());
             subOrderVo.setSubOrderNo(subOrder.getSubOrderNo());
             subOrderVo.setSubOrderStatus(SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
-
+            subOrderVo.setConsumerName(order.getConsumerName());
+            
             PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
             if (purchaseOrderExt != null) {
                 subOrderVo.setSubmitTime(DateUtil.formatToStrTimeV1(purchaseOrderExt.getSubmitTime()));

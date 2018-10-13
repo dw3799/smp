@@ -10,6 +10,8 @@ public class OrderProductVo {
 
     private String orderNo;
 
+    private String orderType;
+
     private Long productCategoryId;
 
     private String productCategory;
@@ -49,6 +51,13 @@ public class OrderProductVo {
     private String totalVolume;
     private String totalWeight;
 
+    public String getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
+    }
 
     public String getSubOrderStatus() {
         return subOrderStatus;

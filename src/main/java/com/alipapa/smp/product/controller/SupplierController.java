@@ -68,16 +68,21 @@ public class SupplierController {
                                                          @RequestParam(name = "mobile", required = false) String mobile,
                                                          @RequestParam(name = "city", required = false) String city) {
         try {
-            if (pageSize == null) {
-                pageSize = 30;
+            Integer start = null;
+            Integer size = null;
+            if (pageSize == null && pageNum == null) {
+                start = null;
+                size = null;
+            } else {
+                if (pageSize == null) {
+                    pageSize = 30;
+                }
+                if (pageNum == null) {
+                    pageNum = 1;
+                }
+                start = (pageNum - 1) * pageSize;
+                size = pageSize;
             }
-
-            if (pageNum == null) {
-                pageNum = 1;
-            }
-
-            Integer start = (pageNum - 1) * pageSize;
-            Integer size = pageSize;
 
             HashMap<String, Object> params = new HashMap<>();
             if (StringUtil.isNotEmptyString(supplierName)) {

@@ -17,6 +17,8 @@ public class SubOrderVo {
 
     private String productAmount;
 
+    private String consumerName;
+
     private String salerName;
 
     private String buyerName;
@@ -36,6 +38,14 @@ public class SubOrderVo {
     private String preFollowTime;
 
     private Long totalCount;
+
+    public String getConsumerName() {
+        return consumerName;
+    }
+
+    public void setConsumerName(String consumerName) {
+        this.consumerName = consumerName;
+    }
 
     public String getPreFollowTime() {
         return preFollowTime;
