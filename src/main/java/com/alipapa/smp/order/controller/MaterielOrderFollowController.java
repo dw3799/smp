@@ -609,6 +609,8 @@ public class MaterielOrderFollowController {
             boolean flag = false;
 
             String materiels = request.getParameter("materiels");
+
+            logger.info("--------------------" + "submitQualityCheck,materiels:" + materiels + "--------------------");
             JSONArray materielsArray = JSONArray.parseArray(materiels);
 
             for (int i = 0; i < materielsArray.size(); i++) {

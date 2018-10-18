@@ -237,6 +237,20 @@ public class SupplierController {
                 return error("供应商不存在");
             }
 
+
+            logger.info("supplierId=" + supplierId);
+            logger.info("supplierName=" + supplierName);
+            logger.info("chargeUser=" + chargeUser);
+            logger.info("city=" + city);
+            logger.info("bankName=" + bankName);
+            logger.info("bankBranch=" + bankBranch);
+            logger.info("bankNo=" + bankNo);
+            logger.info("bankAccount=" + bankAccount);
+            logger.info("address=" + address);
+            logger.info("mobile1=" + mobile1);
+            logger.info("productIds=" + productIds);
+
+
             supplier.setAddress(address);
             supplier.setBankAccount(bankAccount);
             supplier.setBankName(bankName);
@@ -257,11 +271,11 @@ public class SupplierController {
 
             List<SupplierProduct> supplierProductList = supplierService.listSupplierProductBySupplierId(supplier.getId());
             HashMap<String, SupplierProduct> supplierProductHashMap = new HashMap<>();
-            List<Long> deletedSupplierProductList = new ArrayList<>();
+            List<String> deletedSupplierProductList = new ArrayList<>();
 
             if (!CollectionUtils.isEmpty(supplierProductList)) {
                 for (SupplierProduct supplierProduct : supplierProductList) {
-                    deletedSupplierProductList.add(supplierProduct.getId());
+                    deletedSupplierProductList.add(String.valueOf(supplierProduct.getId()));
                     supplierProductHashMap.put(String.valueOf(supplierProduct.getProductId()), supplierProduct);
                 }
             }
@@ -270,13 +284,14 @@ public class SupplierController {
                 String[] productIdArray = productIds.split(";");
                 for (String productId : productIdArray) {
                     if (supplierProductHashMap.get(productId) != null) { //产品已存在
-                        deletedSupplierProductList.remove(Long.valueOf(productId));
+                        deletedSupplierProductList.remove(productId);
                         continue;
                     }
                     Product product = productService.getProductById(Long.valueOf(productId));
                     if (product == null) {
                         continue;
                     }
+                    logger.info("productIdArray,productId:" + productId);
                     SupplierProduct supplierProduct = new SupplierProduct();
                     supplierProduct.setCreatedTime(new Date());
                     supplierProduct.setProductId(product.getId());
@@ -289,8 +304,8 @@ public class SupplierController {
             }
 
             if (!CollectionUtils.isEmpty(deletedSupplierProductList)) {
-                for (Long id : deletedSupplierProductList) {
-                    supplierService.delSupplierProduct(id);
+                for (String id : deletedSupplierProductList) {
+                    supplierService.delSupplierProduct(Long.valueOf(id));
                 }
             }
             return success("success");
