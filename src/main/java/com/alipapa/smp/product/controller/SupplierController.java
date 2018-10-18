@@ -275,7 +275,7 @@ public class SupplierController {
 
             if (!CollectionUtils.isEmpty(supplierProductList)) {
                 for (SupplierProduct supplierProduct : supplierProductList) {
-                    deletedSupplierProductList.add(String.valueOf(supplierProduct.getId()));
+                    deletedSupplierProductList.add(String.valueOf(supplierProduct.getProductId()));
                     supplierProductHashMap.put(String.valueOf(supplierProduct.getProductId()), supplierProduct);
                 }
             }
