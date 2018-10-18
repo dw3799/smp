@@ -557,7 +557,7 @@
     </select>
 
     <sql id="listGroupSubOrderByParamSql">
-        SELECT s.*
+        SELECT DISTINCT s.*
         FROM
         `sub_order` s
         LEFT JOIN `order` o ON o.order_no = s.order_no
