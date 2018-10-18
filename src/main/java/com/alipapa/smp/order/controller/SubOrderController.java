@@ -856,7 +856,7 @@ public class SubOrderController {
             }
 
             if (!RoleEnum.admin.getCodeName().equals(userInfo.getRoleName())) {
-                if (!RoleEnum.financial.getCodeName().equals(userInfo.getRoleName())) {
+                if (!RoleEnum.cashier.getCodeName().equals(userInfo.getRoleName())) {
                     return error("没有权限");
                 }
             }
