@@ -527,7 +527,7 @@ public class ProductController {
         try {
             FileInputStream fis = new FileInputStream(file);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] b = new byte[1024];
+            byte[] b = new byte[1024 * 5];
             int n;
             while ((n = fis.read(b)) != -1) {
                 bos.write(b, 0, n);
