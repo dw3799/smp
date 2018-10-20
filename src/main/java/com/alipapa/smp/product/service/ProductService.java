@@ -133,7 +133,7 @@ public class ProductService {
                 }
 
                 ProductPicture productPicture = productPictureService.getProductPictureByProductIdAndPicNo(product.getId(), picNo);
-                if (productPicture != null) {
+                if (productPicture == null) {
                     continue;
                 }
                 productPicture = new ProductPicture();

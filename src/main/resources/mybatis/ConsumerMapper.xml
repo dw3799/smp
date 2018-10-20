@@ -694,7 +694,7 @@
             and cu.level = #{level}
         </if>
         <if test="intention != null and intention != ''">
-            and cu.intention = #{intention}
+            and cu.intention LIKE CONCAT('%',#{intention},'%')
         </if>
         ORDER BY cu.intention_quantity DESC,cu.created_time DESC
     </sql>
