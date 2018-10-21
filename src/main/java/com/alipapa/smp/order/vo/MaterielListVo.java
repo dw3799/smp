@@ -16,6 +16,16 @@ public class MaterielListVo {
 
     private String totalRestAmount;
 
+    private String needRestAmount;
+
+    public String getNeedRestAmount() {
+        return needRestAmount;
+    }
+
+    public void setNeedRestAmount(String needRestAmount) {
+        this.needRestAmount = needRestAmount;
+    }
+
     public String getTotalRestAmount() {
         return totalRestAmount;
     }
