@@ -74,6 +74,20 @@ public class ProductQualityInfoController {
                                                        @RequestParam(name = "remark", required = false) String remark) {
         UserInfo userInfo = UserStatus.getUserInfo();
         try {
+
+
+            logger.info("subOrderNo=" + subOrderNo);
+            logger.info("result=" + result);
+            logger.info("opType=" + opType);
+            logger.info("arrivalTime=" + arrivalTime);
+            logger.info("checkNumber=" + checkNumber);
+            logger.info("badNumber=" + badNumber);
+            logger.info("printingQuality=" + printingQuality);
+            logger.info("packagingQuality=" + packagingQuality);
+            logger.info("suturingQuality=" + suturingQuality);
+            logger.info("remark=" + remark);
+
+
             if (StringUtil.isEmptyString(subOrderNo) || StringUtil.isEmptyString(result) || StringUtil.isEmptyString(opType)) {
                 return error("缺少必传参数");
             }
