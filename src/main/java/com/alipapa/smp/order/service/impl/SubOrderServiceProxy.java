@@ -347,7 +347,7 @@ public class SubOrderServiceProxy {
             subOrderVo.put("totalCount", totalCount);
             subOrderVo.put("subOrderId", subOrder.getId());
             subOrderVo.put("orderNo", subOrder.getOrderNo());
-            subOrderVo.put("subOrderNo", subOrder.getOrderNo());
+            subOrderVo.put("subOrderNo", subOrder.getSubOrderNo());
             subOrderVo.put("productName", subOrder.getProductName());
             subOrderVo.put("salerUserName", order.getSalerUserName());
             subOrderVo.put("buyerUserName", order.getBuyerUserName());
@@ -405,7 +405,7 @@ public class SubOrderServiceProxy {
             subOrderVo.put("totalCount", totalCount);
             subOrderVo.put("subOrderId", subOrder.getId());
             subOrderVo.put("orderNo", subOrder.getOrderNo());
-            subOrderVo.put("subOrderNo", subOrder.getOrderNo());
+            subOrderVo.put("subOrderNo", subOrder.getSubOrderNo());
             subOrderVo.put("subOrderStatus", SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
             subOrderVo.put("productName", subOrder.getProductName());
             subOrderVo.put("orderType", OrderTypeEnum.valueOf(order.getOrderType()).getDec());
