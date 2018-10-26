@@ -60,6 +60,8 @@ public class SubOrderTailPayController {
     @Autowired
     private OrderWorkFlowService orderWorkFlowService;
 
+    @Autowired
+    private PurchaseOrderExtService purchaseOrderExtService;
 
     /**
      * 获取待财务审核采购单尾款
@@ -162,6 +164,15 @@ public class SubOrderTailPayController {
                 totalPurchaseAmount = totalPurchaseAmount + materielOrder.getPurchaseAmount(); //更新实际付款金额
             }
 
+
+            PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+            if (purchaseOrderExt != null) {
+                purchaseOrderExt.setFinTailTime(new Date());
+                purchaseOrderExt.setUpdatedTime(new Date());
+                purchaseOrderExtService.updatePurchaseOrderExt(purchaseOrderExt);
+            }
+
+
             subOrder.setActualPurchaseAmount(totalPurchaseAmount);
             subOrder.setSubPayStatus(SubOrderPayStatusEnum.CASH_TAIL_PAYING.getCode());
             subOrderService.updateSubOrder(subOrder);
@@ -260,6 +271,13 @@ public class SubOrderTailPayController {
             for (MaterielOrder materielOrder : materielOrderList) {
                 materielOrder.setPayStatus(MaterielOrderPayStatusEnum.SUCCESS.getCode());
                 materielOrderService.updateMaterielOrder(materielOrder);
+            }
+
+            PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
+            if (purchaseOrderExt != null) {
+                purchaseOrderExt.setCashTailTime(new Date());
+                purchaseOrderExt.setUpdatedTime(new Date());
+                purchaseOrderExtService.updatePurchaseOrderExt(purchaseOrderExt);
             }
 
             subOrder.setSubPayStatus(SubOrderPayStatusEnum.SUCCESS.getCode());
