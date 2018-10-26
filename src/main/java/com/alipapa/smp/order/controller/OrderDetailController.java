@@ -389,9 +389,16 @@ public class OrderDetailController {
                 String productRemark = jsonObject.getString("productRemark");
                 String subOrderNo = jsonObject.getString("subOrderNo");
 
-                SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(orderNo, subOrderNo, orderTypeEnum);
-                if (subOrder == null) {
+                SubOrder subOrder = null;
+                if (StringUtil.isEmptyString(subOrderNo)) {
                     subOrder = new SubOrder(); //新增产品
+                    subOrderNo = Constant.SUB_ORDER_PREFIX + OrderNumberGenerator.get();
+                    subOrder.setSubOrderNo(subOrderNo);
+                } else {
+                    subOrder = subOrderService.getSubOrderBySubOrderNo(orderNo, subOrderNo, orderTypeEnum);
+                    if (subOrder == null) {
+                        return error("subOrderNo参数参数异常");
+                    }
                 }
 
                 if (productCategoryId == null || productId == null) {
@@ -430,7 +437,6 @@ public class OrderDetailController {
                 subOrder.setProductRemark(productRemark);
                 subOrder.setRemark(null);
 
-                subOrder.setSubOrderNo(subOrderNo);
                 subOrder.setSubOrderStatus(SubOrderStatusEnum.CREATE.getCode());
                 subOrder.setSubPayStatus(SubOrderPayStatusEnum.UN_PAY.getCode());
                 subOrder.setUpdatedTime(new Date());

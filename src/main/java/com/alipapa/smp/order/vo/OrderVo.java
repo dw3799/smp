@@ -19,6 +19,8 @@ public class OrderVo {
 
     private String submitDateTime;
 
+    private String approveTime; //主管审核通过时间
+
     private String createDateTime;
 
     private String amount; //订单总金额，外币
@@ -34,6 +36,14 @@ public class OrderVo {
     private String salerUserNo;
 
     private String salerUserName;
+
+    public String getApproveTime() {
+        return approveTime;
+    }
+
+    public void setApproveTime(String approveTime) {
+        this.approveTime = approveTime;
+    }
 
     public String getReceiptAmount() {
         return receiptAmount;

@@ -351,7 +351,7 @@ public class OrderTailPayController {
                 orderWorkFlowService.save(orderWorkFlow);
             } else if ("Y".equals(result)) {
                 //更新订单支付状态
-                if (order.getReceiptAmount() + consumerTailPay.getTailAmount() >= order.getOrderAmount()) {
+                if (order.getReceiptAmount() + consumerTailPay.getActualTailAmount() >= order.getOrderAmount()) {
                     order.setPayStatus(OrderPayStatusEnum.SUCCESS.getCode());
                 } else {
                     order.setPayStatus(OrderPayStatusEnum.TAIL_PAYING.getCode());
@@ -365,7 +365,7 @@ public class OrderTailPayController {
 
                 consumerTailPay.setPayStatus(OrderPayStatusEnum.TAIL_PAYED.getCode());
 
-                order.setReceiptAmount(order.getReceiptAmount() + consumerTailPay.getTailAmount());
+                order.setReceiptAmount(order.getReceiptAmount() + consumerTailPay.getActualTailAmount());
                 order.setCnReceiptAmount(order.getCnReceiptAmount() + consumerTailPay.getCnActualTailAmount());
 
                 orderService.updateOrder(order);
@@ -382,7 +382,7 @@ public class OrderTailPayController {
                 orderWorkFlow.setOrderNo(order.getOrderNo());
                 orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
                 orderWorkFlow.setRemark(remark);
-                orderWorkFlow.setResult("尾款审核通过，支付金额:" + PriceUtil.convertToYuanStr(consumerTailPay.getTailAmount()));
+                orderWorkFlow.setResult("尾款审核通过，支付金额:" + PriceUtil.convertToYuanStr(consumerTailPay.getActualTailAmount()));
                 orderWorkFlow.setUpdatedTime(new Date());
                 orderWorkFlowService.save(orderWorkFlow);
             } else {

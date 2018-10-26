@@ -460,6 +460,8 @@ public class OrderServiceProxy {
                 }
                 orderVo.setCreateDateTime(DateUtil.formatToStrTimeV1(order.getCreatedTime()));
 
+                orderVo.setApproveTime(DateUtil.formatToStrTimeV1(order.getUpdatedTime()));
+
                 orderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getDec());
 
                 String currencyDec = orderService.getCurrencyDec(order);
@@ -519,6 +521,7 @@ public class OrderServiceProxy {
                     orderVo.setReceiptFrontPay(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
                     orderVo.setReceiptTailPay(PriceUtil.convertToYuanStr(order.getReceiptAmount() - consumerFrontPay.getActualAmount()) + currencyDec);
                     orderVo.setResTailPay(PriceUtil.convertToYuanStr(order.getOrderAmount() - order.getReceiptAmount()) + currencyDec);
+                    orderVo.setTailPay((order.getOrderAmount() - consumerFrontPay.getActualAmount()) + currencyDec); //尾款总金额
 
                     orderVoList.add(orderVo);
                 }
