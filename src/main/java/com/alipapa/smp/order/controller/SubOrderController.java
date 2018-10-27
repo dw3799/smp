@@ -582,7 +582,7 @@ public class SubOrderController {
                 List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
                 for (MaterielOrder materielOrder : materielOrderList) {
                     materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.BUYER_ORDER.getCode());
-                    materielOrder.setRemark(materielOrder.getRemark() + "主管审核不通过，状态退到待采购下单");
+                    materielOrder.setRemark(materielOrder.getRemark());
                     materielOrderService.updateMaterielOrder(materielOrder);
                 }
                 subOrderService.updateSubOrder(subOrder);
@@ -726,7 +726,7 @@ public class SubOrderController {
                 List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrderNo);
                 for (MaterielOrder materielOrder : materielOrderList) {
                     materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.BUYER_ORDER.getCode());
-                    materielOrder.setRemark(materielOrder.getRemark() + "财务审核不通过，状态退到待采购下单");
+                    materielOrder.setRemark(materielOrder.getRemark());
                     materielOrderService.updateMaterielOrder(materielOrder);
                 }
                 subOrderService.updateSubOrder(subOrder);

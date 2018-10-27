@@ -169,8 +169,7 @@ public class ProductQualityInfoController {
                         orderFollowRecord.setCreatedTime(new Date());
 
                         materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.DISCARDED.getCode());
-                        materielOrder.setRemark(materielOrder.getRemark() + "仓储质检不通过，已废弃");
-
+                        
                         materielOrderService.updateMaterielOrder(materielOrder);
                         orderFollowRecordService.save(orderFollowRecord);
                     }
