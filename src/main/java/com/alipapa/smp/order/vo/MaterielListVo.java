@@ -8,6 +8,8 @@ public class MaterielListVo {
 
     private String subOrderNo;
 
+    private String expectPurchaseAmount;
+
     private String totalPurchaseAmount;
 
     private String purchaseFrontAmount;
@@ -17,6 +19,14 @@ public class MaterielListVo {
     private String totalRestAmount;
 
     private String needRestAmount;
+
+    public String getExpectPurchaseAmount() {
+        return expectPurchaseAmount;
+    }
+
+    public void setExpectPurchaseAmount(String expectPurchaseAmount) {
+        this.expectPurchaseAmount = expectPurchaseAmount;
+    }
 
     public String getNeedRestAmount() {
         return needRestAmount;

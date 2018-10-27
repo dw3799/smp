@@ -27,6 +27,8 @@ public class OrderVo {
 
     private String receiptAmount; //定金，外币
 
+    private String frontAmount; //应收定金，外币
+
     private String buyerUserNo;
 
     private String buyerUserName;
@@ -36,6 +38,15 @@ public class OrderVo {
     private String salerUserNo;
 
     private String salerUserName;
+
+
+    public String getFrontAmount() {
+        return frontAmount;
+    }
+
+    public void setFrontAmount(String frontAmount) {
+        this.frontAmount = frontAmount;
+    }
 
     public String getApproveTime() {
         return approveTime;
