@@ -441,6 +441,7 @@ public class SubOrderController {
 
 
             materielListVo.setSubOrderNo(subOrderNo);
+            materielListVo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(order.getExpectPurchaseAmount()) + Constant.YMB);
 
             if (!CollectionUtils.isEmpty(materielOrderList)) {
                 List<MaterielOrderVo> materielOrderVoList = new ArrayList<>();
@@ -478,7 +479,7 @@ public class SubOrderController {
                     purchaseFrontAmount = purchaseFrontAmount + materielOrder.getPurchaseFrontAmount();
                     materielOrderVoList.add(materielOrderVo);
                 }
-                materielListVo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(order.getExpectPurchaseAmount()) + Constant.YMB);
+
                 materielListVo.setTotalPurchaseAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount) + Constant.YMB);
                 materielListVo.setPurchaseFrontAmount(PriceUtil.convertToYuanStr(purchaseFrontAmount) + Constant.YMB);
                 materielListVo.setTotalRestAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount - purchaseFrontAmount) + Constant.YMB);

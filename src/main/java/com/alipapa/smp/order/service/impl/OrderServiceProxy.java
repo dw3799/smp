@@ -43,6 +43,10 @@ public class OrderServiceProxy {
     @Autowired
     private ConsumerFrontPayService consumerFrontPayService;
 
+    @Autowired
+    private ConsumerTailPayService consumerTailPayService;
+
+
     /**
      * 创建主订单及产品订单及产品明细
      *
@@ -521,8 +525,15 @@ public class OrderServiceProxy {
                     ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(order.getOrderNo());
                     orderVo.setReceiptFrontPay(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
                     orderVo.setReceiptTailPay(PriceUtil.convertToYuanStr(order.getReceiptAmount() - consumerFrontPay.getActualAmount()) + currencyDec);
-                    orderVo.setResTailPay(PriceUtil.convertToYuanStr(order.getOrderAmount() - order.getReceiptAmount()) + currencyDec);
                     orderVo.setTailPay((order.getOrderAmount() - consumerFrontPay.getActualAmount()) + currencyDec); //尾款总金额
+
+
+                    List<ConsumerTailPay> consumerTailPayList = consumerTailPayService.selectInRiewConsumerTailPayByOrderNo(order.getOrderNo());
+
+                    if (!CollectionUtils.isEmpty(consumerTailPayList)) {
+                        ConsumerTailPay consumerTailPay = consumerTailPayList.get(0);
+                        orderVo.setResTailPay(PriceUtil.convertToYuanStr(consumerTailPay.getTailAmount()) + currencyDec);
+                    }
 
                     orderVoList.add(orderVo);
                 }
