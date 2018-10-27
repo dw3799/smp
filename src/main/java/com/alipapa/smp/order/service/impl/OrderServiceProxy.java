@@ -470,7 +470,7 @@ public class OrderServiceProxy {
                 ConsumerFrontPay consumerFrontPay = consumerFrontPayService.selectConsumerFrontPayByOrderNo(order.getOrderNo());
                 if (consumerFrontPay != null) {
                     orderVo.setReceiptAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
-                    orderVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
+                    orderVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFrontAmount()) + currencyDec);
                 }
 
                 orderVo.setBuyerUserName(order.getBuyerUserName());

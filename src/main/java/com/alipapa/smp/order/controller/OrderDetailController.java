@@ -132,6 +132,9 @@ public class OrderDetailController {
             basicOrderInfo.setBuyerUserNo(order.getBuyerUserNo());
             basicOrderInfo.setBuyerUserName(order.getBuyerUserName());
             basicOrderInfo.setCurrency(currencyDec);
+            basicOrderInfo.setConsumerNo(order.getConsumerNo());
+            basicOrderInfo.setConsumerName(order.getConsumerName());
+            basicOrderInfo.setConsumerCountry(order.getConsumerCountry());
 
             basicOrderInfo.setProductAmount(PriceUtil.convertToYuanStr(order.getProductAmount()));
             basicOrderInfo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()));
