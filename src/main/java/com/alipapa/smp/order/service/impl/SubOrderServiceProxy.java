@@ -281,6 +281,9 @@ public class SubOrderServiceProxy {
             subOrderVo.setOrderNo(subOrder.getOrderNo());
             subOrderVo.setOrderType(OrderTypeEnum.valueOf(order.getOrderType()).getDec());
             subOrderVo.setProductAmount(PriceUtil.convertToYuanStr(subOrder.getProductAmount()) + currencyDec);
+
+            subOrderVo.setExpectFrontAmount(PriceUtil.convertToYuanStr(subOrder.getProductFrontAmount()) + Constant.YMB);
+            subOrderVo.setPayedFrontAmount(PriceUtil.convertToYuanStr(subOrder.getActualPurchaseAmount()) + Constant.YMB);
             subOrderVo.setProductName(subOrder.getProductName());
             subOrderVo.setSalerName(order.getSalerUserName());
             subOrderVo.setBuyerName(order.getBuyerUserName());
@@ -288,7 +291,7 @@ public class SubOrderServiceProxy {
             subOrderVo.setSubOrderNo(subOrder.getSubOrderNo());
             subOrderVo.setSubOrderStatus(SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
             subOrderVo.setConsumerName(order.getConsumerName());
-            
+
             PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
             if (purchaseOrderExt != null) {
                 subOrderVo.setSubmitTime(DateUtil.formatToStrTimeV1(purchaseOrderExt.getSubmitTime()));
@@ -481,7 +484,7 @@ public class SubOrderServiceProxy {
             subOrderVo.put("orderType", OrderTypeEnum.valueOf(order.getOrderType()).getDec());
             subOrderVo.put("orderAmount", PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
             subOrderVo.put("receiptAmount", PriceUtil.convertToYuanStr(order.getReceiptAmount()) + currencyDec);
-            subOrderVo.put("productAmount", PriceUtil.convertToYuanStr(order.getProductAmount()) + currencyDec);
+            subOrderVo.put("productAmount", PriceUtil.convertToYuanStr(subOrder.getProductAmount()) + currencyDec);
 
 
             subOrderVo.put("consumerNo", order.getConsumerNo());

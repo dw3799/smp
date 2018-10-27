@@ -37,7 +37,28 @@ public class SubOrderVo {
 
     private String preFollowTime;
 
+    private String expectFrontAmount;
+
+    private String payedFrontAmount;
+
+
     private Long totalCount;
+
+    public String getExpectFrontAmount() {
+        return expectFrontAmount;
+    }
+
+    public void setExpectFrontAmount(String expectFrontAmount) {
+        this.expectFrontAmount = expectFrontAmount;
+    }
+
+    public String getPayedFrontAmount() {
+        return payedFrontAmount;
+    }
+
+    public void setPayedFrontAmount(String payedFrontAmount) {
+        this.payedFrontAmount = payedFrontAmount;
+    }
 
     public String getConsumerName() {
         return consumerName;

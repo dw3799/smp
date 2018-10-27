@@ -184,6 +184,7 @@ public class OrderDetailController {
                     orderProductVo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(subOrder.getExpectPurchaseAmount()));
                     orderProductVo.setProductRemark(subOrder.getProductRemark());
                     orderProductVo.setPicNo(subOrder.getPic());
+                    orderProductVo.setSubOrderStatus(SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
                     if (OrderTypeEnum.SELF_ORDER == orderTypeEnum) {
                         SelfOrderDetail selfOrderDetail = subOrder.getSelfOrderDetail();
                         orderProductVo.setSaleAmount(PriceUtil.convertToYuanStr(subOrder.getSaleAmount()));
