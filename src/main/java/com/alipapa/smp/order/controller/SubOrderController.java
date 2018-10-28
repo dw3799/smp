@@ -441,7 +441,7 @@ public class SubOrderController {
 
 
             materielListVo.setSubOrderNo(subOrderNo);
-            materielListVo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(order.getExpectPurchaseAmount()) + Constant.YMB);
+            materielListVo.setExpectPurchaseAmount(PriceUtil.convertToYuanStr(subOrder.getExpectPurchaseAmount()) + Constant.YMB);
 
             if (!CollectionUtils.isEmpty(materielOrderList)) {
                 List<MaterielOrderVo> materielOrderVoList = new ArrayList<>();
