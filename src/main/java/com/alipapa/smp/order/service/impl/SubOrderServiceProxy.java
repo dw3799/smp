@@ -248,7 +248,7 @@ public class SubOrderServiceProxy {
 
     public List<SubOrderVo> listGroupSubOrder(Map<String, Object> params, Integer start, Integer size) {
 
-        Long totalCount = subOrderMapper.listMySubOrderByParamCount(params);
+        Long totalCount = subOrderMapper.listGroupSubOrderByParamCount(params);
 
         if (totalCount <= 0) {
             return null;
@@ -282,6 +282,7 @@ public class SubOrderServiceProxy {
             subOrderVo.setOrderType(OrderTypeEnum.valueOf(order.getOrderType()).getDec());
             subOrderVo.setProductAmount(PriceUtil.convertToYuanStr(subOrder.getProductAmount()) + currencyDec);
 
+            subOrderVo.setActualPurchaseAmount(PriceUtil.convertToYuanStr(subOrder.getActualPurchaseAmount()) + Constant.YMB);
             subOrderVo.setExpectFrontAmount(PriceUtil.convertToYuanStr(subOrder.getProductFrontAmount()) + Constant.YMB);
             subOrderVo.setPayedFrontAmount(PriceUtil.convertToYuanStr(subOrder.getActualPurchaseAmount()) + Constant.YMB);
             subOrderVo.setProductName(subOrder.getProductName());

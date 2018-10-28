@@ -41,8 +41,18 @@ public class SubOrderVo {
 
     private String payedFrontAmount;
 
-
+    private String actualPurchaseAmount;
+    
     private Long totalCount;
+
+
+    public String getActualPurchaseAmount() {
+        return actualPurchaseAmount;
+    }
+
+    public void setActualPurchaseAmount(String actualPurchaseAmount) {
+        this.actualPurchaseAmount = actualPurchaseAmount;
+    }
 
     public String getExpectFrontAmount() {
         return expectFrontAmount;
