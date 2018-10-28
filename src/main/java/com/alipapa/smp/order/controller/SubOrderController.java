@@ -479,7 +479,7 @@ public class SubOrderController {
                     purchaseFrontAmount = purchaseFrontAmount + materielOrder.getPurchaseFrontAmount();
                     materielOrderVoList.add(materielOrderVo);
                 }
-
+                materielListVo.setPayedAmount(PriceUtil.convertToYuanStr(payedAmount) + Constant.YMB);
                 materielListVo.setTotalPurchaseAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount) + Constant.YMB);
                 materielListVo.setPurchaseFrontAmount(PriceUtil.convertToYuanStr(purchaseFrontAmount) + Constant.YMB);
                 materielListVo.setTotalRestAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount - purchaseFrontAmount) + Constant.YMB);
