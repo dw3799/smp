@@ -485,6 +485,12 @@ public class SubOrderController {
                 materielListVo.setTotalRestAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount - purchaseFrontAmount) + Constant.YMB);
                 materielListVo.setNeedRestAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount - purchaseFrontAmount) + Constant.YMB);
                 materielListVo.setMaterielOrders(materielOrderVoList);
+            } else {
+                materielListVo.setPayedAmount("0" + Constant.YMB);
+                materielListVo.setTotalPurchaseAmount("0" + Constant.YMB);
+                materielListVo.setPurchaseFrontAmount("0" + Constant.YMB);
+                materielListVo.setTotalRestAmount("0" + Constant.YMB);
+                materielListVo.setNeedRestAmount("0" + Constant.YMB);
             }
 
             return WebApiResponse.success(materielListVo);
