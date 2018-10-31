@@ -465,6 +465,10 @@ public class MaterielOrderFollowController {
                 return error("没有可新增物料");
             }
 
+            if (totalPurchaseAmount > subOrder.getExpectPurchaseAmount()) {
+                return error("采购单采购总价不能大于预估采购总价");
+            }
+
             PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
             if (purchaseOrderExt != null && orderOPerateTypeEnum == OrderOPerateTypeEnum.SUBMIT) {
                 purchaseOrderExt.setPurchaseFrontAmount(totalPurchaseFrontAmount);

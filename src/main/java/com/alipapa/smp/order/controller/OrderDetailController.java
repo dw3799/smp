@@ -580,6 +580,7 @@ public class OrderDetailController {
                 orderWorkFlowService.save(orderWorkFlow);
             } else if ("Y".equals(result)) {
                 order.setOrderStatus(OrderStatusEnum.UN_FRONT_PAY.getCode());
+                order.setUpdatedTime(new Date());
                 orderService.updateOrder(order);
 
                 String thisRemark = "";
@@ -800,7 +801,7 @@ public class OrderDetailController {
 
             consumerFrontPayVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFrontAmount()));
             consumerFrontPayVo.setOrderNo(orderNo);
-            consumerFrontPayVo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()));
+            consumerFrontPayVo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
             consumerFrontPayVo.setPayChannel(consumerFrontPay.getPayChannel());
             consumerFrontPayVo.setPayNo(consumerFrontPay.getPayNo());
             consumerFrontPayVo.setPayTime(DateUtil.formatToStrTimeV1(consumerFrontPay.getPayTime()));

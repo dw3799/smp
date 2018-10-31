@@ -280,6 +280,17 @@ public class InvoiceOrderController {
             invoiceOrder.setSalerUserName(order.getSalerUserName());
             invoiceOrder.setSalerUserNo(order.getSalerUserNo());
             invoiceOrder.setUpdatedTime(new Date());
+
+            try {
+                Long deliverTimeLong = Long.valueOf(DateUtil.formatToStr(invoiceOrder.getDeliverTime()));
+                Long nowLong = Long.valueOf(DateUtil.formatToStr(new Date()));
+
+                if (nowLong >= deliverTimeLong) {
+                    return error("发货时间不能早于当天");
+                }
+            } catch (Exception ee) {
+            }
+
             invoiceOrderService.saveInvoiceOrder(order, invoiceOrder, subOrderList, userInfo);
             return WebApiResponse.success("success");
         } catch (Exception ex) {

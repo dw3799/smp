@@ -526,7 +526,7 @@ public class OrderServiceProxy {
                     orderVo.setReceiptFrontPay(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
                     orderVo.setReceiptTailPay(PriceUtil.convertToYuanStr(order.getReceiptAmount() - consumerFrontPay.getActualAmount()) + currencyDec);
                     orderVo.setTailPay((order.getOrderAmount() - consumerFrontPay.getActualAmount()) + currencyDec); //尾款总金额
-
+                    orderVo.setBuyerUserName(order.getBuyerUserName());
 
                     List<ConsumerTailPay> consumerTailPayList = consumerTailPayService.selectInRiewConsumerTailPayByOrderNo(order.getOrderNo());
 

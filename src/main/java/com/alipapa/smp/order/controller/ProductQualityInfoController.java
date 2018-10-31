@@ -134,6 +134,8 @@ public class ProductQualityInfoController {
             if (productQualityInfo.getId() == null) {
                 productQualityInfo.setCreatedTime(new Date());
             }
+
+
             productQualityInfo.setArrivalTime(DateUtil.parseObjToDate(arrivalTime));
             productQualityInfo.setOpUserName(userInfo.getUserName());
             productQualityInfo.setOpUserNo(userInfo.getUserNo());
@@ -145,6 +147,18 @@ public class ProductQualityInfoController {
             productQualityInfo.setSubOrderNo(subOrderNo);
             productQualityInfo.setSuturingQuality(suturingQuality);
             productQualityInfo.setUpdatedTime(new Date());
+
+
+            try {
+                Long arrivalTimeLong = Long.valueOf(DateUtil.formatToStr(productQualityInfo.getArrivalTime()));
+                Long nowLong = Long.valueOf(DateUtil.formatToStr(new Date()));
+
+                if (nowLong <= arrivalTimeLong) {
+                    return error("实际到货时间不能晚于当天");
+                }
+            } catch (Exception ee) {
+            }
+
 
             if (orderOPerateTypeEnum == OrderOPerateTypeEnum.SUBMIT) { //提交
                 if ("N".equals(result)) {
@@ -169,7 +183,7 @@ public class ProductQualityInfoController {
                         orderFollowRecord.setCreatedTime(new Date());
 
                         materielOrder.setMaterielOrderStatus(MaterielOrderStatusEnum.DISCARDED.getCode());
-                        
+
                         materielOrderService.updateMaterielOrder(materielOrder);
                         orderFollowRecordService.save(orderFollowRecord);
                     }

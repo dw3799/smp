@@ -284,7 +284,14 @@ public class SubOrderServiceProxy {
 
             subOrderVo.setActualPurchaseAmount(PriceUtil.convertToYuanStr(subOrder.getActualPurchaseAmount()) + Constant.YMB);
             subOrderVo.setExpectFrontAmount(PriceUtil.convertToYuanStr(subOrder.getProductFrontAmount()) + Constant.YMB);
-            subOrderVo.setPayedFrontAmount(PriceUtil.convertToYuanStr(subOrder.getActualPurchaseAmount()) + Constant.YMB);
+
+            List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrder.getSubOrderNo());
+            Long payedAmount = 0L;
+            for (MaterielOrder materielOrder : materielOrderList) {
+                payedAmount = payedAmount + materielOrder.getActualPurchaseAmount();
+            }
+            subOrderVo.setPayedFrontAmount(PriceUtil.convertToYuanStr(payedAmount) + Constant.YMB);
+
             subOrderVo.setProductName(subOrder.getProductName());
             subOrderVo.setSalerName(order.getSalerUserName());
             subOrderVo.setBuyerName(order.getBuyerUserName());

@@ -35,6 +35,15 @@ public class TailPayOrderVo {
 
     private Long totalCount;
 
+    private String buyerUserName;  //采购员
+
+    public String getBuyerUserName() {
+        return buyerUserName;
+    }
+
+    public void setBuyerUserName(String buyerUserName) {
+        this.buyerUserName = buyerUserName;
+    }
 
     public String getResTailPay() {
         return resTailPay;
