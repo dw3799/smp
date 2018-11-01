@@ -350,14 +350,6 @@ public class OrderTailPayController {
                 orderWorkFlow.setUpdatedTime(new Date());
                 orderWorkFlowService.save(orderWorkFlow);
             } else if ("Y".equals(result)) {
-                //更新订单支付状态
-                if (order.getReceiptAmount() + consumerTailPay.getActualTailAmount() >= order.getOrderAmount()) {
-                    order.setPayStatus(OrderPayStatusEnum.SUCCESS.getCode());
-                } else {
-                    order.setPayStatus(OrderPayStatusEnum.TAIL_PAYING.getCode());
-                }
-
-
                 consumerTailPay.setExchangeRate(exchangeRate);
                 consumerTailPay.setActualTailAmount(PriceUtil.convertToFen(actualTailAmount));
                 Double cnActualAccount = Double.parseDouble(actualTailAmount) * Double.valueOf(consumerTailPay.getExchangeRate());
@@ -367,6 +359,14 @@ public class OrderTailPayController {
 
                 order.setReceiptAmount(order.getReceiptAmount() + consumerTailPay.getActualTailAmount());
                 order.setCnReceiptAmount(order.getCnReceiptAmount() + consumerTailPay.getCnActualTailAmount());
+
+
+                //更新订单支付状态
+                if (order.getReceiptAmount() + consumerTailPay.getActualTailAmount() >= order.getOrderAmount()) {
+                    order.setPayStatus(OrderPayStatusEnum.SUCCESS.getCode());
+                } else {
+                    order.setPayStatus(OrderPayStatusEnum.TAIL_PAYING.getCode());
+                }
 
                 orderService.updateOrder(order);
                 consumerTailPayService.updateConsumerTailPay(consumerTailPay);
@@ -385,6 +385,8 @@ public class OrderTailPayController {
                 orderWorkFlow.setResult("尾款审核通过，支付金额:" + PriceUtil.convertToYuanStr(consumerTailPay.getActualTailAmount()));
                 orderWorkFlow.setUpdatedTime(new Date());
                 orderWorkFlowService.save(orderWorkFlow);
+
+                orderServiceProxy.completeOrder(order.getOrderNo(), UserStatus.getUserInfo());
             } else {
                 return error("参数有误");
             }

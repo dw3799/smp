@@ -93,6 +93,21 @@ public class UserConsumerRelationService {
         return true;
     }
 
+
+    /**
+     * 更新跟进时间，及下单状态
+     *
+     * @return
+     */
+    public boolean updateDealOrder(Long consumerId, Long userId) {
+        UserConsumerRelation userConsumerRelation = this.getRelationByConsumerIsDel(consumerId, userId, null);
+        userConsumerRelation.setFollowTime(new Date());
+        userConsumerRelation.setDealOrder(1);
+        this.updateUserConsumerRelation(userConsumerRelation);
+        return true;
+    }
+
+
     /**
      * @param consumerId
      * @return

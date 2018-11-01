@@ -5,8 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
+import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
+import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
+import com.alipapa.smp.consumer.service.UserConsumerRelationService;
 import com.alipapa.smp.consumer.vo.SysDictVo;
 import com.alipapa.smp.invoice.pojo.*;
 import com.alipapa.smp.invoice.service.*;
@@ -18,6 +21,7 @@ import com.alipapa.smp.order.pojo.*;
 import com.alipapa.smp.order.service.OrderService;
 import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.SubOrderService;
+import com.alipapa.smp.order.service.impl.OrderServiceProxy;
 import com.alipapa.smp.order.service.impl.SubOrderServiceProxy;
 import com.alipapa.smp.order.vo.OrderWorkFlowVo;
 import com.alipapa.smp.order.vo.SubOrderVo;
@@ -47,6 +51,9 @@ import static com.alipapa.smp.utils.WebApiResponse.error;
 @RequestMapping("/api/invoice")
 public class InvoiceOrderController {
     private static Logger logger = LoggerFactory.getLogger(InvoiceOrderController.class);
+
+    @Autowired
+    private OrderServiceProxy orderServiceProxy;
 
 
     @Autowired
@@ -94,6 +101,13 @@ public class InvoiceOrderController {
 
     @Autowired
     private SysDictService sysDictService;
+
+
+    @Autowired
+    private ConsumerService consumerService;
+
+    @Autowired
+    private UserConsumerRelationService userConsumerRelationService;
 
     /**
      * 运输渠道下拉列表
@@ -1016,34 +1030,7 @@ public class InvoiceOrderController {
             }
 
 
-            boolean isAllCompelte = true;
-            List<SubOrder> subOrderList = subOrderService.listSubOrderByOrderNoWithOutDetail(invoiceOrder.getOrderNo());
-
-            for (SubOrder subOrder : subOrderList) {
-                if (subOrder.getSubOrderStatus() != SubOrderStatusEnum.COMPLETE.getCode()) {
-                    isAllCompelte = false;
-                }
-            }
-
-            if (isAllCompelte) {
-                Order order = orderService.selectOrderByOrderNo(invoiceOrder.getOrderNo());
-                order.setOrderStatus(OrderStatusEnum.COMPLETE.getCode());
-                //保存订单流转记录
-                OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
-                orderWorkFlow.setCreatedTime(new Date());
-                orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
-                orderWorkFlow.setOldOrderStatus(OrderStatusEnum.DELIVERY.getCode());
-                orderWorkFlow.setOpUserName(userInfo.getUserName());
-                orderWorkFlow.setOpUserNo(userInfo.getUserNo());
-                orderWorkFlow.setOpUserRole(userInfo.getRoleName());
-                orderWorkFlow.setOrderNo(order.getOrderNo());
-                orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
-                orderWorkFlow.setRemark("产品已全部发货");
-                orderWorkFlow.setResult("已完成");
-                orderWorkFlow.setUpdatedTime(new Date());
-                orderWorkFlowService.save(orderWorkFlow);
-                orderService.updateOrder(order);
-            }
+            orderServiceProxy.completeOrder(invoiceOrder.getOrderNo(), UserStatus.getUserInfo());
         } catch (Exception ex) {
             logger.error("仓储发货单出库异常", ex);
             return error("仓储发货单出库异常");

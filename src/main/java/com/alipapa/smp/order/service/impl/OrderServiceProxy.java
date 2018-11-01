@@ -1,16 +1,20 @@
 package com.alipapa.smp.order.service.impl;
 
 import com.alipapa.smp.common.enums.*;
+import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.SysDict;
 import com.alipapa.smp.consumer.service.ConsumerService;
 import com.alipapa.smp.consumer.service.SysDictService;
+import com.alipapa.smp.consumer.service.UserConsumerRelationService;
 import com.alipapa.smp.order.pojo.*;
 import com.alipapa.smp.order.service.*;
 import com.alipapa.smp.order.vo.ConsumerOrderCount;
 import com.alipapa.smp.order.vo.ConsumerOrderVo;
 import com.alipapa.smp.order.vo.OrderVo;
 import com.alipapa.smp.order.vo.TailPayOrderVo;
+import com.alipapa.smp.user.pojo.User;
+import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.user.vo.UserVo;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
@@ -30,6 +34,12 @@ public class OrderServiceProxy {
 
     @Autowired
     private SubOrderService subOrderService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserConsumerRelationService userConsumerRelationService;
 
     @Autowired
     private SysDictService sysDictService;
@@ -542,4 +552,57 @@ public class OrderServiceProxy {
         return orderVoList;
     }
 
+
+    /**
+     * 完成订单
+     *
+     * @param orderNo
+     * @param userInfo
+     * @return
+     */
+    public boolean completeOrder(String orderNo, UserInfo userInfo) {
+        boolean isAllCompelte = true;
+        List<SubOrder> subOrderList = subOrderService.listSubOrderByOrderNoWithOutDetail(orderNo);
+        Order order = orderService.selectOrderByOrderNo(orderNo);
+
+        if (order.getPayStatus() != OrderPayStatusEnum.SUCCESS.getCode()) {
+            isAllCompelte = false;
+        }
+
+
+        for (SubOrder subOrderOO : subOrderList) {
+            if (subOrderOO.getSubOrderStatus() != SubOrderStatusEnum.COMPLETE.getCode() || subOrderOO.getSubPayStatus() != SubOrderPayStatusEnum.SUCCESS.getCode()) {
+                isAllCompelte = false;
+            }
+        }
+
+        if (isAllCompelte) {
+            order.setOrderStatus(OrderStatusEnum.COMPLETE.getCode());
+            //保存订单流转记录
+            OrderWorkFlow orderWorkFlow = new OrderWorkFlow();
+            orderWorkFlow.setCreatedTime(new Date());
+            orderWorkFlow.setNewOrderStatus(order.getOrderStatus());
+            orderWorkFlow.setOldOrderStatus(OrderStatusEnum.DELIVERY.getCode());
+            orderWorkFlow.setOpUserName(userInfo.getUserName());
+            orderWorkFlow.setOpUserNo(userInfo.getUserNo());
+            orderWorkFlow.setOpUserRole(userInfo.getRoleName());
+            orderWorkFlow.setOrderNo(order.getOrderNo());
+            orderWorkFlow.setType(OrderWorkFlowTypeEnum.M_ORDER.getCodeName());
+            orderWorkFlow.setRemark("产品已全部发货且尾款全部支付完成");
+            orderWorkFlow.setResult("已完成");
+            orderWorkFlow.setUpdatedTime(new Date());
+            orderWorkFlowService.save(orderWorkFlow);
+            orderService.updateOrder(order);
+
+            Consumer consumer = consumerService.getConsumerByConsumerNo(order.getConsumerNo());
+            if (consumer != null) {
+                consumer.setScope(ConsumerScopeEnum.Private.getCodeName());
+                User salerUser = userService.getUserByUserNo(order.getSalerUserNo());
+                userConsumerRelationService.updateDealOrder(consumer.getId(), salerUser.getId());
+                consumerService.updateConsumer(consumer);
+            }
+        }
+
+        return isAllCompelte;
+    }
 }

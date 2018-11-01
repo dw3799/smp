@@ -732,9 +732,9 @@ public class ConsumerController {
         String hasOrder = request.getParameter("hasOrder");
         if (!StringUtil.isEmptyString(hasOrder)) {
             if ("N".equals(hasOrder) || "无订单".equals(hasOrder)) {
-                params.put("hasOrder", 0);
+                params.put("hasOrder", null);
             } else if ("Y".equals(hasOrder) || "有订单".equals(hasOrder)) {
-                params.put("hasOrder", 1);
+                params.put("hasOrder", "有订单");
             }
         }
 

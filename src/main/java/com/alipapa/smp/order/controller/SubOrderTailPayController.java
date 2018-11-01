@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.common.request.UserInfo;
 import com.alipapa.smp.common.request.UserStatus;
+import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.invoice.pojo.ProductQualityInfo;
 import com.alipapa.smp.invoice.service.ProductQualityInfoService;
 import com.alipapa.smp.invoice.vo.QualityCheckInfoVo;
@@ -14,7 +15,9 @@ import com.alipapa.smp.order.service.MaterielOrderService;
 import com.alipapa.smp.order.service.OrderWorkFlowService;
 import com.alipapa.smp.order.service.PurchaseOrderExtService;
 import com.alipapa.smp.order.service.SubOrderService;
+import com.alipapa.smp.order.service.impl.OrderServiceProxy;
 import com.alipapa.smp.order.service.impl.SubOrderServiceProxy;
+import com.alipapa.smp.user.pojo.User;
 import com.alipapa.smp.user.service.UserService;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
@@ -48,6 +51,8 @@ public class SubOrderTailPayController {
     @Autowired
     private SubOrderServiceProxy subOrderServiceProxy;
 
+    @Autowired
+    private OrderServiceProxy orderServiceProxy;
 
     @Autowired
     private SubOrderService subOrderService;
@@ -298,6 +303,10 @@ public class SubOrderTailPayController {
             orderWorkFlow.setResult("尾款支付成功");
             orderWorkFlow.setUpdatedTime(new Date());
             orderWorkFlowService.save(orderWorkFlow);
+
+
+            orderServiceProxy.completeOrder(subOrder.getOrderNo(), UserStatus.getUserInfo());
+
             return WebApiResponse.success("success");
         } catch (Exception ex) {
             logger.error("出纳支付采购单尾款异常", ex);
