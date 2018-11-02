@@ -737,7 +737,7 @@
         </if>
 
         <if test="nHasOrder != null and nHasOrder != ''">
-            and cu.has_order != #{nHasOrder}
+            and (cu.has_order = #{nHasOrder} OR  cu.has_order IS NULL)
         </if>
 
         <if test="hasOrder != null and hasOrder != ''">

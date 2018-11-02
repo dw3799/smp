@@ -362,7 +362,7 @@ public class OrderTailPayController {
 
 
                 //更新订单支付状态
-                if (order.getReceiptAmount() + consumerTailPay.getActualTailAmount() >= order.getOrderAmount()) {
+                if (order.getReceiptAmount() >= order.getOrderAmount()) {
                     order.setPayStatus(OrderPayStatusEnum.SUCCESS.getCode());
                 } else {
                     order.setPayStatus(OrderPayStatusEnum.TAIL_PAYING.getCode());
