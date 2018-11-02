@@ -735,6 +735,11 @@
         <if test="consumerNo != null and consumerNo != ''">
             and cu.consumer_no LIKE CONCAT('%',#{consumerNo},'%')
         </if>
+
+        <if test="nHasOrder != null and nHasOrder != ''">
+            and cu.has_order != #{nHasOrder}
+        </if>
+
         <if test="hasOrder != null and hasOrder != ''">
             and cu.has_order = #{hasOrder}
         </if>
