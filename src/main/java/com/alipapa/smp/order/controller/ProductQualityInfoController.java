@@ -153,7 +153,7 @@ public class ProductQualityInfoController {
                 Long arrivalTimeLong = Long.valueOf(DateUtil.formatToStr(productQualityInfo.getArrivalTime()));
                 Long nowLong = Long.valueOf(DateUtil.formatToStr(new Date()));
 
-                if (nowLong <= arrivalTimeLong) {
+                if (nowLong < arrivalTimeLong) {
                     return error("实际到货时间不能晚于当天");
                 }
             } catch (Exception ee) {

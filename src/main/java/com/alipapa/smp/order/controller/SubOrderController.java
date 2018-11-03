@@ -479,18 +479,20 @@ public class SubOrderController {
                     purchaseFrontAmount = purchaseFrontAmount + materielOrder.getPurchaseFrontAmount();
                     materielOrderVoList.add(materielOrderVo);
                 }
-                materielListVo.setPayedAmount(PriceUtil.convertToYuanStr(payedAmount) + Constant.YMB);
-                materielListVo.setTotalPurchaseAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount) + Constant.YMB);
-                materielListVo.setPurchaseFrontAmount(PriceUtil.convertToYuanStr(purchaseFrontAmount) + Constant.YMB);
-                materielListVo.setTotalRestAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount - purchaseFrontAmount) + Constant.YMB);
-                materielListVo.setNeedRestAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount - purchaseFrontAmount) + Constant.YMB);
+                materielListVo.setPayedAmount(PriceUtil.convertToYuanStr(payedAmount));
+                materielListVo.setTotalPurchaseAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount));
+                materielListVo.setPurchaseFrontAmount(PriceUtil.convertToYuanStr(purchaseFrontAmount));
+                materielListVo.setTotalRestAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount - purchaseFrontAmount));
+                materielListVo.setNeedRestAmount(PriceUtil.convertToYuanStr(totalPurchaseAmount - purchaseFrontAmount));
+                materielListVo.setRmbDec(Constant.YMB);
                 materielListVo.setMaterielOrders(materielOrderVoList);
             } else {
-                materielListVo.setPayedAmount("0" + Constant.YMB);
-                materielListVo.setTotalPurchaseAmount("0" + Constant.YMB);
-                materielListVo.setPurchaseFrontAmount("0" + Constant.YMB);
-                materielListVo.setTotalRestAmount("0" + Constant.YMB);
-                materielListVo.setNeedRestAmount("0" + Constant.YMB);
+                materielListVo.setPayedAmount("0");
+                materielListVo.setTotalPurchaseAmount("0");
+                materielListVo.setPurchaseFrontAmount("0");
+                materielListVo.setTotalRestAmount("0");
+                materielListVo.setNeedRestAmount("0");
+                materielListVo.setRmbDec(Constant.YMB);
             }
 
             return WebApiResponse.success(materielListVo);

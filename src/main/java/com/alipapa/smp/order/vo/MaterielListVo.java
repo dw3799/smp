@@ -20,6 +20,16 @@ public class MaterielListVo {
 
     private String needRestAmount;
 
+    private String rmbDec;
+
+    public String getRmbDec() {
+        return rmbDec;
+    }
+
+    public void setRmbDec(String rmbDec) {
+        this.rmbDec = rmbDec;
+    }
+
     public String getExpectPurchaseAmount() {
         return expectPurchaseAmount;
     }
