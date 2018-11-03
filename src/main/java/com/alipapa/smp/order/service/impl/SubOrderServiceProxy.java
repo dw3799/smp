@@ -6,10 +6,7 @@ import com.alipapa.smp.common.Constant;
 import com.alipapa.smp.common.enums.*;
 import com.alipapa.smp.order.mapper.SubOrderMapper;
 import com.alipapa.smp.order.pojo.*;
-import com.alipapa.smp.order.service.MaterielOrderService;
-import com.alipapa.smp.order.service.OrderService;
-import com.alipapa.smp.order.service.OrderWorkFlowService;
-import com.alipapa.smp.order.service.PurchaseOrderExtService;
+import com.alipapa.smp.order.service.*;
 import com.alipapa.smp.order.vo.SubOrderVo;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.PriceUtil;
@@ -39,6 +36,10 @@ public class SubOrderServiceProxy {
 
     @Autowired
     private PurchaseOrderExtService purchaseOrderExtService;
+
+
+    @Autowired
+    private OrderFollowRecordService orderFollowRecordService;
 
     /**
      * 保存物料订单
@@ -299,6 +300,11 @@ public class SubOrderServiceProxy {
             subOrderVo.setSubOrderNo(subOrder.getSubOrderNo());
             subOrderVo.setSubOrderStatus(SubOrderStatusEnum.valueOf(subOrder.getSubOrderStatus()).getDec());
             subOrderVo.setConsumerName(order.getConsumerName());
+
+            OrderFollowRecord orderFollowRecord = orderFollowRecordService.getLatestOrderFollowRecord(subOrder.getSubOrderNo());
+            if (orderFollowRecord != null) {
+                subOrderVo.setPreFollowTime(DateUtil.formatToStrTimeV1(orderFollowRecord.getUpdatedTime()));
+            }
 
             PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
             if (purchaseOrderExt != null) {

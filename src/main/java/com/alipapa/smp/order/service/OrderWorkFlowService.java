@@ -1,10 +1,12 @@
 package com.alipapa.smp.order.service;
 
+import com.alipapa.smp.common.enums.RoleEnum;
 import com.alipapa.smp.order.mapper.OrderWorkFlowMapper;
 import com.alipapa.smp.order.pojo.OrderWorkFlow;
 import com.alipapa.smp.order.pojo.OrderWorkFlowExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -25,6 +27,10 @@ public class OrderWorkFlowService {
         if (record.getUpdatedTime() == null) {
             record.setUpdatedTime(new Date());
         }
+        RoleEnum roleEnum = RoleEnum.valueOf(record.getOpUserRole());
+        if (roleEnum != null) {
+            record.setOpUserRole(roleEnum.getDec());
+        }
         orderWorkFlowMapper.insert(record);
         return true;
     }
@@ -42,7 +48,17 @@ public class OrderWorkFlowService {
         criteria.andOrderNoEqualTo(orderNo);
         criteria.andTypeEqualTo(type);
         example.setOrderByClause("created_time desc");
-        return orderWorkFlowMapper.selectByExample(example);
+        List<OrderWorkFlow> orderWorkFlowList = orderWorkFlowMapper.selectByExample(example);
+
+        if (!CollectionUtils.isEmpty(orderWorkFlowList)) {
+            for (OrderWorkFlow orderWorkFlow : orderWorkFlowList) {
+                RoleEnum roleEnum = RoleEnum.valueOf(orderWorkFlow.getOpUserRole());
+                if (roleEnum != null) {
+                    orderWorkFlow.setOpUserRole(roleEnum.getDec());
+                }
+            }
+        }
+        return orderWorkFlowList;
     }
 
 

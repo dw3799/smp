@@ -51,4 +51,26 @@ public class OrderFollowRecordService {
     }
 
 
+    /**
+     * 按状态查跟单记录
+     *
+     * @param
+     * @return
+     */
+    public OrderFollowRecord getLatestOrderFollowRecord(String subOrderNo) {
+        OrderFollowRecordExample example = new OrderFollowRecordExample();
+        OrderFollowRecordExample.Criteria criteria = example.createCriteria();
+
+        criteria.andSubOrderNoEqualTo(String.valueOf(subOrderNo));
+
+        example.setOrderByClause("updated_time desc");
+
+        List<OrderFollowRecord> orderFollowRecordList = orderFollowRecordMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(orderFollowRecordList)) {
+            return null;
+        }
+        return orderFollowRecordList.get(0);
+    }
+
+
 }
