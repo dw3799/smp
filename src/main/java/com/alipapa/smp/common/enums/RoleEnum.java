@@ -57,4 +57,16 @@ public enum RoleEnum {
         }
         return null;
     }
+
+
+    public static RoleEnum getValue(String codeName) {
+        RoleEnum[] roleEnums = RoleEnum.values();
+        for (RoleEnum roleEnum : roleEnums) {
+            if (roleEnum.getCodeName().equals(codeName)) {
+                return roleEnum;
+            }
+        }
+        return null;
+    }
+
 }

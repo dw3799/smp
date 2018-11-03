@@ -27,7 +27,7 @@ public class OrderWorkFlowService {
         if (record.getUpdatedTime() == null) {
             record.setUpdatedTime(new Date());
         }
-        RoleEnum roleEnum = RoleEnum.valueOf(record.getOpUserRole());
+        RoleEnum roleEnum = RoleEnum.getValue(record.getOpUserRole());
         if (roleEnum != null) {
             record.setOpUserRole(roleEnum.getDec());
         }
@@ -52,7 +52,7 @@ public class OrderWorkFlowService {
 
         if (!CollectionUtils.isEmpty(orderWorkFlowList)) {
             for (OrderWorkFlow orderWorkFlow : orderWorkFlowList) {
-                RoleEnum roleEnum = RoleEnum.valueOf(orderWorkFlow.getOpUserRole());
+                RoleEnum roleEnum = RoleEnum.getValue(orderWorkFlow.getOpUserRole());
                 if (roleEnum != null) {
                     orderWorkFlow.setOpUserRole(roleEnum.getDec());
                 }
