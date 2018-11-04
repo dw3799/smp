@@ -26,9 +26,23 @@ public class ConsumerDetailVo {
 
     private Integer totalOrder;
 
-    private Long orderAmount;
+    private String orderAmount;
+
+    private String historyOrder;
 
     private Long totalCount;
+
+    public void setOrderAmount(String orderAmount) {
+        this.orderAmount = orderAmount;
+    }
+
+    public String getHistoryOrder() {
+        return historyOrder;
+    }
+
+    public void setHistoryOrder(String historyOrder) {
+        this.historyOrder = historyOrder;
+    }
 
     public String getEmail() {
         return email;
@@ -132,13 +146,5 @@ public class ConsumerDetailVo {
 
     public void setTotalOrder(Integer totalOrder) {
         this.totalOrder = totalOrder;
-    }
-
-    public Long getOrderAmount() {
-        return orderAmount;
-    }
-
-    public void setOrderAmount(Long orderAmount) {
-        this.orderAmount = orderAmount;
     }
 }

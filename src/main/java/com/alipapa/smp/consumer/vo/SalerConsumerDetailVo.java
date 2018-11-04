@@ -24,11 +24,21 @@ public class SalerConsumerDetailVo {
 
     private Integer totalOrder;
 
-    private Long orderAmount;
+    private String orderAmount;
+
+    private String historyOrder;
 
     private Long totalCount;
 
-/*    consumerId:"2",//客户ID
+    public String getHistoryOrder() {
+        return historyOrder;
+    }
+
+    public void setHistoryOrder(String historyOrder) {
+        this.historyOrder = historyOrder;
+    }
+
+    /*    consumerId:"2",//客户ID
     consumerNo:"201803160002",//客户编号
     name:"Tony2",//客户名称
     country："中国",//客户国籍
@@ -129,11 +139,11 @@ public class SalerConsumerDetailVo {
         this.totalOrder = totalOrder;
     }
 
-    public Long getOrderAmount() {
+    public String getOrderAmount() {
         return orderAmount;
     }
 
-    public void setOrderAmount(Long orderAmount) {
+    public void setOrderAmount(String orderAmount) {
         this.orderAmount = orderAmount;
     }
 

@@ -1,12 +1,13 @@
 package com.alipapa.smp.consumer.service;
 
-import com.alipapa.smp.consumer.controller.ConsumerController;
 import com.alipapa.smp.consumer.mapper.ConsumerMapper;
 import com.alipapa.smp.consumer.pojo.Consumer;
 import com.alipapa.smp.consumer.pojo.ConsumerExample;
 import com.alipapa.smp.consumer.pojo.ConsumerExt;
 import com.alipapa.smp.consumer.vo.ConsumerDetailVo;
 import com.alipapa.smp.consumer.vo.SalerConsumerDetailVo;
+import com.alipapa.smp.order.service.impl.OrderServiceProxy;
+import com.alipapa.smp.order.vo.ConsumerOrderCount;
 import com.alipapa.smp.utils.DateUtil;
 import com.alipapa.smp.utils.StringUtil;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 @Service
@@ -22,6 +24,10 @@ public class ConsumerService {
     private static Logger logger = LoggerFactory.getLogger(ConsumerService.class);
 
     @Autowired
+    private OrderServiceProxy orderServiceProxy;
+
+
+    @Resource
     private ConsumerMapper consumerMapper;
 
     /**
@@ -182,8 +188,13 @@ public class ConsumerService {
 
 
                     //TODO from订单管理
-                    consumerDetailVo.setTotalOrder(null);
-                    consumerDetailVo.setOrderAmount(null);
+                    ConsumerOrderCount consumerOrderCount = orderServiceProxy.getConsumerOrderCount(consumer.getConsumerNo());
+
+                    if (consumerOrderCount != null && consumerOrderCount.getDealOrderCount() != null) {
+                        consumerDetailVo.setTotalOrder(consumerOrderCount.getDealOrderCount());
+                        consumerDetailVo.setOrderAmount(consumerOrderCount.getDealOrderAmount());
+                        consumerDetailVo.setHistoryOrder(consumerOrderCount.getDealOrderCount() + "笔" + "/" + consumerOrderCount.getDealOrderAmount());
+                    }
 
                     consumerDetailVo.setTotalCount(count);
                     consumerDetailVoList.add(consumerDetailVo);
@@ -243,8 +254,13 @@ public class ConsumerService {
 
 
                     //TODO from订单管理
-                    consumerDetailVo.setTotalOrder(null);
-                    consumerDetailVo.setOrderAmount(null);
+                    ConsumerOrderCount consumerOrderCount = orderServiceProxy.getConsumerOrderCount(consumer.getConsumerNo());
+
+                    if (consumerOrderCount != null && consumerOrderCount.getDealOrderCount() != null) {
+                        consumerDetailVo.setTotalOrder(consumerOrderCount.getDealOrderCount());
+                        consumerDetailVo.setOrderAmount(consumerOrderCount.getDealOrderAmount());
+                        consumerDetailVo.setHistoryOrder(consumerOrderCount.getDealOrderCount() + "笔" + "/" + consumerOrderCount.getDealOrderAmount());
+                    }
 
                     consumerDetailVo.setTotalCount(count);
                     consumerDetailVoList.add(consumerDetailVo);
@@ -286,9 +302,13 @@ public class ConsumerService {
                     consumerDetailVo.setIntention(consumer.getIntention());
                     consumerDetailVo.setIntentionQuantity(consumer.getIntentionQuantity());
                     //TODO from订单管理
-                    consumerDetailVo.setTotalOrder(null);
-                    consumerDetailVo.setOrderAmount(null);
+                    ConsumerOrderCount consumerOrderCount = orderServiceProxy.getConsumerOrderCount(consumer.getConsumerNo());
 
+                    if (consumerOrderCount != null && consumerOrderCount.getDealOrderCount() != null) {
+                        consumerDetailVo.setTotalOrder(consumerOrderCount.getDealOrderCount());
+                        consumerDetailVo.setOrderAmount(consumerOrderCount.getDealOrderAmount());
+                        consumerDetailVo.setHistoryOrder(consumerOrderCount.getDealOrderCount() + "笔" + "/" + consumerOrderCount.getDealOrderAmount());
+                    }
                     consumerDetailVo.setTotalCount(count);
                     consumerDetailVoList.add(consumerDetailVo);
                 }
