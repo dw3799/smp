@@ -265,7 +265,7 @@ public class OrderTailPayController {
             consumerTailPayVo.setOrderAmount(PriceUtil.convertToYuanStr(order.getOrderAmount()) + currencyDec);
             consumerTailPayVo.setActualAmount(PriceUtil.convertToYuanStr(order.getReceiptAmount()) + currencyDec);
 
-            List<ConsumerTailPay> consumerTailPayList = consumerTailPayService.selectInRiewConsumerTailPayByOrderNo(orderNo);
+            List<ConsumerTailPay> consumerTailPayList = consumerTailPayService.selectAllConsumerTailPayByOrderNo(orderNo);
 
             if (!CollectionUtils.isEmpty(consumerTailPayList)) {
                 ConsumerTailPay consumerTailPay = consumerTailPayList.get(0);

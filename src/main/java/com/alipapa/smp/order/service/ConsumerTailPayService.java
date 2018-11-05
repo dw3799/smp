@@ -63,11 +63,33 @@ public class ConsumerTailPayService {
         ConsumerTailPayExample example = new ConsumerTailPayExample();
         ConsumerTailPayExample.Criteria criteria = example.createCriteria();
         criteria.andOrderNoEqualTo(orderNo);
-        //criteria.andPayStatusEqualTo(OrderPayStatusEnum.TAIL_CASH_APV.getCode());
+        criteria.andPayStatusEqualTo(OrderPayStatusEnum.TAIL_CASH_APV.getCode());
         example.setOrderByClause("created_time desc");
+
         List<ConsumerTailPay> consumerTailPayList = consumerTailPayMapper.selectByExample(example);
         return consumerTailPayList;
     }
+
+
+    /**
+     * 获取待确认的尾款
+     *
+     * @param orderNo
+     * @return
+     */
+    public List<ConsumerTailPay> selectAllConsumerTailPayByOrderNo(String orderNo) {
+        if (StringUtil.isEmptyString(orderNo)) {
+            return null;
+        }
+        ConsumerTailPayExample example = new ConsumerTailPayExample();
+        ConsumerTailPayExample.Criteria criteria = example.createCriteria();
+        criteria.andOrderNoEqualTo(orderNo);
+        example.setOrderByClause("created_time desc");
+
+        List<ConsumerTailPay> consumerTailPayList = consumerTailPayMapper.selectByExample(example);
+        return consumerTailPayList;
+    }
+
 
 
     /**
