@@ -479,7 +479,7 @@ public class InvoiceOrderController {
             InvoiceAdressVo invoiceAdressVo = new InvoiceAdressVo();
             invoiceAdressVo.setAddress(invoiceOrder.getAddress());
             invoiceAdressVo.setConsignee(invoiceOrder.getConsignee());
-            invoiceAdressVo.setDeliverTime(DateUtil.formatToStrTimeV1(invoiceOrder.getCreatedTime()));
+            invoiceAdressVo.setDeliverTime(DateUtil.formatToStrTimeV1(invoiceOrder.getDeliverTime()));
             invoiceAdressVo.setDeliverType(DeliverTypeEnum.valueOf(invoiceOrder.getDeliverType()).getDec());
             invoiceAdressVo.setId(invoiceOrder.getId());
             invoiceAdressVo.setInvoiceOrderNo(invoiceOrder.getInvoiceNo());
