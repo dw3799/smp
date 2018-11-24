@@ -474,8 +474,6 @@ public class OrderServiceProxy {
                 }
                 orderVo.setCreateDateTime(DateUtil.formatToStrTimeV1(order.getCreatedTime()));
 
-                orderVo.setApproveTime(DateUtil.formatToStrTimeV1(order.getUpdatedTime()));
-
                 orderVo.setOrderStatus(OrderStatusEnum.valueOf(order.getOrderStatus()).getDec());
 
                 String currencyDec = orderService.getCurrencyDec(order);
@@ -485,6 +483,7 @@ public class OrderServiceProxy {
                 if (consumerFrontPay != null) {
                     orderVo.setReceiptAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getActualAmount()) + currencyDec);
                     orderVo.setFrontAmount(PriceUtil.convertToYuanStr(consumerFrontPay.getFrontAmount()) + currencyDec);
+                    orderVo.setApproveTime(DateUtil.formatToStrTimeV1(consumerFrontPay.getUpdatedTime()));
                 }
 
                 orderVo.setBuyerUserName(order.getBuyerUserName());
