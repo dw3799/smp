@@ -427,8 +427,17 @@ public class SubOrderServiceProxy {
             subOrderVo.put("productName", subOrder.getProductName());
             subOrderVo.put("orderType", OrderTypeEnum.valueOf(order.getOrderType()).getDec());
             subOrderVo.put("purchaseAmount", PriceUtil.convertToYuanStr(subOrder.getActualPurchaseAmount()) + Constant.YMB);
-            subOrderVo.put("payedAmount", PriceUtil.convertToYuanStr(subOrder.getPayedAmount()) + Constant.YMB);
-            subOrderVo.put("restAmount", PriceUtil.convertToYuanStr(subOrder.getActualPurchaseAmount() - subOrder.getPayedAmount()) + Constant.YMB);
+
+            List<MaterielOrder> materielOrderList = materielOrderService.listMaterielOrderBySubOrderNo(subOrder.getSubOrderNo());
+            Long payedAmount = 0L;
+            if (!CollectionUtils.isEmpty(materielOrderList)) {
+                for (MaterielOrder materielOrder : materielOrderList) {
+                    payedAmount = payedAmount + materielOrder.getActualPurchaseAmount();
+                }
+            }
+
+            subOrderVo.put("payedAmount", PriceUtil.convertToYuanStr(payedAmount) + Constant.YMB);
+            subOrderVo.put("restAmount", PriceUtil.convertToYuanStr(subOrder.getActualPurchaseAmount() - payedAmount) + Constant.YMB);
             subOrderVo.put("buyerUserName", order.getBuyerUserName());
 
             PurchaseOrderExt purchaseOrderExt = purchaseOrderExtService.getPurchaseOrderExtBySubOrderNo(subOrder.getSubOrderNo());
