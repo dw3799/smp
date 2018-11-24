@@ -624,22 +624,26 @@ public class MaterielOrderFollowController {
                 String materielOrderStatus = jsonObject.getString("materielOrderStatus");
 
                 if (materielOrderId == null || StringUtil.isEmptyString(materielOrderStatus)) {
-                    return error("缺少必填参数！");
+                    logger.error("缺少必填参数！");
+                    continue;
                 }
 
                 MaterielOrder materielOrder = materielOrderService.selectMaterielOrderById(materielOrderId);
                 MaterielOrderStatusEnum materielOrderStatusEnum = MaterielOrderStatusEnum.valueOf(materielOrderStatus);
 
                 if (materielOrderStatusEnum == null) {
-                    return error("状态参数不合法");
+                    logger.error("状态参数不合法");
+                    continue;
                 }
 
                 if (materielOrderStatusEnum.getCode() < materielOrder.getMaterielOrderStatus()) {
-                    return error("状态参数有误");
+                    logger.error("状态参数有误");
+                    continue;
                 }
 
                 if (materielOrderStatusEnum != MaterielOrderStatusEnum.FACTORY_INVOICE) {
-                    return error("当前状态不能提交质检");
+                    logger.error("当前状态不能提交质检");
+                    continue;
                 }
 
                 if (materielOrderStatusEnum.getCode() == materielOrder.getMaterielOrderStatus()) {

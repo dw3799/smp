@@ -463,30 +463,54 @@ public class InvoiceOrderController {
      * @return
      */
     @RequestMapping(value = "/getInvoiceAddressInfo", method = RequestMethod.GET)
-    public WebApiResponse<InvoiceAdressVo> getInvoiceAddressInfo(@RequestParam("invoiceOrderNo") String invoiceOrderNo) {
+    public WebApiResponse<InvoiceAdressVo> getInvoiceAddressInfo(@RequestParam(value = "invoiceOrderNo", required = false) String invoiceOrderNo, @RequestParam(value = "subOrderNo", required = false) String subOrderNo) {
         UserInfo userInfo = UserStatus.getUserInfo();
-
-        if (StringUtil.isEmptyString(invoiceOrderNo)) {
-            return WebApiResponse.error("参数不能为空");
-        }
-
-        InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceOrderNo);
-        if (invoiceOrder == null) {
-            return WebApiResponse.error("发货单不存在");
-        }
-
         try {
-            InvoiceAdressVo invoiceAdressVo = new InvoiceAdressVo();
-            invoiceAdressVo.setAddress(invoiceOrder.getAddress());
-            invoiceAdressVo.setConsignee(invoiceOrder.getConsignee());
-            invoiceAdressVo.setDeliverTime(DateUtil.formatToStrTimeV1(invoiceOrder.getDeliverTime()));
-            invoiceAdressVo.setDeliverType(DeliverTypeEnum.valueOf(invoiceOrder.getDeliverType()).getDec());
-            invoiceAdressVo.setId(invoiceOrder.getId());
-            invoiceAdressVo.setInvoiceOrderNo(invoiceOrder.getInvoiceNo());
-            invoiceAdressVo.setMobile(invoiceOrder.getMobile());
-            invoiceAdressVo.setOrderNo(invoiceOrder.getOrderNo());
-            invoiceAdressVo.setPostalCode(invoiceOrder.getPostalCode());
-            return WebApiResponse.success(invoiceAdressVo);
+            if (StringUtil.isEmptyString(invoiceOrderNo)) {
+                InvoiceOrder invoiceOrder = invoiceOrderService.selectInvoiceOrderByInvoiceOrderNo(invoiceOrderNo);
+                if (invoiceOrder == null) {
+                    return WebApiResponse.error("发货单不存在");
+                }
+
+                InvoiceAdressVo invoiceAdressVo = new InvoiceAdressVo();
+                invoiceAdressVo.setAddress(invoiceOrder.getAddress());
+                invoiceAdressVo.setConsignee(invoiceOrder.getConsignee());
+                invoiceAdressVo.setDeliverTime(DateUtil.formatToStrTimeV1(invoiceOrder.getDeliverTime()));
+                invoiceAdressVo.setDeliverType(DeliverTypeEnum.valueOf(invoiceOrder.getDeliverType()).getDec());
+                invoiceAdressVo.setId(invoiceOrder.getId());
+                invoiceAdressVo.setInvoiceOrderNo(invoiceOrder.getInvoiceNo());
+                invoiceAdressVo.setMobile(invoiceOrder.getMobile());
+                invoiceAdressVo.setOrderNo(invoiceOrder.getOrderNo());
+                invoiceAdressVo.setPostalCode(invoiceOrder.getPostalCode());
+                return WebApiResponse.success(invoiceAdressVo);
+            } else if (StringUtil.isNotEmptyString(subOrderNo)) {
+                SubOrder subOrder = subOrderService.getSubOrderBySubOrderNo(subOrderNo);
+                if (subOrder == null) {
+                    return WebApiResponse.success(null);
+                }
+
+                Order order = orderService.selectOrderByOrderNo(subOrder.getOrderNo());
+                if (order == null) {
+                    return WebApiResponse.success(null);
+                }
+
+                Consumer consumer = consumerService.getConsumerByConsumerNo(order.getConsumerNo());
+                if (consumer == null) {
+                    return WebApiResponse.success(null);
+                }
+
+                InvoiceAdressVo invoiceAdressVo = new InvoiceAdressVo();
+                invoiceAdressVo.setAddress(consumer.getReceivingAddress());
+                invoiceAdressVo.setConsignee(consumer.getConsignee());
+                invoiceAdressVo.setDeliverType(DeliverTypeEnum.Grand.getDec());
+                invoiceAdressVo.setId(null);
+                invoiceAdressVo.setInvoiceOrderNo(null);
+                invoiceAdressVo.setMobile(consumer.getTelMobile());
+                invoiceAdressVo.setOrderNo(order.getOrderNo());
+                invoiceAdressVo.setPostalCode(consumer.getPostalCode());
+                return WebApiResponse.success(invoiceAdressVo);
+            }
+            return null;
         } catch (Exception ex) {
             logger.error("获取发货单发货信息异常", ex);
             return WebApiResponse.error("获取获取发货单发货信息异常");
@@ -501,7 +525,7 @@ public class InvoiceOrderController {
      * @return
      */
     @RequestMapping(value = "/listInvoiceOrderWorkFlow", method = RequestMethod.GET)
-    public WebApiResponse<List<OrderWorkFlowVo>> listInvoiceOrderWorkFlow(@RequestParam("invoiceOrderNo") String invoiceOrderNo) {
+    public WebApiResponse<List<OrderWorkFlowVo>> listInvoiceOrderWorkFlow(@RequestParam(value = "invoiceOrderNo") String invoiceOrderNo) {
 
         if (StringUtil.isEmptyString(invoiceOrderNo)) {
             return WebApiResponse.error("参数不能为空");
